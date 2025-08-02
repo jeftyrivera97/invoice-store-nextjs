@@ -7,7 +7,9 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { onLogin } from "@/store/auth/authSlice";
+import { onLogin, onErrorLogin } from "@/store/auth/authSlice";
+import { toast } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -41,38 +43,46 @@ export function LoginForm({
   });
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    const { email, password } = data;
+    try {
+      const { email, password } = data;
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (res?.ok) {
-      // obtener sesión desde next-auth (cliente)
-      const sessionRes = await fetch("/api/auth/session");
-      const session = await sessionRes.json();
+      if (res?.ok) {
+        // obtener sesión desde next-auth (cliente)
+        const sessionRes = await fetch("/api/auth/session");
+        const session = await sessionRes.json();
 
-      console.log("session:", session);
+        console.log("session:", session);
 
-      // ahora puedes hacer dispatch con los datos del usuario
-      dispatch(onLogin(session?.user));
-      router.push("/");
-    } else {
-      setError("Credenciales incorrectas");
+        // ahora puedes hacer dispatch con los datos del usuario
+        dispatch(onLogin(session?.user));
+        router.push("/");
+      } else {
+        toast.error('Credenciales incorrectas');
+        dispatch(onErrorLogin("Error de inicio de sesión aqui en else"));
+      }
+    } catch (error) {
+       toast.error('Error al iniciar sesión');
+      console.error("Error en el inicio de sesión:", error);
+      dispatch(onErrorLogin("Error de inicio de sesión aqui en catch"));
     }
   }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
+       <Toaster />
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Bienvenido</CardTitle>
           <CardDescription>Ingresa con tu cuenta</CardDescription>
         </CardHeader>
         <CardContent>
-         <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-3">
@@ -105,14 +115,16 @@ export function LoginForm({
                 <Button type="submit" className="w-full">
                   Acceder
                 </Button>
+                 
               </div>
             </div>
           </form>
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        Al hacer clic en continuar, aceptas nuestros <a href="#">Términos de Servicio</a>{" "}
-        y <a href="#">Política de Privacidad</a>.
+        Al hacer clic en continuar, aceptas nuestros{" "}
+        <a href="#">Términos de Servicio</a> y{" "}
+        <a href="#">Política de Privacidad</a>.
       </div>
     </div>
   );

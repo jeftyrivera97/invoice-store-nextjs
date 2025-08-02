@@ -1,0 +1,20 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
+export const SiteHeaderTitle = () => {
+  const pathname = usePathname();
+
+  // Determinar el título basado en el pathname
+  let headerTitle = "Inicio";
+  if (pathname.includes("/productos")) {
+    headerTitle = "Productos";
+  } else if (pathname.includes("/facturacion")) {
+    headerTitle = "Facturación";
+  } else if (pathname.includes("/comprobantes")) {
+    headerTitle = "Comprobantes";
+  } else if (pathname.includes("/caja")) {
+    headerTitle = "Caja";
+  }
+  return <h1 className="text-base font-medium">{headerTitle}</h1>;
+};

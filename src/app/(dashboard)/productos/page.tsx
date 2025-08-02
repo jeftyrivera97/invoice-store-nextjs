@@ -1,8 +1,9 @@
-
+import { SiteHeader } from "@/components/ui/header/SiteHeader"
 export default function ProductosPage() {
   return (
-    <div>
+    <>
+       
       <h1>Hello Productos Page</h1>
-    </div>
+    </>
   );
 }
