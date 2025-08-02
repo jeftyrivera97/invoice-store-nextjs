@@ -48,9 +48,9 @@ const items = [
   },
 ]
 
-export function AppSidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar>
+    <Sidebar collapsible="offcanvas" {...props}>
       <Header />
       <SidebarContent>
         <SidebarGroup>

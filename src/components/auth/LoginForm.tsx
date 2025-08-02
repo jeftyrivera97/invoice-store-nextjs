@@ -33,8 +33,6 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-  const [error, setError] = useState("");
-
   const dispatch = useDispatch();
 
   const form = useForm({
@@ -52,24 +50,24 @@ export function LoginForm({
         redirect: false,
       });
 
+      console.log("Respuesta de signIn:", res);
+
       if (res?.ok) {
-        // obtener sesión desde next-auth (cliente)
         const sessionRes = await fetch("/api/auth/session");
         const session = await sessionRes.json();
 
-        console.log("session:", session);
+        console.log("Sesión obtenida:", session);
 
-        // ahora puedes hacer dispatch con los datos del usuario
         dispatch(onLogin(session?.user));
         router.push("/");
       } else {
-        toast.error('Credenciales incorrectas');
-        dispatch(onErrorLogin("Error de inicio de sesión aqui en else"));
+        toast.error("Credenciales incorrectas");
+        dispatch(onErrorLogin("Error de inicio de sesión"));
       }
     } catch (error) {
-       toast.error('Error al iniciar sesión');
+      toast.error("Error al iniciar sesión");
       console.error("Error en el inicio de sesión:", error);
-      dispatch(onErrorLogin("Error de inicio de sesión aqui en catch"));
+      dispatch(onErrorLogin("Error de inicio de sesión"));
     }
   }
 

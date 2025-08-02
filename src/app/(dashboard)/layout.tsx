@@ -1,12 +1,9 @@
 import { AppSidebar } from "@/components";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/ui/header/SiteHeader";
-
 import { cookies } from "next/headers";
+import AuthStatus from "@/components/auth/AuthStatus";
+import SessionWrapper from "@/components/providers/SessionWrapper"; // 👈 nuevo
 
 export default async function DashboardLayout({
   children,
@@ -17,18 +14,29 @@ export default async function DashboardLayout({
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   return (
-    <SidebarProvider defaultOpen={defaultOpen}>
-      <AppSidebar />
-      <SidebarInset>
-        <main>
-          <SiteHeader />
-          <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-              {children}
+    <SessionWrapper> {/* 👈 agrega este wrapper aquí */}
+      <SidebarProvider
+        defaultOpen={defaultOpen}
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AuthStatus />
+        <AppSidebar variant="inset" />
+        <SidebarInset>
+          <main>
+            <SiteHeader />
+            <div className="flex flex-1 flex-col">
+              <div className="@container/main flex flex-1 flex-col gap-2">
+                {children}
+              </div>
             </div>
-          </div>
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </SessionWrapper>
   );
 }
