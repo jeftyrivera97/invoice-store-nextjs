@@ -1,4 +1,5 @@
-import { Calendar, Home, Inbox, Search, LucideDollarSign, Info, DollarSign, ShoppingBag, Book } from "lucide-react"
+import { Home, Inbox, Search, LucideDollarSign, Info, DollarSign, ShoppingBag, Book,LogOut, ChevronUp, User2 } from "lucide-react"
+
 
 import {
   Sidebar,
@@ -10,6 +11,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Footer } from "./Footer";
+import { Header } from "./Header";
+
+
+
+
+
 
 // Menu items.
 const items = [
@@ -43,6 +51,7 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar>
+      <Header />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Panel</SidebarGroupLabel>
@@ -62,6 +71,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <Footer />
     </Sidebar>
   )
 }

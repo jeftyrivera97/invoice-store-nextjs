@@ -1,5 +1,7 @@
 import { AppSidebar } from "@/components";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar"
+import { SiteHeader } from "@/components/ui/header/SiteHeader"
+
 
 import { cookies } from "next/headers"
 
@@ -11,12 +13,15 @@ export default async function DashboardLayout( { children }: {
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
   
   return (
+    
   <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <main>
-        <SidebarTrigger />
-        {children}
-      </main>
+         <SidebarInset>
+           <main>
+             <SiteHeader />
+             {children}
+           </main>
+         </SidebarInset>
     </SidebarProvider>
   );
 }
