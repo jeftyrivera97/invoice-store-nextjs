@@ -50,13 +50,11 @@ export function LoginForm({
         redirect: false,
       });
 
-      console.log("Respuesta de signIn:", res);
 
       if (res?.ok) {
         const sessionRes = await fetch("/api/auth/session");
         const session = await sessionRes.json();
 
-        console.log("Sesión obtenida:", session);
 
         dispatch(onLogin(session?.user));
         router.push("/");

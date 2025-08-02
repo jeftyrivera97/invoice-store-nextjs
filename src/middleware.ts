@@ -8,8 +8,6 @@ const secret = process.env.NEXTAUTH_SECRET;
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret });
 
-  console.log("🧾 Token en middleware:", token);
-
   if (!token) {
     const loginUrl = new URL("/auth", req.url);
     loginUrl.searchParams.set("callbackUrl", req.url);

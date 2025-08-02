@@ -37,7 +37,7 @@ export const Footer = () => {
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  console.log("user", user);
+
 
   return (
     <SidebarFooter>
