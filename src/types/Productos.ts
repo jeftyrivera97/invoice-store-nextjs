@@ -3,7 +3,7 @@ export interface ProductsData {
 }
 
 export interface ProductoData {
-    id:                  string;
+    id:                  bigint;
     codigo_producto:     string;
     descripcion:         string;
     id_categoria:        string;

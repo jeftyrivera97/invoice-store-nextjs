@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
@@ -13,7 +14,7 @@ function convertBigIntToString(obj: any): any {
 export async function GET() {
   try {
     console.log("Iniciando consulta de productos...");
-  const productos = await prisma.productos.findMany({
+  const data = await prisma.productos.findMany({
     include: {
       producto_categorias: true, 
       proveedores: true,
@@ -22,12 +23,10 @@ export async function GET() {
   });
 
     // Convierte todos los BigInt a string
-    const productosSafe = convertBigIntToString(productos);
-
-    console.log("Productos convertidos:", productosSafe);
+    const productos = convertBigIntToString(data);
 
     return NextResponse.json(
-      { data: productosSafe },
+      { data: productos },
       { status: 200 } // Cambia el estado a 200 para solicitudes GET exitosas
     );
   } catch (error: any) {

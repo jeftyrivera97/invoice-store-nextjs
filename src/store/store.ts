@@ -1,10 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
-import authReducer from './auth/authSlice' // Import the default export as `authReducer`
+import authReducer from './auth/authSlice'
+import  productoReducer  from './producto/productoSlice'
+ // Import the default export as `authReducer`
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       auth: authReducer, // Use the default export directly
+      producto: productoReducer
     },
   })
 }
