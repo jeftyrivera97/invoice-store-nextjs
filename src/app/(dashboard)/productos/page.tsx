@@ -7,10 +7,10 @@ export default async function ProductosPage({
 }: {
   searchParams: { page?: string; search?: string };
 }) {
-   const awaitedSearchParams = await searchParams;
+  const awaitedSearchParams = await searchParams;
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0 mt-2">
+    <>
       <div className="grid auto-rows-min gap-4 md:grid-cols-1">
         <div>
           <IndexPageTitle title="Lista de Productos" />
@@ -28,6 +28,6 @@ export default async function ProductosPage({
           search={awaitedSearchParams.search}
         />
       </div>
-    </div>
+    </>
   );
 }

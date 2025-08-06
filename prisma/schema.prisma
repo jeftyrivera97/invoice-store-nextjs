@@ -677,7 +677,7 @@ model producto_multimedias {
 
 model productos {
   id                   BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
-  codigo_producto      String                 @db.VarChar(255)
+  codigo_producto      String                 @db.VarChar(255) 
   descripcion          String                 @db.VarChar(255)
   id_categoria         BigInt?                @db.UnsignedBigInt
   marca                String                 @db.VarChar(255)

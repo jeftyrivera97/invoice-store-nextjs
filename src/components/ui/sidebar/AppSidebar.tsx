@@ -65,10 +65,6 @@ const items = {
           title: "Todos los Productos",
           url: "/productos",
         },
-        {
-          title: "Nuevo Producto",
-          url: "#",
-        },
   
       ],
     },
@@ -80,15 +76,15 @@ const items = {
       items: [
         {
           title: "Todos los Comprobantes",
-          url: "/combrobantes",
+          url: "/comprobantes",
         },
         {
           title: "Nueva Factura",
-          url: "/combrobantes/facturas/new",
+          url: "/comprobantes/facturas/new",
         },
         {
           title: "Nuevo Recibo",
-          url: "/combrobantes/recibos/new",
+          url: "/comprobantes/recibos/new",
         },
         
       ],
