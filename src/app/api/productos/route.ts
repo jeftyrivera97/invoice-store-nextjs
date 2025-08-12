@@ -14,13 +14,9 @@ function convertBigIntToString(obj: any): any {
 export async function GET() {
   try {
     console.log("Iniciando consulta de productos...");
-  const data = await prisma.productos.findMany({
-    include: {
-      producto_categorias: true, 
-      proveedores: true,
-      impuestos: true, // Incluye los datos de la relación con `impuestos`
-    },
-  });
+    const data = await prisma.productos.findMany();
+
+    console.log("Data:", data);
 
     // Convierte todos los BigInt a string
     const productos = convertBigIntToString(data);
@@ -30,7 +26,11 @@ export async function GET() {
       { status: 200 } // Cambia el estado a 200 para solicitudes GET exitosas
     );
   } catch (error: any) {
-    console.error("Error al obtener los productos:", error.message, error.stack);
+    console.error(
+      "Error al obtener los productos:",
+      error.message,
+      error.stack
+    );
     return NextResponse.json(
       { error: error.message || "Error al obtener los productos" },
       { status: 500 }

@@ -1,6 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface MetodoPago {
+  id: string;
+  descripcion: string;
+}
+
+interface Cliente {
+  id: string;
+  codigo_cliente: string;
+  descripcion: string;
+}
+
 export interface ItemCart {
+  id: string;
+  precio_venta: number;
   codigo_producto: string;
   descripcion: string;
   cantidad: number;
@@ -17,6 +30,20 @@ export interface ItemCart {
 interface CartState {
   moduleName: string;
   moduleTitle: string;
+  cliente: {
+    id: string;
+    codigo_cliente: string;
+    descripcion: string;
+    // Otros campos que necesites
+  };
+  tipo_factura: object;
+  estado_factura: object;
+  metodo_pago: {
+    id: string;
+    descripcion: string;
+  };
+  referencia: string;
+  comentario: string;
   items: ItemCart[];
   gravado15: number;
   gravado18: number;
@@ -52,6 +79,20 @@ const initialState: CartState = {
   descuento: 0,
   subtotal: 0,
   total: 0,
+  cliente: {
+    id: "",
+    codigo_cliente: "",
+    descripcion: "",
+    // Otros campos que necesites
+  },
+  tipo_factura: {},
+  estado_factura: {},
+  metodo_pago: {
+    id: "",
+    descripcion: "",
+  },
+  referencia: "",
+  comentario: "",
 };
 
 export const cartSlice = createSlice({
@@ -143,6 +184,24 @@ export const cartSlice = createSlice({
       state.errorMessage = action.payload;
       state.items = [];
       state.counter = 0;
+      state.gravado15 = 0;
+      state.impuesto18 = 0;
+      state.exento = 0;
+      state.exonerado = 0;
+      state.cliente = {
+        id: "",
+        codigo_cliente: "",
+        descripcion: "",
+        // Otros campos que necesites
+      };
+      state.tipo_factura = {};
+      state.estado_factura = {};
+      state.metodo_pago = {
+        id: "",
+        descripcion: "",
+      };
+      state.referencia = "";
+      state.comentario = "";
     },
 
     onRecalculateTotals: (state) => {
@@ -200,6 +259,17 @@ export const cartSlice = createSlice({
         );
       }
     },
+    onClienteSelection: (state, action: PayloadAction<Cliente>) => {
+      state.cliente = action.payload;
+    },
+
+    onMetodoPagoSelection: (state, action: PayloadAction<MetodoPago>) => {
+      state.metodo_pago = action.payload;
+    },
+
+    onReferenciaFill: (state, action: PayloadAction<string>) => {
+      state.referencia = action.payload;
+    }
   },
 });
 
@@ -211,6 +281,9 @@ export const {
   onApplyDiscount,
   onRemoveFromCart,
   onRecalculateTotals,
+  onClienteSelection,
+  onMetodoPagoSelection,
+  onReferenciaFill,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

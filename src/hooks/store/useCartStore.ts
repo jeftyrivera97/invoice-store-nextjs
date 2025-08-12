@@ -9,8 +9,23 @@ import {
   onApplyDiscount, // <-- Importa la acción
   onRemoveFromCart,
   onRecalculateTotals,
-
+  onClienteSelection,
+  onMetodoPagoSelection,
+  onReferenciaFill,
 } from "@/store/cart/cartSlice";
+
+
+// Define the interfaces (or import them if they're exported from cartSlice)
+interface Cliente {
+  id: string;
+  codigo_cliente: string;
+  descripcion: string;
+}
+
+interface MetodoPago {
+  id: string;
+  descripcion: string;
+}
 
 export const useCartStore = () => {
   const {
@@ -21,6 +36,9 @@ export const useCartStore = () => {
     counter,
     moduleName,
     moduleTitle,
+    cliente,
+    metodo_pago,
+    referencia,
   } = useSelector((state: RootState) => state.cart);
 
   const dispatch = useDispatch();
@@ -37,6 +55,8 @@ export const useCartStore = () => {
 
       // Aquí puedes construir el objeto ItemCart según tu interfaz
       const itemCart = {
+        id: data.id,
+        precio_venta: data.precio_venta,
         codigo_producto: data.codigo_producto,
         descripcion: data.descripcion,
         cantidad: cantidad, // o la cantidad que el usuario seleccione
@@ -69,8 +89,23 @@ export const useCartStore = () => {
   const productCartDelete = (codigo_producto: string) => {
     dispatch(onRemoveFromCart(codigo_producto));
     dispatch(onRecalculateTotals());
+  };
 
+  // Update the method signatures with proper typing
+  const clienteSelected = (cliente: Cliente) => {
+    dispatch(onClienteSelection(cliente));
+  };
 
+  const metodoPagoSelected = (metodo_pago: MetodoPago) => {
+    dispatch(onMetodoPagoSelection(metodo_pago));
+  };
+
+  const referenciaFill = (referencia: string) => {
+    dispatch(onReferenciaFill(referencia));
+  };
+
+  const cleanCart = () => {
+    dispatch(onRecalculateTotals());
   };
 
   return {
@@ -82,9 +117,16 @@ export const useCartStore = () => {
     counter,
     moduleName,
     moduleTitle,
+    cliente,
+    metodo_pago,
+    referencia,
     // Métodos
     fetchProductoByCodigo,
     applyDiscount, // <-- Exporta el método
     productCartDelete,
+    clienteSelected,
+    metodoPagoSelected,
+    referenciaFill,
+    cleanCart,
   };
 };

@@ -13,22 +13,22 @@ function convertBigIntToString(obj: any): any {
 
 export async function GET() {
   try {
-    console.log("Iniciando consulta de pagos categorias...");
-    const data = await prisma.pago_categorias.findMany();
+    console.log("Iniciando consulta de metodos de pagos...");
+    const data = await prisma.metodos_pagos.findMany();
 
     // Convierte todos los BigInt a string
-    const pagosCategorias = convertBigIntToString(data);
+    const metodosPagos = convertBigIntToString(data);
 
-    console.log(pagosCategorias);
+    console.log(metodosPagos);
 
     return NextResponse.json(
-      { data: pagosCategorias },
+      { data: metodosPagos },
       { status: 200 } // Cambia el estado a 200 para solicitudes GET exitosas
     );
   } catch (error: any) {
-    console.error("Error al obtener los clientes:", error.message, error.stack);
+    console.error("Error al obtener los metodos de pagos:", error.message, error.stack);
     return NextResponse.json(
-      { error: error.message || "Error al obtener los clientes" },
+      { error: error.message || "Error al obtener los metodos de pagos" },
       { status: 500 }
     );
   }
