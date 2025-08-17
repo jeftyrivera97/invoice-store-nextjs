@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './auth/authSlice'
 import  productoReducer  from './producto/productoSlice'
 import  clienteReducer  from './cliente/clienteSlice'
-import cartReducer from './cart/cartSlice'
+import invoiceReducer from './invoice/invoiceSlice'
  // Import the default export as `authReducer`
 
 export const makeStore = () => {
@@ -11,7 +11,7 @@ export const makeStore = () => {
       auth: authReducer, // Use the default export directly
       producto: productoReducer,
       cliente: clienteReducer,
-      cart: cartReducer,
+      invoice: invoiceReducer,
     },
   })
 }

@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/ui/header/SiteHeader";
 import { cookies } from "next/headers";
 import AuthStatus from "@/components/auth/AuthStatus";
-import SessionWrapper from "@/components/providers/SessionWrapper"; // 👈 nuevo
+import SessionWrapper from "@/components/providers/SessionWrapper"; 
 
 export default async function DashboardLayout({
   children,
@@ -31,7 +31,7 @@ export default async function DashboardLayout({
             <SiteHeader />
             <div className="flex flex-1 flex-col">
               <div className="@container/main flex flex-1 flex-col gap-2">
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0 mt-2">
+                <div className="flex flex-1 flex-col gap-4 p-4 pt-0 mt-4">
                   {children}
                 </div>
               </div>

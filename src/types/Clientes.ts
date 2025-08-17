@@ -1,3 +1,4 @@
+
 export interface ClientesType {
     data: ClientesData[];
 }
@@ -6,6 +7,7 @@ export interface ClientesData {
     id:             string;
     codigo_cliente: string;
     descripcion:    string;
+    direccion:      string;
     telefono:       string;
     id_estado:      string;
     id_usuario:     string;

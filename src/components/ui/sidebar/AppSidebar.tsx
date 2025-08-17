@@ -62,29 +62,25 @@ const items = {
       isActive: true,
       items: [
         {
-          title: "Todos los Productos",
+          title: "Administrar Productos",
           url: "/productos",
         },
   
       ],
     },
     {
-      title: "Comprobantes",
+      title: "Facturas",
       url: "#",
       icon: Bot,
       isActive: true,
       items: [
         {
-          title: "Todos los Comprobantes",
-          url: "/comprobantes",
+          title: "Administrar Facturas",
+          url: "/facturas",
         },
         {
           title: "Nueva Factura",
-          url: "/comprobantes/facturas/new",
-        },
-        {
-          title: "Nuevo Recibo",
-          url: "/comprobantes/recibos/new",
+          url: "/facturas/new",
         },
         
       ],
@@ -96,7 +92,7 @@ const items = {
        isActive: true,
       items: [
         {
-          title: "Todos los Clientes",
+          title: "Administrar Clientes",
           url: "#",
         },
         {
@@ -113,12 +109,13 @@ const items = {
       items: [
         {
           title: "Administrar Cajas",
-          url: "#",
+          url: "/cajas",
         },
         {
-          title: "Resumen de Cajas",
-          url: "#",
+          title: "Administrar Sesiones",
+          url: "/cajas/sesiones",
         },
+        
       ],
     },
   ],

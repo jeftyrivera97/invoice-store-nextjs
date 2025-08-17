@@ -9,12 +9,10 @@ export const SiteHeaderTitle = () => {
   let headerTitle = "Inicio";
   if (pathname.includes("/productos")) {
     headerTitle = "Productos";
-  } else if (pathname.includes("/facturacion")) {
-    headerTitle = "Facturación";
-  } else if (pathname.includes("/comprobantes")) {
-    headerTitle = "Comprobantes";
-  } else if (pathname.includes("/caja")) {
-    headerTitle = "Caja";
+  } else if (pathname.includes("/facturas")) {
+    headerTitle = "Facturas";
+  } else if (pathname.includes("/cajas")) {
+    headerTitle = "Cajas";
   }
   return <h1 className="text-base font-medium">{headerTitle}</h1>;
 };

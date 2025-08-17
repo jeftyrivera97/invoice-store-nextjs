@@ -37,7 +37,7 @@ export interface ProductoData {
 
 export interface ProductoImpuestos {
   id: string;
-  descripcion: ProductoDescripcion;
+  descripcion: string;
   valor: number;
   id_estado: string;
   created_at: null;
@@ -45,10 +45,6 @@ export interface ProductoImpuestos {
   deleted_at: null;
 }
 
-export enum ProductoDescripcion {
-  Exento = "Exento",
-  The18 = "18%",
-}
 
 export interface ProductoCategorias {
   id: string;

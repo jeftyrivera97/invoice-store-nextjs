@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { parse } from "path";
+import { ventas } from "../../../generated/prisma/index";
 
 // Función para convertir BigInt a string
 function convertBigIntToString(obj: any): any {
@@ -32,8 +32,10 @@ export async function POST(request: NextRequest) {
       total,
       id_categoria,
       id_tipo_factura,
-      id_metodo_pago, // ← Agregar esta validación
+      id_metodo_pago,
+      id_estado_factura,
       productos,
+      referencia,
     } = body;
 
     // Validaciones básicas actualizadas
@@ -47,10 +49,22 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         {
-          error: "Faltan campos requeridos: id_cliente, id_usuario, total, productos, id_metodo_pago",
+          error:
+            "Faltan campos requeridos: id_cliente, id_usuario, total, productos, id_metodo_pago",
         },
         { status: 400 }
       );
+    }
+
+    const sesion = await prisma.cajas_sesiones.findFirst({
+      where: {
+        id_usuario: BigInt(id_usuario),
+        id_estado_sesion: BigInt(1), // Asegurarse de que la sesión esté abierta
+      },
+    });
+
+    if (!sesion) {
+      throw new Error("No hay una sesión abierta para el usuario");
     }
 
     // Usar transacción para asegurar consistencia
@@ -73,9 +87,9 @@ export async function POST(request: NextRequest) {
           descuentos: parseFloat(descuentos) || 0,
           subtotal: parseFloat(subtotal) || 0,
           total: parseFloat(total) || 0,
-          id_categoria: BigInt(id_categoria || 1),
-          id_tipo_factura: BigInt(id_tipo_factura || 1),
-          id_estado_factura: BigInt(3),
+          id_categoria: BigInt(id_categoria),
+          id_tipo_factura: BigInt(id_tipo_factura),
+          id_estado_factura: BigInt(id_estado_factura),
           id_estado: BigInt(1),
           created_at: new Date(),
           updated_at: new Date(),
@@ -83,7 +97,7 @@ export async function POST(request: NextRequest) {
       });
 
       // 2. Crear el detalle de la factura
-     const detallesFactura: any[] = [];
+      const detallesFactura: any[] = [];
       for (const producto of productos) {
         const detalle = await tx.facturas_detalles.create({
           data: {
@@ -112,9 +126,100 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      const factura_pagos = await tx.facturas_pagos.create({
+        data: {
+          id_factura: nuevaFactura.id,
+          id_metodo_pago: BigInt(id_metodo_pago),
+          fecha_hora: new Date(),
+          referencia:
+            id_metodo_pago === "1"
+              ? "N/A"
+              : id_metodo_pago === "2"
+              ? "N/A"
+              : referencia,
+          comentario:
+            id_metodo_pago === "1"
+              ? "Credito"
+              : id_metodo_pago === "2"
+              ? "Pagado con Efectivo"
+              : "Pagado con Transaccion Electronica",
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+
+      let venta_efectivo = sesion.venta_efectivo || 0;
+      let venta_tarjeta = sesion.venta_tarjeta || 0;
+      let venta_transferencia = sesion.venta_transferencia || 0;
+      let venta_pago_link = sesion.venta_pago_link || 0;
+      let venta_cheque = sesion.venta_cheque || 0;
+      let venta_credito = sesion.venta_credito || 0;
+      let saldoCaja = sesion.saldo_inicial || 0;
+
+      if (id_metodo_pago === "1") {
+        venta_credito = venta_credito + total;
+      } else if (id_metodo_pago === "2") {
+        venta_efectivo = venta_efectivo + total;
+        saldoCaja = saldoCaja + total;
+      } else if (id_metodo_pago === "3") {
+        venta_tarjeta = venta_tarjeta + total;
+      } else if (id_metodo_pago === "4") {
+        venta_transferencia = venta_transferencia + total;
+      } else if (id_metodo_pago === "5") {
+        venta_pago_link = venta_pago_link + total;
+      } else if (id_metodo_pago === "6") {
+        venta_cheque = venta_cheque + total;
+      }
+
+      // 4. Actualizar el saldo de la sesión
+      const caja_sesion = await tx.cajas_sesiones.update({
+        where: { id: sesion.id, id_estado_sesion: BigInt(1) },
+        data: {
+          saldo_final: saldoCaja,
+          venta_efectivo: venta_efectivo,
+          venta_tarjeta: venta_tarjeta,
+          venta_transferencia: venta_transferencia,
+          venta_pago_link: venta_pago_link,
+          venta_cheque: venta_cheque,
+          venta_credito: venta_credito,
+          updated_at: new Date(),
+        },
+      });
+
+      const caja_movimiento = await tx.cajas_movimientos.create({
+        data: {
+          fecha: new Date(),
+          id_sesion: sesion.id,
+          id_categoria: 1,
+          id_medio: 2,
+          monto: total,
+          descripcion: "Pago de factura",
+          id_estado: 1,
+          id_usuario: BigInt(id_usuario),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+
+      const venta = await tx.ventas.create({
+        data: {
+          fecha: new Date(),
+          total: total,
+          id_sesion: caja_sesion.id,
+          id_estado: 1,
+          id_usuario: BigInt(id_usuario),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+
       return {
         factura: nuevaFactura,
         detalles: detallesFactura,
+        pagos: factura_pagos,
+        sesion: caja_sesion,
+        movimiento: caja_movimiento,
+        venta: venta,
       };
     });
 
@@ -138,7 +243,8 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: error.message || "Error interno del servidor",
-        details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+        details:
+          process.env.NODE_ENV === "development" ? error.stack : undefined,
       },
       { status: 500 }
     );
@@ -172,4 +278,34 @@ async function generarNumeroFactura(tx: any): Promise<string> {
   }
 }
 
+export async function GET() {
+  try {
+    console.log("Iniciando consulta de facturas...");
+    const data = await prisma.facturas.findMany({
+      include: {
+        clientes: true,
+        categorias_facturas: true,
+        tipos_facturas: true,
+        estados_facturas: true,
+        estados: true,
+        users: true,
+      },
+    });
 
+    // Convierte todos los BigInt a string
+    const facturas = convertBigIntToString(data);
+
+    console.log(facturas);
+
+    return NextResponse.json(
+      { data: facturas },
+      { status: 200 } // Cambia el estado a 200 para solicitudes GET exitosas
+    );
+  } catch (error: any) {
+    console.error("Error al obtener las facturas:", error.message, error.stack);
+    return NextResponse.json(
+      { error: error.message || "Error al obtener las facturas" },
+      { status: 500 }
+    );
+  }
+}
