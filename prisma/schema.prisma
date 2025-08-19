@@ -558,30 +558,31 @@ model cajas_movimientos {
 }
 
 model cajas_sesiones {
-  id                  BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
-  id_caja             BigInt?             @db.UnsignedBigInt
-  saldo_inicial       Float
-  saldo_final         Float?
-  fecha_apertura      DateTime            @db.DateTime(0)
-  fecha_cierre        DateTime?           @db.DateTime(0)
-  venta_efectivo      Float
-  venta_tarjeta       Float
-  venta_transferencia Float
-  venta_pago_link     Float
-  venta_cheque        Float
-  venta_credito       Float
-  id_estado_sesion    BigInt?             @db.UnsignedBigInt
-  id_estado           BigInt?             @db.UnsignedBigInt
-  id_usuario          BigInt?             @db.UnsignedBigInt
-  created_at          DateTime?           @db.Timestamp(0)
-  updated_at          DateTime?           @db.Timestamp(0)
-  deleted_at          DateTime?           @db.Timestamp(0)
-  cajas_movimientos   cajas_movimientos[]
-  cajas               cajas?              @relation(fields: [id_caja], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cajas_sesiones_id_caja_foreign")
-  estados             estados?            @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cajas_sesiones_id_estado_foreign")
-  estados_sesiones    estados_sesiones?   @relation(fields: [id_estado_sesion], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cajas_sesiones_id_estado_sesion_foreign")
-  users               users?              @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cajas_sesiones_id_usuario_foreign")
-  ventas              ventas[]
+  id                    BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  id_caja               BigInt?             @db.UnsignedBigInt
+  caja_efectivo_inicial Float
+  caja_efectivo_final   Float?
+  fecha_apertura        DateTime            @db.DateTime(0)
+  fecha_cierre          DateTime?           @db.DateTime(0)
+  venta_efectivo        Float
+  venta_tarjeta         Float
+  venta_transferencia   Float
+  venta_pago_link       Float
+  venta_cheque          Float
+  venta_credito         Float
+  total                 Float?
+  id_estado_sesion      BigInt?             @db.UnsignedBigInt
+  id_estado             BigInt?             @db.UnsignedBigInt
+  id_usuario            BigInt?             @db.UnsignedBigInt
+  created_at            DateTime?           @db.Timestamp(0)
+  updated_at            DateTime?           @db.Timestamp(0)
+  deleted_at            DateTime?           @db.Timestamp(0)
+  cajas_movimientos     cajas_movimientos[]
+  cajas                 cajas?              @relation(fields: [id_caja], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cajas_sesiones_id_caja_foreign")
+  estados               estados?            @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cajas_sesiones_id_estado_foreign")
+  estados_sesiones      estados_sesiones?   @relation(fields: [id_estado_sesion], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cajas_sesiones_id_estado_sesion_foreign")
+  users                 users?              @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cajas_sesiones_id_usuario_foreign")
+  ventas                ventas[]
 
   @@index([id_caja], map: "cajas_sesiones_id_caja_foreign")
   @@index([id_estado], map: "cajas_sesiones_id_estado_foreign")
@@ -793,19 +794,22 @@ model facturas_detalles {
 }
 
 model metodos_pagos {
-  id             BigInt           @id @default(autoincrement()) @db.UnsignedBigInt
-  descripcion    String           @db.VarChar(255)
-  id_estado      BigInt?          @db.UnsignedBigInt
-  id_usuario     BigInt?          @db.UnsignedBigInt
-  created_at     DateTime?        @db.Timestamp(0)
-  updated_at     DateTime?        @db.Timestamp(0)
-  deleted_at     DateTime?        @db.Timestamp(0)
-  facturas_pagos facturas_pagos[]
-  estados        estados?         @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metodos_pagos_id_estado_foreign")
-  users          users?           @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metodos_pagos_id_usuario_foreign")
+  id                BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  descripcion       String             @db.VarChar(255)
+  id_tipo_operacion BigInt?            @db.UnsignedBigInt
+  id_estado         BigInt?            @db.UnsignedBigInt
+  id_usuario        BigInt?            @db.UnsignedBigInt
+  created_at        DateTime?          @db.Timestamp(0)
+  updated_at        DateTime?          @db.Timestamp(0)
+  deleted_at        DateTime?          @db.Timestamp(0)
+  facturas_pagos    facturas_pagos[]
+  estados           estados?           @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metodos_pagos_id_estado_foreign")
+  tipos_operaciones tipos_operaciones? @relation(fields: [id_tipo_operacion], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metodos_pagos_id_tipo_operacion_foreign")
+  users             users?             @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metodos_pagos_id_usuario_foreign")
 
   @@index([id_estado], map: "metodos_pagos_id_estado_foreign")
   @@index([id_usuario], map: "metodos_pagos_id_usuario_foreign")
+  @@index([id_tipo_operacion], map: "metodos_pagos_id_tipo_operacion_foreign")
 }
 
 model tipos_compras {
@@ -861,14 +865,15 @@ model tipos_ingresos {
 }
 
 model tipos_operaciones {
-  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  descripcion String    @db.VarChar(255)
-  id_estado   BigInt?   @db.UnsignedBigInt
-  created_at  DateTime? @db.Timestamp(0)
-  updated_at  DateTime? @db.Timestamp(0)
-  deleted_at  DateTime? @db.Timestamp(0)
-  compras     compras[]
-  estados     estados?  @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tipos_operaciones_id_estado_foreign")
+  id            BigInt          @id @default(autoincrement()) @db.UnsignedBigInt
+  descripcion   String          @db.VarChar(255)
+  id_estado     BigInt?         @db.UnsignedBigInt
+  created_at    DateTime?       @db.Timestamp(0)
+  updated_at    DateTime?       @db.Timestamp(0)
+  deleted_at    DateTime?       @db.Timestamp(0)
+  compras       compras[]
+  metodos_pagos metodos_pagos[]
+  estados       estados?        @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tipos_operaciones_id_estado_foreign")
 
   @@index([id_estado], map: "tipos_operaciones_id_estado_foreign")
 }

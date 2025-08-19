@@ -6,8 +6,8 @@ export const cajasColumns = [
 export const sesionesColumns = [
   { label: "ID", className: "w-[100px]" },
   { label: "Caja" },
-  { label: "Saldo Inicial" },
-  { label: "Saldo Final" },
+  { label: "Saldo Inicial Caja" },
+  { label: "Saldo Final Caja" },
   { label: "Apertura" },
   { label: "Cierre" },
   { label: "Efectivo" },
@@ -16,6 +16,7 @@ export const sesionesColumns = [
   { label: "Pago Link" },
   { label: "Cheque" },
   { label: "Credito" },
+  { label: "Total Vendido" },
   { label: "Estado" },
   { label: "Usuario" },
   { label: "Opciones" },

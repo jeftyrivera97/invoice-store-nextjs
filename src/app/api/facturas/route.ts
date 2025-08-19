@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { ventas } from "../../../generated/prisma/index";
+import { ventas, metodos_pagos } from '../../../generated/prisma/index';
 
 // Función para convertir BigInt a string
 function convertBigIntToString(obj: any): any {
@@ -30,10 +30,7 @@ export async function POST(request: NextRequest) {
       descuentos,
       subtotal,
       total,
-      id_categoria,
-      id_tipo_factura,
       id_metodo_pago,
-      id_estado_factura,
       productos,
       referencia,
     } = body;
@@ -67,8 +64,18 @@ export async function POST(request: NextRequest) {
       throw new Error("No hay una sesión abierta para el usuario");
     }
 
+    
+
     // Usar transacción para asegurar consistencia
     const result = await prisma.$transaction(async (tx) => {
+
+      const metodos_pagos = await tx.metodos_pagos.findUnique({
+        where: { id: BigInt(id_metodo_pago) },
+      });
+
+      const idTipoOperacion: number = Number(metodos_pagos?.id_tipo_operacion || "1");
+
+
       // 1. Crear la factura
       const nuevaFactura = await tx.facturas.create({
         data: {
@@ -87,9 +94,9 @@ export async function POST(request: NextRequest) {
           descuentos: parseFloat(descuentos) || 0,
           subtotal: parseFloat(subtotal) || 0,
           total: parseFloat(total) || 0,
-          id_categoria: BigInt(id_categoria),
-          id_tipo_factura: BigInt(id_tipo_factura),
-          id_estado_factura: BigInt(id_estado_factura),
+          id_categoria: idTipoOperacion == 1 ? BigInt(1) : BigInt(3),
+          id_tipo_factura: idTipoOperacion == 1 ? BigInt(1) : BigInt(2),
+          id_estado_factura: idTipoOperacion == 1 ? BigInt(3) : BigInt(2),
           id_estado: BigInt(1),
           created_at: new Date(),
           updated_at: new Date(),
@@ -126,23 +133,28 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      
+     
+
       const factura_pagos = await tx.facturas_pagos.create({
         data: {
           id_factura: nuevaFactura.id,
           id_metodo_pago: BigInt(id_metodo_pago),
           fecha_hora: new Date(),
           referencia:
-            id_metodo_pago === "1"
+             id_metodo_pago == 2
               ? "N/A"
-              : id_metodo_pago === "2"
+              : id_metodo_pago == 1
               ? "N/A"
               : referencia,
           comentario:
-            id_metodo_pago === "1"
+            id_metodo_pago == 1
               ? "Credito"
-              : id_metodo_pago === "2"
+              : id_metodo_pago == 2
               ? "Pagado con Efectivo"
-              : "Pagado con Transaccion Electronica",
+                : id_metodo_pago == 3 || id_metodo_pago == 4
+              ? "Pagado con Tarjeta"
+              : "Pagado con Cheque",
           created_at: new Date(),
           updated_at: new Date(),
         },
@@ -154,13 +166,12 @@ export async function POST(request: NextRequest) {
       let venta_pago_link = sesion.venta_pago_link || 0;
       let venta_cheque = sesion.venta_cheque || 0;
       let venta_credito = sesion.venta_credito || 0;
-      let saldoCaja = sesion.saldo_inicial || 0;
+      const saldoCajaEfectivo = sesion.caja_efectivo_inicial || 0;
 
       if (id_metodo_pago === "1") {
         venta_credito = venta_credito + total;
       } else if (id_metodo_pago === "2") {
         venta_efectivo = venta_efectivo + total;
-        saldoCaja = saldoCaja + total;
       } else if (id_metodo_pago === "3") {
         venta_tarjeta = venta_tarjeta + total;
       } else if (id_metodo_pago === "4") {
@@ -171,56 +182,88 @@ export async function POST(request: NextRequest) {
         venta_cheque = venta_cheque + total;
       }
 
+      const totalVendido =
+        venta_efectivo +
+        venta_tarjeta +
+        venta_transferencia +
+        venta_pago_link +
+        venta_cheque;
+
       // 4. Actualizar el saldo de la sesión
       const caja_sesion = await tx.cajas_sesiones.update({
         where: { id: sesion.id, id_estado_sesion: BigInt(1) },
         data: {
-          saldo_final: saldoCaja,
+          caja_efectivo_final: venta_efectivo + saldoCajaEfectivo,
           venta_efectivo: venta_efectivo,
           venta_tarjeta: venta_tarjeta,
           venta_transferencia: venta_transferencia,
           venta_pago_link: venta_pago_link,
           venta_cheque: venta_cheque,
           venta_credito: venta_credito,
+          total: totalVendido,
           updated_at: new Date(),
         },
       });
 
-      const caja_movimiento = await tx.cajas_movimientos.create({
-        data: {
-          fecha: new Date(),
-          id_sesion: sesion.id,
-          id_categoria: 1,
-          id_medio: 2,
-          monto: total,
-          descripcion: "Pago de factura",
-          id_estado: 1,
-          id_usuario: BigInt(id_usuario),
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
+      if (idTipoOperacion == 1) {
+        // Si es de contado, se registra un movimiento de caja y venta
+        const caja_movimiento = await tx.cajas_movimientos.create({
+          data: {
+            fecha: new Date(),
+            id_sesion: sesion.id,
+            id_categoria: 1, // Ingreso
+            id_medio: id_metodo_pago,
+            monto: total,
+            descripcion: "Pago de factura",
+            id_estado: 1,
+            id_usuario: BigInt(id_usuario),
+            created_at: new Date(),
+            updated_at: new Date(),
+          },
+        });
 
-      const venta = await tx.ventas.create({
-        data: {
-          fecha: new Date(),
-          total: total,
-          id_sesion: caja_sesion.id,
-          id_estado: 1,
-          id_usuario: BigInt(id_usuario),
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
+        const venta = await tx.ventas.create({
+          data: {
+            fecha: new Date(),
+            total: total,
+            id_sesion: caja_sesion.id,
+            id_estado: 1,
+            id_usuario: BigInt(id_usuario),
+            created_at: new Date(),
+            updated_at: new Date(),
+          },
+        });
 
-      return {
-        factura: nuevaFactura,
-        detalles: detallesFactura,
-        pagos: factura_pagos,
-        sesion: caja_sesion,
-        movimiento: caja_movimiento,
-        venta: venta,
-      };
+        const ingreso = await tx.ingresos.create({
+          data: {
+            descripcion: "Ingreso por venta de productos",
+            fecha: new Date(),
+            id_categoria: 1, // Ingreso por venta de productos
+            total: total,
+            id_estado: 1,
+            id_usuario: BigInt(id_usuario),
+            created_at: new Date(),
+            updated_at: new Date(),
+          }
+        })
+
+        return {
+          factura: nuevaFactura,
+          detalles: detallesFactura,
+          pagos: factura_pagos,
+          sesion: caja_sesion,
+          movimiento: caja_movimiento,
+          venta: venta,
+          ingreso: ingreso,
+        };
+      }
+      
+        return {
+          factura: nuevaFactura,
+          detalles: detallesFactura,
+          pagos: factura_pagos,
+          sesion: caja_sesion,
+        };
     });
 
     console.log("Factura creada exitosamente:", result.factura.id);

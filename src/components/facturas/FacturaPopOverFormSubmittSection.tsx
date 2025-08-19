@@ -89,9 +89,6 @@ export const FacturaPopOverFormSubmittSection = () => {
 
         // Tipos
         id_metodo_pago: metodo_pago.id,
-        id_categoria: metodo_pago.id !== "2" ? 1 : 3,
-        id_tipo_factura: metodo_pago.id !== "2" ? 1 : 2,
-        id_estado_factura: metodo_pago.id == "2" ? 3 : 2,
 
         // Productos del carrito
         productos: items.map((item) => ({

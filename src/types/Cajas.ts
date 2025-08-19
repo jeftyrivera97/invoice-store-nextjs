@@ -24,8 +24,8 @@ export interface CajaData {
 export interface CajaSesionesData {
   id: string;
   id_caja: string;
-  saldo_inicial: number;
-  saldo_final: number;
+  caja_efectivo_inicial: number;
+  caja_efectivo_final: number;
   fecha_apertura: Date;
   fecha_cierre: Date;
   venta_efectivo: number;
@@ -34,6 +34,7 @@ export interface CajaSesionesData {
   venta_pago_link: number;
   venta_cheque: number;
   venta_credito: number;
+  total: number;
   id_estado_sesion: string;
   id_estado: string;
   id_usuario: string;
