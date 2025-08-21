@@ -19,6 +19,7 @@ export async function createNewSesion({
         id_caja: Number(cajaId),
         caja_efectivo_inicial: saldoInicial,
         caja_efectivo_final: 0,
+        faltante: 0,
         fecha_apertura: new Date(),
         fecha_cierre: null,
         venta_efectivo: 0,
@@ -27,7 +28,7 @@ export async function createNewSesion({
         venta_tarjeta: 0,
         venta_transferencia: 0,
         venta_credito: 0,
-        total: 0,
+        total_contado: 0,
         id_estado_sesion: 1,
         id_estado: 1,
         id_usuario: Number(userId),
@@ -43,5 +44,7 @@ export async function createNewSesion({
     redirect("/cajas/sesiones/new?error=Error al crear la sesión");
   }
 
-  redirect("/cajas/sesiones/new?success=Ahora puede crear facturas con esta sesion.");
+  redirect(
+    "/cajas/sesiones/new?success=Ahora puede crear facturas con esta sesion."
+  );
 }

@@ -118,6 +118,18 @@ const items = {
         
       ],
     },
+     {
+      title: "Folios",
+      url: "#",
+      icon: Settings2,
+       isActive: true,
+      items: [
+        {
+          title: "Administrar Folios",
+          url: "/folios",
+        },
+      ],
+    },
   ],
 };
 

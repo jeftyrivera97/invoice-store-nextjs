@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { ventas, metodos_pagos } from '../../../generated/prisma/index';
+import { ventas, metodos_pagos } from "../../../generated/prisma/index";
 
 // Función para convertir BigInt a string
 function convertBigIntToString(obj: any): any {
@@ -64,22 +64,39 @@ export async function POST(request: NextRequest) {
       throw new Error("No hay una sesión abierta para el usuario");
     }
 
-    
+    const folios = await prisma.folios.findFirst({
+      where: {
+        id_estado: BigInt(1),
+      },
+    });
+
+    if (!folios) {
+      throw new Error("No hay un folio activo");
+    }
+
+    if (folios.actual == folios.final) {
+      throw new Error(
+        "El folio actual ha alcanzado su límite. Debe crear un nuevo folio"
+      );
+    }
 
     // Usar transacción para asegurar consistencia
     const result = await prisma.$transaction(async (tx) => {
-
       const metodos_pagos = await tx.metodos_pagos.findUnique({
         where: { id: BigInt(id_metodo_pago) },
       });
 
-      const idTipoOperacion: number = Number(metodos_pagos?.id_tipo_operacion || "1");
-
+      const idTipoOperacion: number = Number(
+        metodos_pagos?.id_tipo_operacion || "1"
+      );
 
       // 1. Crear la factura
       const nuevaFactura = await tx.facturas.create({
         data: {
-          codigo_factura: await generarNumeroFactura(tx), // ← Usar codigo_factura
+          codigo_factura:
+            idTipoOperacion === 1
+              ? await generarNumeroFactura(tx)
+              : `CREDITO - ${Date.now()}`, // ← Usar codigo_factura
           fecha: new Date(),
           fecha_hora: new Date(),
           fecha_vencimiento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -94,6 +111,7 @@ export async function POST(request: NextRequest) {
           descuentos: parseFloat(descuentos) || 0,
           subtotal: parseFloat(subtotal) || 0,
           total: parseFloat(total) || 0,
+          id_folio: idTipoOperacion === 1 ? BigInt(folios.id) : null,
           id_categoria: idTipoOperacion == 1 ? BigInt(1) : BigInt(3),
           id_tipo_factura: idTipoOperacion == 1 ? BigInt(1) : BigInt(2),
           id_estado_factura: idTipoOperacion == 1 ? BigInt(3) : BigInt(2),
@@ -133,16 +151,13 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      
-     
-
       const factura_pagos = await tx.facturas_pagos.create({
         data: {
           id_factura: nuevaFactura.id,
           id_metodo_pago: BigInt(id_metodo_pago),
           fecha_hora: new Date(),
           referencia:
-             id_metodo_pago == 2
+            id_metodo_pago == 2
               ? "N/A"
               : id_metodo_pago == 1
               ? "N/A"
@@ -152,7 +167,7 @@ export async function POST(request: NextRequest) {
               ? "Credito"
               : id_metodo_pago == 2
               ? "Pagado con Efectivo"
-                : id_metodo_pago == 3 || id_metodo_pago == 4
+              : id_metodo_pago == 3 || id_metodo_pago == 4
               ? "Pagado con Tarjeta"
               : "Pagado con Cheque",
           created_at: new Date(),
@@ -200,7 +215,7 @@ export async function POST(request: NextRequest) {
           venta_pago_link: venta_pago_link,
           venta_cheque: venta_cheque,
           venta_credito: venta_credito,
-          total: totalVendido,
+          total_contado: totalVendido,
           updated_at: new Date(),
         },
       });
@@ -226,7 +241,7 @@ export async function POST(request: NextRequest) {
           data: {
             fecha: new Date(),
             total: total,
-            id_sesion: caja_sesion.id,
+            id_movimiento: caja_movimiento.id,
             id_estado: 1,
             id_usuario: BigInt(id_usuario),
             created_at: new Date(),
@@ -244,8 +259,18 @@ export async function POST(request: NextRequest) {
             id_usuario: BigInt(id_usuario),
             created_at: new Date(),
             updated_at: new Date(),
-          }
-        })
+          },
+        });
+
+        await tx.folios.update({
+          where: { id: BigInt(folios.id) },
+          data: {
+            actual: {
+              increment: 1,
+            },
+            updated_at: new Date(),
+          },
+        });
 
         return {
           factura: nuevaFactura,
@@ -257,13 +282,13 @@ export async function POST(request: NextRequest) {
           ingreso: ingreso,
         };
       }
-      
-        return {
-          factura: nuevaFactura,
-          detalles: detallesFactura,
-          pagos: factura_pagos,
-          sesion: caja_sesion,
-        };
+
+      return {
+        factura: nuevaFactura,
+        detalles: detallesFactura,
+        pagos: factura_pagos,
+        sesion: caja_sesion,
+      };
     });
 
     console.log("Factura creada exitosamente:", result.factura.id);
@@ -297,23 +322,21 @@ export async function POST(request: NextRequest) {
 // Función auxiliar corregida
 async function generarNumeroFactura(tx: any): Promise<string> {
   try {
-    // Obtener la última factura para generar el siguiente número
-    const ultimaFactura = await tx.facturas.findFirst({
+    // Obtener la último folio para generar el siguiente número
+    const folio = await tx.folios.findFirst({
+      where: { id_estado: BigInt(1) },
       orderBy: { id: "desc" },
-      select: { codigo_factura: true }, // ← Cambiar a codigo_factura
+      select: { codigo_folio: true, inicio: true, final: true, actual: true },
     });
 
-    if (!ultimaFactura || !ultimaFactura.codigo_factura) {
-      return "FAC-00001";
+    if (!folio || !folio.codigo_folio) {
+      return "N/A";
     }
 
-    // Extraer el número de la última factura
-    const ultimoNumero = ultimaFactura.codigo_factura.split("-")[1];
-    const siguienteNumero = (parseInt(ultimoNumero) + 1)
-      .toString()
-      .padStart(5, "0");
-
-    return `FAC-${siguienteNumero}`;
+    // Extraer el número de la último folio
+    const ultimoNumero = folio.actual;
+    const siguienteNumero = ultimoNumero + 1;
+    return `${folio.codigo_folio}${siguienteNumero}`;
   } catch (error) {
     // Si hay error, generar uno basado en timestamp
     const timestamp = Date.now().toString().slice(-5);

@@ -1,6 +1,7 @@
 export const cajasColumns = [
   { label: "ID", className: "w-[100px]" },
   { label: "Descripcion" },
+  { label: "Opciones" },
 ];
 
 export const sesionesColumns = [
@@ -17,8 +18,19 @@ export const sesionesColumns = [
   { label: "Cheque" },
   { label: "Credito" },
   { label: "Total Vendido" },
+  { label: "Faltante" },
   { label: "Estado" },
   { label: "Usuario" },
+  { label: "Opciones" },
+];
+
+export const foliosColumns = [
+  { label: "ID", className: "w-[100px]" },
+  { label: "Codigo" },
+  { label: "Inicio" },
+  { label: "Final" },
+  { label: "Actual" },
+  { label: "Estado" },
   { label: "Opciones" },
 ];
 
@@ -30,5 +42,6 @@ export const productosColumns = [
   { label: "Marca" },
   { label: "Proveedor" },
   { label: "Existencias" },
-  { label: "Precio", className: "text-right" },
+  { label: "Precio" },
+  { label: "Opciones" },
 ];

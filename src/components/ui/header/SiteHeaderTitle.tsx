@@ -14,5 +14,8 @@ export const SiteHeaderTitle = () => {
   } else if (pathname.includes("/cajas")) {
     headerTitle = "Cajas";
   }
+  else if (pathname.includes("/folios")) {
+    headerTitle = "Folios de Facturacion";
+  }
   return <h1 className="text-base font-medium">{headerTitle}</h1>;
 };

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // ← Importar authOptions
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { NoSesionComponent } from "@/components";
+import { RestriccionComponent } from "@/components";
 
 export default async function NewComprobantePage() {
   const session = await getServerSession(authOptions);
@@ -21,8 +21,41 @@ export default async function NewComprobantePage() {
     },
   });
 
+  const folio = await prisma.folios.findFirst({
+    where: {
+      id_estado: BigInt(1),
+    },
+  });
+
   if (!sesion) {
-    return <NoSesionComponent />;
+    return (
+      <RestriccionComponent
+        title="No hay Sesion de Caja activa para este usuario"
+        description="Dirigase a Sesiones para administrar un nueva sesion."
+        instruction="Debe activar o crear un nueva sesion."
+      />
+    );
   }
+
+  if (!folio) {
+    return (
+      <RestriccionComponent
+        title="No hay folios disponibles"
+        description="Dirigase a Folios para administrar un nuevo folio."
+        instruction="Debe activar o crear un nuevo folio."
+      />
+    );
+  }
+
+  if (folio.actual == folio.final) {
+    return (
+      <RestriccionComponent
+        title="El folio de facturacion activo ya alcanzo su limite"
+        description="Dirigase a Folios para administrar un nuevo folio."
+        instruction="Debe activar o crear un nuevo folio."
+      />
+    );
+  }
+
   return <NewFacturaComponent />;
 }

@@ -1,17 +1,7 @@
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import getCajas from "@/helpers/cajas/getCajas";
-import { CajaData } from "@/types/Cajas";
 import { redirect } from "next/navigation";
 import {
   AlertCircleIcon,
@@ -22,7 +12,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // ← Importar authOptions
-import { createNewSesion, validateCreateSesion } from "@/helpers";
+import { createNewFolio, validateCreateFolio } from "@/helpers";
 import {
   Card,
   CardAction,
@@ -34,23 +24,24 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 
-async function createSession(formData: FormData) {
+async function createFolio(formData: FormData) {
   "use server";
 
   // Validar datos
-  const { session, cajaId, saldoInicial } = await validateCreateSesion(
+  const { session, codigo, inicio, final } = await validateCreateFolio(
     formData
   );
 
-  // Crear sesión
-  await createNewSesion({
-    cajaId,
-    saldoInicial,
+  // Crear folio
+  await createNewFolio({
+    codigo,
+    inicio,
+    final,
     userId: session.user.id,
   });
 }
 
-export const NewSesionComponent = async ({
+export const NewFolioComponent = async ({
   searchParams,
 }: {
   searchParams: { error?: string; success?: string };
@@ -62,8 +53,6 @@ export const NewSesionComponent = async ({
     redirect("/login?error=Debe iniciar sesión");
   }
 
-  const { data } = await getCajas();
-
   return (
     <>
       {/* Mostrar mensaje de error */}
@@ -71,7 +60,7 @@ export const NewSesionComponent = async ({
         <div className="grid w-full max-w-xl items-start gap-4 mb-4">
           <Alert variant="destructive">
             <AlertCircleIcon />
-            <AlertTitle>Error creando un nueva sesion.</AlertTitle>
+            <AlertTitle>Error creando un nuevo folio.</AlertTitle>
             <AlertDescription>
               <p>{decodeURIComponent(awaitedSearchParams.error)}</p>
               <ul className="list-inside list-disc text-sm mt-2">
@@ -87,23 +76,23 @@ export const NewSesionComponent = async ({
         <div className="grid w-full max-w-xl items-start gap-4 mb-4">
           <Alert>
             <CheckCircle2Icon />
-            <AlertTitle>Sesion creada exitosamente!</AlertTitle>
+            <AlertTitle>Folio creado exitosamente!</AlertTitle>
             <AlertDescription>
               {decodeURIComponent(awaitedSearchParams.success)}
             </AlertDescription>
           </Alert>
         </div>
       )}
-      <form action={createSession}>
+      <form action={createFolio}>
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <CardTitle>Nueva Sesion de Caja</CardTitle>
+            <CardTitle>Nuevo Folio</CardTitle>
             <CardDescription>
-              Ingrese la información de la nueva sesión.
+              Ingrese la información del nuevo folio.
             </CardDescription>
             <CardAction>
               <Button variant="destructive" size="icon">
-                <Link href="/cajas/sesiones">
+                <Link href="/folios">
                   <ArrowLeftIcon />
                 </Link>
               </Button>
@@ -112,42 +101,37 @@ export const NewSesionComponent = async ({
           <CardContent>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="caja">*Usuario en Caja</Label>
-                <Input type="text" readOnly value={session.user.name} />
+                <Label htmlFor="codigo">*Codigo</Label>
+                <Input
+                  type="text"
+                  name="codigo"
+                  id="codigo"
+                  required
+                  placeholder="Ej. xxx-xxx-xx-xxx"
+                  defaultValue=""
+                />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <div className="grid w-full items-center gap-3">
-                    <Label htmlFor="caja">*Caja</Label>
-                    <Select name="caja" required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccione una caja" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Cajas</SelectLabel>
-                          {data.map((caja: CajaData) => (
-                            <SelectItem
-                              key={caja.id.toString()}
-                              value={caja.id.toString()}
-                            >
-                              {caja.descripcion}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="saldo_inicial">*Inicio</Label>
+                    <Input
+                      type="number"
+                      name="inicio"
+                      id="inicio"
+                      min="0"
+                      step="1"
+                      required
+                    />
                   </div>
                 </div>
                 <div className="grid gap-2">
                   <div className="grid w-full items-center gap-3">
-                    <Label htmlFor="saldo_inicial">*Saldo en Caja</Label>
+                    <Label htmlFor="saldo_inicial">*Final</Label>
                     <Input
                       type="number"
-                      name="saldo_inicial"
-                      id="saldo_inicial"
-                      placeholder="Saldo Inicial"
-                      defaultValue="0"
+                      name="final"
+                      id="final"
                       min="0"
                       step="0.01"
                       required
