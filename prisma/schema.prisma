@@ -565,7 +565,7 @@ model cajas_sesiones {
   id_caja                                        BigInt?             @db.UnsignedBigInt
   caja_efectivo_inicial                          Float
   caja_efectivo_final                            Float?
-  faltante                                       Float?
+  diferencia                                     Float?
   fecha_apertura                                 DateTime            @db.DateTime(0)
   fecha_cierre                                   DateTime?           @db.DateTime(0)
   venta_efectivo                                 Float

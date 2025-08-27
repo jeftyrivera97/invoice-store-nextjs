@@ -8,7 +8,7 @@ export default async function DashboardPage() {
       <div className="grid auto-rows-min gap-4 md:grid-cols-1">
         <div className="bg-muted/50 h-32 rounded-xl flex items-center justify-center">
           <p className="text-sm font-medium">
-            Este es el contenido del div
+          Home Page
           </p>
         </div>
       </div>

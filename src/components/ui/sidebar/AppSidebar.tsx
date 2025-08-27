@@ -74,10 +74,7 @@ const items = {
       icon: Bot,
       isActive: true,
       items: [
-        {
-          title: "Administrar Facturas",
-          url: "/facturas",
-        },
+
         {
           title: "Nueva Factura",
           url: "/facturas/new",
@@ -85,22 +82,7 @@ const items = {
         
       ],
     },
-    {
-      title: "Clientes",
-      url: "#",
-      icon: BookOpen,
-       isActive: true,
-      items: [
-        {
-          title: "Administrar Clientes",
-          url: "#",
-        },
-        {
-          title: "Nuevo Cliente",
-          url: "#",
-        },
-      ],
-    },
+    
     {
       title: "Cajas",
       url: "#",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -8,6 +9,11 @@ import { Printer } from "lucide-react";
 import type { RootState } from "@/store/store";
 import { useInvoiceStore } from "@/hooks/store/useInvoiceStore";
 import toast, { Toaster } from "react-hot-toast";
+import { pdf } from "@react-pdf/renderer";
+import InvoicePDFComponent from "./InvoicePDFComponent"; // ✅ Ajustar ruta
+import { getEmpresa } from "@/helpers";
+import { clientes } from '../../generated/prisma/index';
+
 
 export const FacturaPopOverFormSubmittSection = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -127,7 +133,10 @@ export const FacturaPopOverFormSubmittSection = () => {
             icon: "🚀",
           }
         );
-        console.log("Factura creada:", result.data);
+
+        // ✅ Generar y descargar PDF después del éxito
+        await generarPDF(result.data);
+
         // Limpiar todo después del éxito
         cleanInvoice();
       } else {
@@ -147,6 +156,47 @@ export const FacturaPopOverFormSubmittSection = () => {
       setIsLoading(false);
     }
   };
+
+  // ✅ Función para generar PDF
+  const generarPDF = async (facturaData: any) => {
+    try {
+      console.log("Generando PDF con datos:", facturaData);
+
+      // Crear el PDF usando react-pdf/renderer
+      const blob = await pdf(
+        <InvoicePDFComponent
+          factura={facturaData.factura}
+          detalles={facturaData.detalles}
+          cliente={facturaData.cliente}
+          items={items}
+          folio={facturaData.folio}
+          empresa={facturaData.empresa}
+        />
+      ).toBlob();
+
+      // Crear URL del blob y descargar
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `factura-${facturaData.factura.codigo_factura}.pdf`;
+      link.click();
+
+      // Limpiar URL
+      URL.revokeObjectURL(url);
+
+      toast.success("PDF generado exitosamente", {
+        duration: 1500,
+        icon: "📄",
+      });
+    } catch (error) {
+      console.error("Error generando PDF:", error);
+      toast.error("Error al generar PDF", {
+        duration: 1500,
+        icon: "❌",
+      });
+    }
+  };
+
   // Determinar si el botón debe estar deshabilitado
   const isDisabled =
     isLoading || items.length === 0 || !cliente || !metodo_pago;

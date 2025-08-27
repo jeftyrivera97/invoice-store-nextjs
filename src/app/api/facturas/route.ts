@@ -272,6 +272,21 @@ export async function POST(request: NextRequest) {
           },
         });
 
+        const cliente = await tx.clientes.findUnique({
+          where: { id: BigInt(id_cliente) },
+        });
+
+        const empresa = await tx.empresas.findUnique({
+          where: { id: 1 },
+        });
+
+        const folio = await tx.folios.findFirst({
+          where: {
+            id_estado: BigInt(1),
+          },
+        });
+
+    
         return {
           factura: nuevaFactura,
           detalles: detallesFactura,
@@ -280,6 +295,10 @@ export async function POST(request: NextRequest) {
           movimiento: caja_movimiento,
           venta: venta,
           ingreso: ingreso,
+          cliente: cliente,
+          empresa: empresa,
+          folio: folio,
+
         };
       }
 

@@ -18,7 +18,7 @@ export const sesionesColumns = [
   { label: "Cheque" },
   { label: "Credito" },
   { label: "Total Vendido" },
-  { label: "Faltante" },
+  { label: "Diferencia" },
   { label: "Estado" },
   { label: "Usuario" },
   { label: "Opciones" },

@@ -19,7 +19,7 @@ export async function createNewSesion({
         id_caja: Number(cajaId),
         caja_efectivo_inicial: saldoInicial,
         caja_efectivo_final: 0,
-        faltante: 0,
+        diferencia: 0,
         fecha_apertura: new Date(),
         fecha_cierre: null,
         venta_efectivo: 0,
