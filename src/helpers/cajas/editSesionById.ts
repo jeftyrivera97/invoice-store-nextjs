@@ -7,6 +7,7 @@ interface EditSessionData {
   ventaEfectivo: number;
   cajaEfectivoContado: number;
   cajaEfectivoInicial: number;
+  id_usuario_auditor: number;
 }
 
 export async function editSesionById({
@@ -14,6 +15,7 @@ export async function editSesionById({
   cajaEfectivoContado,
   ventaEfectivo,
   cajaEfectivoInicial,
+  id_usuario_auditor
 }: EditSessionData) {
   if (!sesionId || cajaEfectivoContado < 0) {
     redirect(`/cajas/sesiones/${sesionId}/edit?error=Datos inválidos`);
@@ -32,6 +34,7 @@ export async function editSesionById({
         id_estado: BigInt(2),
         diferencia: diferencia,
         updated_at: new Date(),
+        id_usuario_auditor: BigInt(id_usuario_auditor),
       },
     });
 

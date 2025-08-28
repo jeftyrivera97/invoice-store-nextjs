@@ -16,8 +16,8 @@ export default async function EditSesionPage({
   return (
     <>
       <EditSesionComponent 
-        params={resolvedParams} // ✅ Pasar datos resueltos
-        alerts={resolvedSearchParams} // ✅ Pasar datos resueltos
+        params={resolvedParams}
+        alerts={resolvedSearchParams} 
       />
     </>
   );

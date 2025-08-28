@@ -1,8 +1,10 @@
+import { NewCajaComponent } from "@/components";
 
-export default function NewCajaPage() {
-  return (
-    <div>
-      <h1>New Caja Page</h1>
-    </div>
-  );
+export default async function NewCajaPage({
+  searchParams,
+}: {
+  searchParams: { error?: string; success?: string };
+}) {
+  const awaitedSearchParams = await searchParams;
+  return <NewCajaComponent searchParams={awaitedSearchParams} />;
 }

@@ -182,14 +182,14 @@ interface InvoicePDFProps {
   tipoFactura: any;
 }
 
-export default function InvoicePDFComponent({
+export default function InvoiceCreditoPDFComponent({
   factura,
   detalles,
   cliente,
   items,
   folio,
   empresa,
-  tipoFactura
+  tipoFactura,
 }: InvoicePDFProps) {
   // ✅ Función usando la librería correctamente
   const numeroEnLetras = (numero: number): string => {
@@ -238,44 +238,24 @@ export default function InvoicePDFComponent({
           <Text style={styles.companyInfo}>
             Correo: {empresa?.correo || ""}
           </Text>
-          <Text style={styles.companyInfo}>CAI: {empresa?.cai || ""}</Text>
+          
         </View>
 
-        {/* Info de Factura */}
+        {/* Info de Ticket */}
         <View style={styles.invoiceHeader}>
           <Text style={styles.invoiceNumber}>
-            FACTURA #{factura?.codigo_factura || "N/A"}
+            TICKET #{factura?.codigo_factura || "N/A"}
           </Text>
           <Text style={styles.invoiceDate}>
             {factura?.fecha ? formatDate(factura.fecha) : "N/A"}
           </Text>
-          <Text style={styles.companyInfo}>Factura de {tipoFactura}</Text>
+          <Text style={styles.companyInfo}>Ticket de {tipoFactura}</Text>
         </View>
 
         {/* Cliente */}
         <View style={styles.clientSection}>
           <Text style={styles.clientText}>
             Cliente: {cliente?.descripcion || "CONSUMIDOR FINAL"}
-          </Text>
-
-          <Text style={styles.clientText}>RTN: {cliente.codigo_cliente}</Text>
-          <Text style={styles.clientText}>
-            Tel.: {cliente.telefono_cliente}
-          </Text>
-          <Text style={styles.clientText}>Direccion: {cliente.direccion}</Text>
-        </View>
-
-        {/* Correlativo */}
-        <View style={styles.clientSection}>
-          <Text style={styles.clientText}>
-            No. Orden de Compra Exenta:_______
-          </Text>
-
-          <Text style={styles.clientText}>
-            No. Constancia de registro exonerado: _______
-          </Text>
-            <Text style={styles.clientText}>
-            No. de Registro de la SAG: _______
           </Text>
         </View>
 
@@ -307,29 +287,7 @@ export default function InvoicePDFComponent({
 
         {/* Totales Simplificados */}
         <View style={styles.totalsSection}>
-          {(factura?.exento || 0) > 0 && (
-            <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Importe Exento:</Text>
-              <Text style={styles.totalValue}>
-                {formatCurrency(factura.exento || 0)}
-              </Text>
-            </View>
-          )}
-
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Importe Gravado 15%:</Text>
-            <Text style={styles.totalValue}>
-              {formatCurrency(factura.gravado15 || 0)}
-            </Text>
-          </View>
-
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>ISV 15%:</Text>
-            <Text style={styles.totalValue}>
-              {formatCurrency(factura.impuesto15 || 0)}
-            </Text>
-          </View>
-
+    
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Descuentos Otorgados:</Text>
             <Text style={styles.totalValue}>
@@ -350,21 +308,7 @@ export default function InvoicePDFComponent({
           <Text style={styles.footerText}>
             VALOR EN LETRAS: {numeroEnLetras(Number(factura?.total || 0))}
           </Text>
-          <Text style={styles.footerText}>
-            Fecha Límite de Emisión: 08/01/2025
-          </Text>
-          <Text style={styles.footerText}>
-            Rango autorizado: {folio?.codigo_folio || ""}
-            {folio?.inicio || ""}
-          </Text>
-          <Text style={styles.footerText}>
-            al {folio?.codigo_folio || ""}
-            {folio?.final || ""}
-          </Text>
-          <Text style={styles.footerText}>Original: Cliente</Text>
-          <Text style={styles.footerText}>
-            Copia: Obligado Tributario Emisor
-          </Text>
+      
           <Text style={styles.thanksText}>¡GRACIAS POR SU COMPRA!</Text>
         </View>
       </Page>

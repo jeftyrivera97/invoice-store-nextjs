@@ -58,9 +58,9 @@ export interface InvoiceType {
 export interface InvoiceData {
   id: string;
   codigo_factura: string;
-  fecha: Date;
-  fecha_hora: Date;
-  fecha_vencimiento: Date;
+  fecha: string;
+  fecha_hora: string;
+  fecha_vencimiento: string;
   id_cliente: string;
   gravado15: number;
   gravado18: number;

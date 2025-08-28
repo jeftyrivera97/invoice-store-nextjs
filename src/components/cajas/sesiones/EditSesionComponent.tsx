@@ -20,8 +20,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import Link from "next/link";
-import { editSesionById, getSesionById } from "@/helpers";
+import { editSesionById, getSesionById, getUsers } from "@/helpers";
+import { UsersType } from "@/types/User";
 
 // ✅ Mover server action fuera del componente y corregir
 async function editSession(formData: FormData) {
@@ -31,12 +42,14 @@ async function editSession(formData: FormData) {
   const efectivoCajaFinal = formData.get("efectivo_caja_final");
   const efectivoCajaInicial = formData.get("efectivo_caja_inicial");
   const efectivoVenta = formData.get("venta_efectivo");
+  const usuarioAuditor = formData.get("usuario_auditor");
 
   if (
     !sesionId ||
     !efectivoCajaFinal ||
     !efectivoCajaInicial ||
-    !efectivoVenta
+    !efectivoVenta ||
+    !usuarioAuditor
   ) {
     redirect(`/cajas/sesiones/${sesionId}/edit?error=Faltan datos requeridos`);
   }
@@ -46,6 +59,7 @@ async function editSession(formData: FormData) {
     cajaEfectivoInicial: Number(efectivoCajaInicial),
     cajaEfectivoContado: Number(efectivoCajaFinal),
     ventaEfectivo: Number(efectivoVenta),
+    id_usuario_auditor: Number(usuarioAuditor),
   });
 }
 
@@ -65,6 +79,7 @@ export const EditSesionComponent = async ({
 
   //  Usar params.id directamente
   const { data: sesionData } = await getSesionById(Number(params.id));
+  const { data: users } = await getUsers();
 
   if (!sesionData) {
     redirect("/cajas/sesiones?error=Sesión no encontrada");
@@ -105,7 +120,7 @@ export const EditSesionComponent = async ({
         {/* ✅ Usar params.id directamente */}
         <input type="hidden" name="sesionId" value={params.id} />
 
-        <Card className="w-full max-w-4xl mx-auto">
+        <Card className="w-full max-w-lg">
           <CardHeader>
             <CardTitle>Cerrar Sesión de Caja</CardTitle>
             <CardDescription>
@@ -179,10 +194,6 @@ export const EditSesionComponent = async ({
                     value={sesionData?.venta_transferencia || 0}
                   />
                 </div>
-              </div>
-
-              {/* Columna Derecha */}
-              <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="venta_pago_link">Ventas Pago Link</Label>
                   <Input
@@ -191,7 +202,10 @@ export const EditSesionComponent = async ({
                     value={sesionData?.venta_pago_link || 0}
                   />
                 </div>
+              </div>
 
+              {/* Columna Derecha */}
+              <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="venta_cheque">Ventas con Cheque</Label>
                   <Input
@@ -218,6 +232,7 @@ export const EditSesionComponent = async ({
                     value={sesionData?.total_contado || 0}
                   />
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="saldo_inicial">Efectivo Inicial</Label>
                   <Input
@@ -229,11 +244,43 @@ export const EditSesionComponent = async ({
                   />
                 </div>
                 <div className="grid gap-2">
+                  <Label htmlFor="fecha_cierre">Fecha Cierre</Label>
+                  <Input
+                    type="text"
+                    readOnly
+                    value={new Date().toLocaleString()}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label
+                    htmlFor="usuario"
+                    className="text-red-600 font-semibold"
+                  >
+                    *Usuario Auditor (Requerido)
+                  </Label>
+                  <Select name="usuario_auditor" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un Usuario Auditor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Usuarios</SelectLabel>
+                        {users.map((user: UsersType) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid gap-2">
                   <Label
                     htmlFor="efectivo_caja_final"
                     className="text-red-600 font-semibold"
                   >
-                    *Efectivo Contado Manualmente (Requerido)
+                    *Efectivo Contado (Requerido)
                   </Label>
                   <Input
                     type="number"

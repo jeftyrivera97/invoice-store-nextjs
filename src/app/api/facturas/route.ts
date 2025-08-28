@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { ventas, metodos_pagos } from "../../../generated/prisma/index";
+import {
+  ventas,
+  metodos_pagos,
+  tipos_facturas,
+} from "../../../generated/prisma/index";
 
 // Función para convertir BigInt a string
 function convertBigIntToString(obj: any): any {
@@ -220,6 +224,27 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      const cliente = await tx.clientes.findUnique({
+        where: { id: BigInt(id_cliente) },
+      });
+
+      const empresa = await tx.empresas.findUnique({
+        where: { id: 1 },
+      });
+
+      const folio = await tx.folios.findFirst({
+        where: {
+          id_estado: BigInt(1),
+        },
+      });
+
+      const idTF = Number(nuevaFactura.id_tipo_factura);
+      const tipos_facturas = await tx.tipos_facturas.findUnique({
+        where: { id: BigInt(idTF) },
+      });
+
+      const tipoFactura = tipos_facturas?.descripcion;
+
       if (idTipoOperacion == 1) {
         // Si es de contado, se registra un movimiento de caja y venta
         const caja_movimiento = await tx.cajas_movimientos.create({
@@ -272,21 +297,6 @@ export async function POST(request: NextRequest) {
           },
         });
 
-        const cliente = await tx.clientes.findUnique({
-          where: { id: BigInt(id_cliente) },
-        });
-
-        const empresa = await tx.empresas.findUnique({
-          where: { id: 1 },
-        });
-
-        const folio = await tx.folios.findFirst({
-          where: {
-            id_estado: BigInt(1),
-          },
-        });
-
-    
         return {
           factura: nuevaFactura,
           detalles: detallesFactura,
@@ -298,7 +308,7 @@ export async function POST(request: NextRequest) {
           cliente: cliente,
           empresa: empresa,
           folio: folio,
-
+          tipoFactura: tipoFactura,
         };
       }
 
@@ -307,6 +317,10 @@ export async function POST(request: NextRequest) {
         detalles: detallesFactura,
         pagos: factura_pagos,
         sesion: caja_sesion,
+        cliente: cliente,
+        empresa: empresa,
+        folio: folio,
+        tipoFactura: tipoFactura,
       };
     });
 

@@ -45,3 +45,23 @@ export const productosColumns = [
   { label: "Precio" },
   { label: "Opciones" },
 ];
+
+export const facturasColumns = [
+  { label: "ID", className: "w-[100px]" },
+  { label: "Codigo" },
+  { label: "Fecha" },
+  { label: "Cliente" },
+  { label: "Gravado 15" },
+  { label: "Gravado 18" },
+  { label: "Impuesto 15" },
+  { label: "Impuesto 18" },
+  { label: "Exento" },
+  { label: "Exonerado" },
+  { label: "Subtotal" },
+  { label: "Total" },
+  { label: "Categoria" },
+  { label: "Tipo" },
+  { label: "Estado" },
+  { label: "Usuario" },
+  { label: "Opciones" },
+];

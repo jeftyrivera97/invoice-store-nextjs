@@ -12,8 +12,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { pdf } from "@react-pdf/renderer";
 import InvoicePDFComponent from "./InvoicePDFComponent"; // ✅ Ajustar ruta
 import { getEmpresa } from "@/helpers";
-import { clientes } from '../../generated/prisma/index';
-
+import { clientes } from "../../generated/prisma/index";
+import InvoiceCreditoPDFComponent from "./InvoiceCreditoPDFComponent";
 
 export const FacturaPopOverFormSubmittSection = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -162,17 +162,36 @@ export const FacturaPopOverFormSubmittSection = () => {
     try {
       console.log("Generando PDF con datos:", facturaData);
 
-      // Crear el PDF usando react-pdf/renderer
-      const blob = await pdf(
-        <InvoicePDFComponent
-          factura={facturaData.factura}
-          detalles={facturaData.detalles}
-          cliente={facturaData.cliente}
-          items={items}
-          folio={facturaData.folio}
-          empresa={facturaData.empresa}
-        />
-      ).toBlob();
+      let component;
+      if (facturaData.factura.id_tipo_factura == 1) {
+        component = (
+          <InvoicePDFComponent
+            factura={facturaData.factura}
+            detalles={facturaData.detalles}
+            cliente={facturaData.cliente}
+            items={items}
+            folio={facturaData.folio}
+            empresa={facturaData.empresa}
+            tipoFactura={facturaData.tipoFactura}
+          />
+        );
+      } else if (facturaData.factura.id_tipo_factura == 2) {
+        component = (
+          <InvoiceCreditoPDFComponent
+            factura={facturaData.factura}
+            detalles={facturaData.detalles}
+            cliente={facturaData.cliente}
+            items={items}
+            folio={facturaData.folio}
+            empresa={facturaData.empresa}
+            tipoFactura={facturaData.tipoFactura}
+          />
+        );
+      } else {
+        throw new Error("Tipo de factura no soportado");
+      }
+
+      const blob = await pdf(component).toBlob();
 
       // Crear URL del blob y descargar
       const url = URL.createObjectURL(blob);
@@ -184,6 +203,7 @@ export const FacturaPopOverFormSubmittSection = () => {
       // Limpiar URL
       URL.revokeObjectURL(url);
 
+      // Crear el PDF usando react-pdf/renderer
       toast.success("PDF generado exitosamente", {
         duration: 1500,
         icon: "📄",

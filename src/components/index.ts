@@ -21,3 +21,6 @@ export * from "./folios/IndexTable";
 export * from "./folios/NewFolioComponent";
 export * from "./shared/RestriccionComponent";
 export * from "./cajas/sesiones/EditSesionComponent";
+export * from './facturas/InvoiceCreditoPDFComponent';
+export * from './cajas/NewCajaComponent';
+export { IndexTable as FacturasIndexTable } from './facturas/IndexTable';

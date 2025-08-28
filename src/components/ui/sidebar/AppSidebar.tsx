@@ -74,6 +74,10 @@ const items = {
       icon: Bot,
       isActive: true,
       items: [
+         {
+          title: "Administrar Facturas",
+          url: "/facturas",
+        },
 
         {
           title: "Nueva Factura",

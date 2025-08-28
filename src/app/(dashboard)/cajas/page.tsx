@@ -1,13 +1,16 @@
 import { AddButton, IndexPageTitle } from "@/components";
-import IndexTable from "@/components/cajas/IndexTable";
-import AlertComponent from "@/components/shared/AlertComponent";
+import {IndexTable} from "@/components/cajas/IndexTable";
 
 
+export default async function CajaPage({
+  searchParams,
+}: {
+  searchParams: { error?: string; success?: string };
+}) {
+  const awaitedSearchParams = await searchParams;
 
-export default function CajaPage() {
   return (
     <>
-    
       <div className="grid auto-rows-min gap-4 md:grid-cols-1">
         <div>
           <IndexPageTitle title="Lista de Cajas" />
@@ -27,7 +30,7 @@ export default function CajaPage() {
       </div>
 
       <div className="grid auto-rows-min gap-4 md:grid-cols-1">
-        <IndexTable />
+        <IndexTable searchParams={awaitedSearchParams} />
       </div>
     </>
   );
