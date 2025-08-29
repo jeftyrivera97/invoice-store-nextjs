@@ -5,12 +5,12 @@ import { useEffect } from "react";
 
 
 
-import { FacturaItemsTable } from "./FacturaItemsTable";
-import { FacturaProductAddComponent } from "./FacturaProductAddComponent";
-import { FacturaTotalesSection } from "./FacturaTotalesSection";
+import { ComprobanteItemsTable } from "./ComprobanteItemsTable";
+import { ComprobanteProductAddComponent } from "./ComprobanteProductAddComponent";
+import { ComprobanteTotalesSection } from "./ComprobanteTotalesSection";
 
 
-export const NewFacturaComponent = () => {
+export const NewComprobanteComponent = () => {
   const { startLoading: startProductoLoading } = useProductoStore();
   const { startLoading: startClienteLoading } = useClienteStore();
 
@@ -27,17 +27,17 @@ export const NewFacturaComponent = () => {
       <div className="grid auto-rows-min w-full gap-4 md:grid-cols-[1fr_4fr]">
         {/* Columna 1 */}
         <div>
-          <FacturaProductAddComponent />
+          <ComprobanteProductAddComponent />
         </div>
 
         {/* Columna 2 */}
         <div>
-          <FacturaTotalesSection />
+          <ComprobanteTotalesSection />
         </div>
       </div>
 
       <div className="grid auto-rows-min w-full gap-4 md:grid-cols-1">
-        <FacturaItemsTable />
+        <ComprobanteItemsTable />
       </div>
     </>
   );

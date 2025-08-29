@@ -12,13 +12,13 @@ import {
 
 
 import { useSelector } from "react-redux";
-import { FacturaPopOverPagoSection } from "./FacturaPopOverPagoSection";
-import { FacturaPopOverClienteSection } from "./FacturaPopOverClienteSection";
-import { FacturaPopOverFormSubmittSection } from "./FacturaPopOverFormSubmittSection";
+import { ComprobantePopOverPagoSection } from "./ComprobantePopOverPagoSection";
+import { ComprobantePopOverClienteSection } from "./ComprobantePopOverClienteSection";
+import { ComprobantePopOverFormSubmittSection } from "./ComprobantePopOverFormSubmittSection";
 
 
 
-export const FacturaPopOverComponent = () => {
+export const ComprobantePopOverComponent = () => {
 
   const { total } = useSelector((state: RootState) => state.invoice);
 
@@ -46,9 +46,9 @@ export const FacturaPopOverComponent = () => {
                 readOnly
               />
             </div>
-            <FacturaPopOverClienteSection />
-            <FacturaPopOverPagoSection />
-            <FacturaPopOverFormSubmittSection />
+            <ComprobantePopOverClienteSection />
+            <ComprobantePopOverPagoSection />
+            <ComprobantePopOverFormSubmittSection />
           </div>
         </div>
       </PopoverContent>

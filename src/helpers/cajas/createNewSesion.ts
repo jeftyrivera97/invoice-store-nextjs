@@ -45,6 +45,6 @@ export async function createNewSesion({
   }
 
   redirect(
-    "/cajas/sesiones/new?success=Ahora puede crear facturas con esta sesion."
+    "/cajas/sesiones/new?success=Ahora puede crear comprobantes con esta sesion."
   );
 }

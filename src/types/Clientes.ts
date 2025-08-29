@@ -11,7 +11,7 @@ export interface ClientesData {
     telefono:       string;
     id_estado:      string;
     id_usuario:     string;
-    created_at:     Date;
-    updated_at:     Date;
+    created_at:     string;
+    updated_at:     string;
     deleted_at:     null;
 }

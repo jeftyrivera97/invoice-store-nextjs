@@ -1,8 +1,8 @@
 
 import { SearchInput } from "../../../components/shared/SearchInput";
-import { FacturasIndexTable, IndexPageTitle } from "@/components";
+import { ComprobantesIndexTable, IndexPageTitle } from "@/components";
 
-export default async function FacturasPage({
+export default async function ComprobantesPage({
   searchParams,
 }: {
   searchParams: { page?: string; search?: string };
@@ -13,17 +13,17 @@ export default async function FacturasPage({
     <>
       <div className="grid auto-rows-min gap-4 md:grid-cols-1">
         <div>
-          <IndexPageTitle title="Lista de Facturas" />
+          <IndexPageTitle title="Lista de Comprobantes" />
         </div>
 
         <div className="grid auto-rows-min gap-4 md:grid-cols-1 w-1/4">
           <div>
-            <SearchInput placeholder="Buscar Facturas..." />
+            <SearchInput placeholder="Buscar Comprobantes..." />
           </div>
         </div>
       </div>
       <div className="grid auto-rows-min gap-4 md:grid-cols-1">
-        <FacturasIndexTable
+        <ComprobantesIndexTable
           page={awaitedSearchParams.page}
           search={awaitedSearchParams.search}
         />

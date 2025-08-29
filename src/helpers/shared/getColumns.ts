@@ -46,7 +46,7 @@ export const productosColumns = [
   { label: "Opciones" },
 ];
 
-export const facturasColumns = [
+export const comprobantesColumns = [
   { label: "ID", className: "w-[100px]" },
   { label: "Codigo" },
   { label: "Fecha" },

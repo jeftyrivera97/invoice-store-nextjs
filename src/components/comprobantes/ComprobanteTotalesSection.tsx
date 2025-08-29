@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label";
 
 import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
-import { FacturaPopOverComponent } from "./FacturaPopOverComponent";
+import { ComprobantePopOverComponent } from "./ComprobantePopOverComponent";
 
-export const FacturaTotalesSection = () => {
+export const ComprobanteTotalesSection = () => {
   const {
     porcentajeDescuento,
     exento,
@@ -107,7 +107,7 @@ export const FacturaTotalesSection = () => {
       <div>
         <div className="grid w-full max-w-sm items-center gap-3">
           <Label htmlFor="agregar">&nbsp;</Label>
-          <FacturaPopOverComponent />
+          <ComprobantePopOverComponent />
         </div>
       </div>
     </div>

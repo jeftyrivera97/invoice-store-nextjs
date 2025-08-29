@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useInvoiceStore } from "@/hooks/store/useInvoiceStore";
 
-export const FacturaPopOverClienteSection = () => {
+export const ComprobantePopOverClienteSection = () => {
   const { clienteSelected, cliente } = useInvoiceStore(); // Asumiendo que tienes selectedClienteId en el store
   
   const { startLoading: startClienteLoading, data: clientes } = useClienteStore();

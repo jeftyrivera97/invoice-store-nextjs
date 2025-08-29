@@ -39,7 +39,8 @@ export async function createNewFolio({
     const nuevoFolio = await prisma.folios.create({
       data: {
         codigo_folio: codigo,
-        descripcion: 'Folio de Facturacion',
+        descripcion: "Folio de Facturacion",
+        fecha_limite: new Date(),
         inicio: Number(inicio),
         final: Number(final),
         actual: Number(inicio - 1),

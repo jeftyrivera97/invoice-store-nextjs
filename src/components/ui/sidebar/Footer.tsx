@@ -90,7 +90,7 @@ export const Footer = () => {
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <IconCreditCard />
-                Facturación
+                Comprobante
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <IconNotification />

@@ -18,5 +18,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/", "/cajas", "/productos", "/facturas"], // Protege `/dashboard` y todas sus subrutas
+  matcher: ["/dashboard/:path*", "/", "/cajas", "/productos", "/comprobantes"], // Protege `/dashboard` y todas sus subrutas
 };

@@ -9,7 +9,7 @@ import { PlusCircleIcon } from "lucide-react";
 
 
 
-export const FacturaProductAddComponent = () => {
+export const ComprobanteProductAddComponent = () => {
 
   const { fetchProductoByCodigo, applyDiscount } = useInvoiceStore();
 

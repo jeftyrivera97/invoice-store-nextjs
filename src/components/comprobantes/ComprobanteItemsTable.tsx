@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export const FacturaItemsTable = () => {
+export const ComprobanteItemsTable = () => {
   const { items } = useSelector((state: RootState) => state.invoice);
 
   const { productInvoiceDelete } = useInvoiceStore();
@@ -24,7 +24,7 @@ export const FacturaItemsTable = () => {
   return (
     <div className="overflow-x-auto overflow-y-auto">
       <Table>
-        <TableCaption>Contenido en Factura</TableCaption>
+        <TableCaption>Contenido en Comprobante</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Opciones</TableHead>

@@ -19,5 +19,6 @@ export * from './cajas/validateCreateCaja'
 export * from './cajas/createNewCaja'
 export * from './cajas/desactivateCajaById'
 export * from './cajas/activateCajaById'
-export * from './facturas/getFacturas'
-export * from './facturas/getFacturaById'
+export * from './comprobantes/getComprobanteById'
+export * from './comprobantes/getComprobantes'
+export * from './comprobantes/getCategoriasComprobantes';

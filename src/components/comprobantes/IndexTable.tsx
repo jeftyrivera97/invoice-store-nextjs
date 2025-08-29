@@ -10,10 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
 import {
-  activateCajaById,
-  facturasColumns,
-  desactivateCajaById,
-  getFacturas,
+  comprobantesColumns,
+  getComprobantes,
 } from "@/helpers";
 import Link from "next/link";
 
@@ -27,21 +25,21 @@ export const IndexTable = async function ({
   const pageNumber = parseInt(page || "1");
   const pageSize = 20;
 
-  if (isNaN(pageNumber) || pageNumber < 1) redirect("/facturas?page=1");
+  if (isNaN(pageNumber) || pageNumber < 1) redirect("/comprobantes?page=1");
 
   // Usa el helper para obtener productos y paginación
-  const { facturas, totalPages } = await getFacturas({
+  const { comprobantes, totalPages } = await getComprobantes({
     page: pageNumber,
     pageSize,
     search: search || "",
   });
 
-  const columnsTable = facturasColumns;
+  const columnsTable = comprobantesColumns;
 
   return (
     <>
       <Table>
-        <TableCaption>Lista de facturas disponibles.</TableCaption>
+        <TableCaption>Lista de comprobantes disponibles.</TableCaption>
         <TableHeader>
           <TableRow>
             {columnsTable.map((col) => (
@@ -52,35 +50,33 @@ export const IndexTable = async function ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {facturas.map((factura) => (
-            <TableRow key={factura.id.toString()}>
-              <TableCell className="font-medium">{factura.id}</TableCell>
-              <TableCell>{factura.codigo_factura}</TableCell>
+          {comprobantes.map((comprobante) => (
+            <TableRow key={comprobante.id.toString()}>
+              <TableCell className="font-medium">{comprobante.id}</TableCell>
+              <TableCell>{comprobante.codigo_comprobante}</TableCell>
               <TableCell>
-                {factura.fecha
-                  ? new Date(factura.fecha).toLocaleDateString("es-ES")
+                {comprobante.fecha
+                  ? new Date(comprobante.fecha).toLocaleDateString("es-ES")
                   : ""}
               </TableCell>
-              <TableCell>{factura.clientes?.descripcion}</TableCell>
-              <TableCell>L. {factura.gravado15}</TableCell>
-              <TableCell>L. {factura.gravado18}</TableCell>
-              <TableCell>L. {factura.impuesto15}</TableCell>
-              <TableCell>L. {factura.impuesto18}</TableCell>
-              <TableCell>L. {factura.exento}</TableCell>
-              <TableCell>L. {factura.exonerado}</TableCell>
-              <TableCell>L. {factura.subtotal}</TableCell>
-              <TableCell>L. {factura.total}</TableCell>
-              <TableCell>{factura.categorias_facturas?.descripcion}</TableCell>
-              <TableCell>{factura.tipos_facturas?.descripcion}</TableCell>
-              <TableCell>{factura.estados?.descripcion}</TableCell>
-              <TableCell>{factura.users?.name}</TableCell>
+              <TableCell>{comprobante.clientes?.descripcion}</TableCell>
+              <TableCell>L. {comprobante.gravado15}</TableCell>
+              <TableCell>L. {comprobante.gravado18}</TableCell>
+              <TableCell>L. {comprobante.impuesto15}</TableCell>
+              <TableCell>L. {comprobante.impuesto18}</TableCell>
+              <TableCell>L. {comprobante.exento}</TableCell>
+              <TableCell>L. {comprobante.exonerado}</TableCell>
+              <TableCell>L. {comprobante.subtotal}</TableCell>
+              <TableCell>L. {comprobante.total}</TableCell>
+              <TableCell>{comprobante.categorias_comprobantes?.descripcion}</TableCell>
+              <TableCell>{comprobante.tipos_comprobantes?.descripcion}</TableCell>
+              <TableCell>{comprobante.estados?.descripcion}</TableCell>
+              <TableCell>{comprobante.users?.name}</TableCell>
               <TableCell>
                 {
-                factura.id_tipo_factura === BigInt(1) 
-                ? 
-                  <Button variant="secondary"><Link href={`/facturas/${factura.id}`}>Ver</Link></Button>
-                : 
-                  <Button variant="destructive"><Link href={`/facturas/${factura.id}/edit`}>Pagar</Link></Button>
+                comprobante.id_tipo_comprobante === BigInt(1)
+                  ? <Button variant="secondary"><Link href={`/comprobantes/${comprobante.id}`}>Ver</Link></Button>
+                  : <Button variant="destructive"><Link href={`/comprobantes/${comprobante.id}/edit`}>Pagar</Link></Button>
                 }
                 </TableCell>
             </TableRow>

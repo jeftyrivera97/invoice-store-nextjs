@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     marginBottom: "0.5mm",
     lineHeight: 1.1,
   },
-  // Información de factura
+  // Información de comprobante
   invoiceHeader: {
     alignItems: "center",
     marginBottom: "2mm",
@@ -173,23 +173,23 @@ const styles = StyleSheet.create({
 });
 
 interface InvoicePDFProps {
-  factura: any;
+  comprobante: any;
   detalles: any[];
   cliente: any;
   items: any[];
   folio: any;
   empresa: any;
-  tipoFactura: any;
+  tipoComprobante: any;
 }
 
 export default function InvoiceCreditoPDFComponent({
-  factura,
+  comprobante,
   detalles,
   cliente,
   items,
   folio,
   empresa,
-  tipoFactura,
+  tipoComprobante,
 }: InvoicePDFProps) {
   // ✅ Función usando la librería correctamente
   const numeroEnLetras = (numero: number): string => {
@@ -244,12 +244,12 @@ export default function InvoiceCreditoPDFComponent({
         {/* Info de Ticket */}
         <View style={styles.invoiceHeader}>
           <Text style={styles.invoiceNumber}>
-            TICKET #{factura?.codigo_factura || "N/A"}
+            TICKET #{comprobante?.codigo_comprobante || "N/A"}
           </Text>
           <Text style={styles.invoiceDate}>
-            {factura?.fecha ? formatDate(factura.fecha) : "N/A"}
+            {comprobante?.fecha ? formatDate(comprobante.fecha) : "N/A"}
           </Text>
-          <Text style={styles.companyInfo}>Ticket de {tipoFactura}</Text>
+          <Text style={styles.companyInfo}>Ticket de {tipoComprobante}</Text>
         </View>
 
         {/* Cliente */}
@@ -291,14 +291,14 @@ export default function InvoiceCreditoPDFComponent({
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Descuentos Otorgados:</Text>
             <Text style={styles.totalValue}>
-              -{formatCurrency(factura.descuentos || 0)}
+              -{formatCurrency(comprobante.descuentos || 0)}
             </Text>
           </View>
 
           <View style={styles.grandTotal}>
             <Text style={styles.grandTotalLabel}>TOTAL:</Text>
             <Text style={styles.grandTotalValue}>
-              {formatCurrency(factura?.total || 0)}
+              {formatCurrency(comprobante?.total || 0)}
             </Text>
           </View>
         </View>
@@ -306,7 +306,7 @@ export default function InvoiceCreditoPDFComponent({
         {/* Footer Compacto */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            VALOR EN LETRAS: {numeroEnLetras(Number(factura?.total || 0))}
+            VALOR EN LETRAS: {numeroEnLetras(Number(comprobante?.total || 0))}
           </Text>
       
           <Text style={styles.thanksText}>¡GRACIAS POR SU COMPRA!</Text>

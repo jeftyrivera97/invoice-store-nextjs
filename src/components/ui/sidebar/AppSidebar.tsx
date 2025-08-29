@@ -69,19 +69,19 @@ const items = {
       ],
     },
     {
-      title: "Facturas",
+      title: "Comprobantes",
       url: "#",
       icon: Bot,
       isActive: true,
       items: [
          {
-          title: "Administrar Facturas",
-          url: "/facturas",
+          title: "Administrar Comprobantes",
+          url: "/comprobantes",
         },
 
         {
-          title: "Nueva Factura",
-          url: "/facturas/new",
+          title: "Nuevo Comprobante",
+          url: "/comprobantes/new",
         },
         
       ],

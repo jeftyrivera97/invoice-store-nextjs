@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import {
-  ventas,
-  metodos_pagos,
-  tipos_facturas,
-} from "../../../generated/prisma/index";
 
 // Función para convertir BigInt a string
 function convertBigIntToString(obj: any): any {
@@ -19,7 +14,7 @@ function convertBigIntToString(obj: any): any {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log("Datos recibidos para nueva factura:", body);
+    console.log("Datos recibidos para nueva comprobante:", body);
 
     // Validar datos requeridos
     const {
@@ -37,6 +32,7 @@ export async function POST(request: NextRequest) {
       id_metodo_pago,
       productos,
       referencia,
+      id_categoria_comprobante,
     } = body;
 
     // Validaciones básicas actualizadas
@@ -46,7 +42,8 @@ export async function POST(request: NextRequest) {
       !total ||
       !productos ||
       productos.length === 0 ||
-      !id_metodo_pago // ← Agregar validación
+      !id_metodo_pago || // ← Agregar validación
+      !id_categoria_comprobante
     ) {
       return NextResponse.json(
         {
@@ -94,13 +91,13 @@ export async function POST(request: NextRequest) {
         metodos_pagos?.id_tipo_operacion || "1"
       );
 
-      // 1. Crear la factura
-      const nuevaFactura = await tx.facturas.create({
+      // 1. Crear el comprobante
+      const nuevaComprobante = await tx.comprobantes.create({
         data: {
-          codigo_factura:
-            idTipoOperacion === 1
-              ? await generarNumeroFactura(tx)
-              : `CREDITO - ${Date.now()}`, // ← Usar codigo_factura
+          codigo_comprobante:
+            id_categoria_comprobante != 1
+              ? await generarNumeroComprobante(tx)
+              : `TICKET-${Date.now()}`, // ← Usar codigo_comprobante
           fecha: new Date(),
           fecha_hora: new Date(),
           fecha_vencimiento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -115,23 +112,22 @@ export async function POST(request: NextRequest) {
           descuentos: parseFloat(descuentos) || 0,
           subtotal: parseFloat(subtotal) || 0,
           total: parseFloat(total) || 0,
-          id_folio: idTipoOperacion === 1 ? BigInt(folios.id) : null,
-          id_categoria: idTipoOperacion == 1 ? BigInt(1) : BigInt(3),
-          id_tipo_factura: idTipoOperacion == 1 ? BigInt(1) : BigInt(2),
-          id_estado_factura: idTipoOperacion == 1 ? BigInt(3) : BigInt(2),
+          id_categoria: id_categoria_comprobante,
+          id_tipo_comprobante: BigInt(1),
+          id_estado_comprobante: BigInt(3),
           id_estado: BigInt(1),
           created_at: new Date(),
           updated_at: new Date(),
         },
       });
 
-      // 2. Crear el detalle de la factura
-      const detallesFactura: any[] = [];
+      // 2. Crear el detalle de la comprobante
+      const detallesComprobante: any[] = [];
       for (const producto of productos) {
-        const detalle = await tx.facturas_detalles.create({
+        const detalle = await tx.comprobantes_detalles.create({
           data: {
-            linea: detallesFactura.length + 1,
-            id_factura: nuevaFactura.id,
+            linea: detallesComprobante.length + 1,
+            id_comprobante: nuevaComprobante.id,
             id_producto: BigInt(producto.id_producto),
             cantidad: parseInt(producto.cantidad),
             precio: parseFloat(producto.precio_unitario),
@@ -141,7 +137,7 @@ export async function POST(request: NextRequest) {
             updated_at: new Date(),
           },
         });
-        detallesFactura.push(detalle);
+        detallesComprobante.push(detalle);
 
         // 3. Actualizar stock del producto (opcional)
         await tx.productos.update({
@@ -155,9 +151,9 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      const factura_pagos = await tx.facturas_pagos.create({
+      const comprobante_pagos = await tx.comprobantes_pagos.create({
         data: {
-          id_factura: nuevaFactura.id,
+          id_comprobante: nuevaComprobante.id,
           id_metodo_pago: BigInt(id_metodo_pago),
           fecha_hora: new Date(),
           referencia:
@@ -238,50 +234,22 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      const idTF = Number(nuevaFactura.id_tipo_factura);
-      const tipos_facturas = await tx.tipos_facturas.findUnique({
+      const idTF = Number(nuevaComprobante.id_tipo_comprobante);
+      const tipos_comprobantes = await tx.tipos_comprobantes.findUnique({
         where: { id: BigInt(idTF) },
       });
 
-      const tipoFactura = tipos_facturas?.descripcion;
+      const tipoComprobante = tipos_comprobantes?.descripcion;
 
-      if (idTipoOperacion == 1) {
-        // Si es de contado, se registra un movimiento de caja y venta
-        const caja_movimiento = await tx.cajas_movimientos.create({
+      // Si no es un ticket, se registra un folio
+      if (id_categoria_comprobante != 1) {
+        const folioComprobante = await tx.comprobantes_folios.create({
           data: {
-            fecha: new Date(),
-            id_sesion: sesion.id,
-            id_categoria: 1, // Ingreso
-            id_medio: id_metodo_pago,
-            monto: total,
-            descripcion: "Pago de factura",
-            id_estado: 1,
+            id_comprobante: nuevaComprobante.id,
+            id_folio: folios.id,
+            id_estado: BigInt(1),
             id_usuario: BigInt(id_usuario),
-            created_at: new Date(),
-            updated_at: new Date(),
-          },
-        });
 
-        const venta = await tx.ventas.create({
-          data: {
-            fecha: new Date(),
-            total: total,
-            id_movimiento: caja_movimiento.id,
-            id_estado: 1,
-            id_usuario: BigInt(id_usuario),
-            created_at: new Date(),
-            updated_at: new Date(),
-          },
-        });
-
-        const ingreso = await tx.ingresos.create({
-          data: {
-            descripcion: "Ingreso por venta de productos",
-            fecha: new Date(),
-            id_categoria: 1, // Ingreso por venta de productos
-            total: total,
-            id_estado: 1,
-            id_usuario: BigInt(id_usuario),
             created_at: new Date(),
             updated_at: new Date(),
           },
@@ -296,49 +264,82 @@ export async function POST(request: NextRequest) {
             updated_at: new Date(),
           },
         });
-
-        return {
-          factura: nuevaFactura,
-          detalles: detallesFactura,
-          pagos: factura_pagos,
-          sesion: caja_sesion,
-          movimiento: caja_movimiento,
-          venta: venta,
-          ingreso: ingreso,
-          cliente: cliente,
-          empresa: empresa,
-          folio: folio,
-          tipoFactura: tipoFactura,
-        };
       }
 
+      // Si es de contado, se registra un movimiento de caja y venta
+
+      const caja_movimiento = await tx.cajas_movimientos.create({
+        data: {
+          fecha: new Date(),
+          id_sesion: sesion.id,
+          id_categoria: 1, // Ingreso
+          id_medio: id_metodo_pago,
+          monto: total,
+          descripcion: id_categoria_comprobante == 1 ? "Pago de ticket" : "Pago de Factura",
+          id_estado: 1,
+          id_usuario: BigInt(id_usuario),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+
+      const venta = await tx.ventas.create({
+        data: {
+          fecha: new Date(),
+          total: total,
+          id_movimiento: caja_movimiento.id,
+          id_comprobante: nuevaComprobante.id,
+          id_estado: 1,
+          id_usuario: BigInt(id_usuario),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+
+      const ingreso = await tx.ingresos.create({
+        data: {
+          descripcion: "Ingreso por venta de productos",
+          fecha: new Date(),
+          id_categoria: 1, // Ingreso por venta de productos
+          total: total,
+          id_estado: 1,
+          id_usuario: BigInt(id_usuario),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+
       return {
-        factura: nuevaFactura,
-        detalles: detallesFactura,
-        pagos: factura_pagos,
+        comprobante: nuevaComprobante,
+        detalles: detallesComprobante,
+        pagos: comprobante_pagos,
         sesion: caja_sesion,
+        movimiento: caja_movimiento,
+        venta: venta,
+        ingreso: ingreso,
         cliente: cliente,
         empresa: empresa,
         folio: folio,
-        tipoFactura: tipoFactura,
+        tipoComprobante: tipoComprobante,
+        id_categoria_comprobante: id_categoria_comprobante,
       };
     });
 
-    console.log("Factura creada exitosamente:", result.factura.id);
+    console.log("Comprobante creada exitosamente:", result.comprobante.id);
 
     // Convertir BigInt a string para la respuesta
-    const facturaResponse = convertBigIntToString(result);
+    const comprobanteResponse = convertBigIntToString(result);
 
     return NextResponse.json(
       {
         success: true,
-        message: "Factura creada exitosamente",
-        data: facturaResponse,
+        message: "Comprobante creada exitosamente",
+        data: comprobanteResponse,
       },
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("Error al crear factura:", error.message, error.stack);
+    console.error("Error al crear comprobante:", error.message, error.stack);
 
     return NextResponse.json(
       {
@@ -353,7 +354,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Función auxiliar corregida
-async function generarNumeroFactura(tx: any): Promise<string> {
+async function generarNumeroComprobante(tx: any): Promise<string> {
   try {
     // Obtener la último folio para generar el siguiente número
     const folio = await tx.folios.findFirst({
@@ -379,31 +380,35 @@ async function generarNumeroFactura(tx: any): Promise<string> {
 
 export async function GET() {
   try {
-    console.log("Iniciando consulta de facturas...");
-    const data = await prisma.facturas.findMany({
+    console.log("Iniciando consulta de comprobantes...");
+    const data = await prisma.comprobantes.findMany({
       include: {
         clientes: true,
-        categorias_facturas: true,
-        tipos_facturas: true,
-        estados_facturas: true,
+        categorias_comprobantes: true,
+        tipos_comprobantes: true,
+        estados_comprobantes: true,
         estados: true,
         users: true,
       },
     });
 
     // Convierte todos los BigInt a string
-    const facturas = convertBigIntToString(data);
+    const comprobantes = convertBigIntToString(data);
 
-    console.log(facturas);
+    console.log(comprobantes);
 
     return NextResponse.json(
-      { data: facturas },
+      { data: comprobantes },
       { status: 200 } // Cambia el estado a 200 para solicitudes GET exitosas
     );
   } catch (error: any) {
-    console.error("Error al obtener las facturas:", error.message, error.stack);
+    console.error(
+      "Error al obtener las comprobantes:",
+      error.message,
+      error.stack
+    );
     return NextResponse.json(
-      { error: error.message || "Error al obtener las facturas" },
+      { error: error.message || "Error al obtener las comprobantes" },
       { status: 500 }
     );
   }

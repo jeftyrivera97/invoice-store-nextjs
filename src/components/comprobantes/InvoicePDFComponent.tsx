@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     marginBottom: "0.5mm",
     lineHeight: 1.1,
   },
-  // Información de factura
+  // Información de comprobante
   invoiceHeader: {
     alignItems: "center",
     marginBottom: "2mm",
@@ -173,23 +173,23 @@ const styles = StyleSheet.create({
 });
 
 interface InvoicePDFProps {
-  factura: any;
+  comprobante: any;
   detalles: any[];
   cliente: any;
   items: any[];
   folio: any;
   empresa: any;
-  tipoFactura: any;
+  tipoComprobante: any;
 }
 
 export default function InvoicePDFComponent({
-  factura,
+  comprobante,
   detalles,
   cliente,
   items,
   folio,
   empresa,
-  tipoFactura
+  tipoComprobante
 }: InvoicePDFProps) {
   // ✅ Función usando la librería correctamente
   const numeroEnLetras = (numero: number): string => {
@@ -241,15 +241,15 @@ export default function InvoicePDFComponent({
           <Text style={styles.companyInfo}>CAI: {empresa?.cai || ""}</Text>
         </View>
 
-        {/* Info de Factura */}
+        {/* Info de Comprobante */}
         <View style={styles.invoiceHeader}>
           <Text style={styles.invoiceNumber}>
-            FACTURA #{factura?.codigo_factura || "N/A"}
+            FACTURA #{comprobante?.codigo_comprobante || "N/A"}
           </Text>
           <Text style={styles.invoiceDate}>
-            {factura?.fecha ? formatDate(factura.fecha) : "N/A"}
+            {comprobante?.fecha ? formatDate(comprobante.fecha) : "N/A"}
           </Text>
-          <Text style={styles.companyInfo}>Factura de {tipoFactura}</Text>
+          <Text style={styles.companyInfo}>Comprobante de {tipoComprobante}</Text>
         </View>
 
         {/* Cliente */}
@@ -307,11 +307,11 @@ export default function InvoicePDFComponent({
 
         {/* Totales Simplificados */}
         <View style={styles.totalsSection}>
-          {(factura?.exento || 0) > 0 && (
+          {(comprobante?.exento || 0) > 0 && (
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Importe Exento:</Text>
               <Text style={styles.totalValue}>
-                {formatCurrency(factura.exento || 0)}
+                {formatCurrency(comprobante.exento || 0)}
               </Text>
             </View>
           )}
@@ -319,28 +319,28 @@ export default function InvoicePDFComponent({
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Importe Gravado 15%:</Text>
             <Text style={styles.totalValue}>
-              {formatCurrency(factura.gravado15 || 0)}
+              {formatCurrency(comprobante.gravado15 || 0)}
             </Text>
           </View>
 
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>ISV 15%:</Text>
             <Text style={styles.totalValue}>
-              {formatCurrency(factura.impuesto15 || 0)}
+              {formatCurrency(comprobante.impuesto15 || 0)}
             </Text>
           </View>
 
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Descuentos Otorgados:</Text>
             <Text style={styles.totalValue}>
-              -{formatCurrency(factura.descuentos || 0)}
+              -{formatCurrency(comprobante.descuentos || 0)}
             </Text>
           </View>
 
           <View style={styles.grandTotal}>
             <Text style={styles.grandTotalLabel}>TOTAL:</Text>
             <Text style={styles.grandTotalValue}>
-              {formatCurrency(factura?.total || 0)}
+              {formatCurrency(comprobante?.total || 0)}
             </Text>
           </View>
         </View>
@@ -348,10 +348,10 @@ export default function InvoicePDFComponent({
         {/* Footer Compacto */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            VALOR EN LETRAS: {numeroEnLetras(Number(factura?.total || 0))}
+            VALOR EN LETRAS: {numeroEnLetras(Number(comprobante?.total || 0))}
           </Text>
           <Text style={styles.footerText}>
-            Fecha Límite de Emisión: 08/01/2025
+            Fecha Límite de Emisión: {folio?.fecha_limite || ""}
           </Text>
           <Text style={styles.footerText}>
             Rango autorizado: {folio?.codigo_folio || ""}

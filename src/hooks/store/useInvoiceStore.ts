@@ -13,9 +13,11 @@ import {
   onMetodoPagoSelection,
   onReferenciaFill,
   onInvoiceClean,
+  onCategoriaComprobanteSelection,
 } from "@/store/invoice/invoiceSlice";
 
 import { 
+  InvoiceCategoryData,
   InvoiceCliente, 
   InvoiceMetodoPago 
 } from "@/types/Invoices";
@@ -31,6 +33,7 @@ export const useInvoiceStore = () => {
     moduleTitle,
     cliente,
     metodo_pago,
+    categoria_comprobante,
     referencia,
   } = useSelector((state: RootState) => state.invoice);
 
@@ -93,6 +96,10 @@ export const useInvoiceStore = () => {
     dispatch(onMetodoPagoSelection(metodo_pago));
   };
 
+  const categoriaComprobanteSelected = (categoria_comprobante: InvoiceCategoryData) => {
+    dispatch(onCategoriaComprobanteSelection(categoria_comprobante));
+  };
+
   const referenciaFill = (referencia: string) => {
     dispatch(onReferenciaFill(referencia));
   };
@@ -113,6 +120,7 @@ export const useInvoiceStore = () => {
     cliente,
     metodo_pago,
     referencia,
+    categoria_comprobante,
     // Métodos
     fetchProductoByCodigo,
     applyDiscount, // <-- Exporta el método
@@ -121,5 +129,6 @@ export const useInvoiceStore = () => {
     metodoPagoSelected,
     referenciaFill,
     cleanInvoice,
+    categoriaComprobanteSelected,
   };
 };

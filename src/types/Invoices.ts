@@ -29,8 +29,9 @@ export interface InvoiceState {
   moduleName: string;
   moduleTitle: string;
   cliente: InvoiceCliente;
-  tipo_factura: InvoiceCategoryData;
-  estado_factura: InvoiceEstados;
+  tipo_comprobante: InvoiceCategoryData;
+  categoria_comprobante: InvoiceCategoryData;
+  estado_comprobante: InvoiceEstados;
   metodo_pago: InvoiceMetodoPago;
   referencia: string;
   comentario: string;
@@ -57,7 +58,7 @@ export interface InvoiceType {
 
 export interface InvoiceData {
   id: string;
-  codigo_factura: string;
+  codigo_comprobante: string;
   fecha: string;
   fecha_hora: string;
   fecha_vencimiento: string;
@@ -73,20 +74,19 @@ export interface InvoiceData {
   total: number;
   id_folio: string;
   id_categoria: string;
-  id_tipo_factura: string;
-  id_estado_factura: string;
+  id_tipo_comprobante: string;
+  id_estado_comprobante: string;
   id_estado: string;
   id_usuario: string;
   created_at: string;
   updated_at: string;
   deleted_at: null;
   clientes: InvoiceCliente;
-  categorias_facturas: InvoiceCategoryData;
-  tipos_facturas: InvoiceCategoryData;
-  estados_facturas: InvoiceEstados;
+  categorias_comprobantes: InvoiceCategoryData;
+  tipos_comprobantes: InvoiceCategoryData;
+  estados_comprobantes: InvoiceEstados;
   estados: InvoiceEstados;
   users: InvoiceUsers;
-  folios: FolioData;
 }
 
 export interface InvoiceCategoryData {
@@ -128,3 +128,20 @@ export interface InvoiceUsers {
   created_at: string;
   updated_at: string;
 }
+
+
+export interface InvoiceDetail {
+  id: string;
+  linea: string;
+  id_comprobante: InvoiceData;
+  productos: InvoiceItem;
+  cantidad: number;
+  precio: number;
+  total_linea: number;
+  id_usuario: InvoiceUsers;
+  created_at: string;
+  updated_at: string;
+}
+
+
+

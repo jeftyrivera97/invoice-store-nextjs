@@ -4,12 +4,13 @@ import {
   InvoiceItem,
   InvoiceCliente,
   InvoiceMetodoPago,
+  InvoiceCategoryData,
 } from "@/types/Invoices";
 
 // Actualizar el initialState
 const initialState: InvoiceState = {
   moduleName: "invoice",
-  moduleTitle: "Facturación",
+  moduleTitle: "Comprobante",
   items: [],
   loading: false,
   status: "not-loaded",
@@ -37,7 +38,7 @@ const initialState: InvoiceState = {
     updated_at:  "",
     deleted_at: null,
   },
-  tipo_factura: {
+  tipo_comprobante: {
     id: "",
     descripcion: "",
     id_estado: "",
@@ -46,7 +47,7 @@ const initialState: InvoiceState = {
     updated_at: "",
     deleted_at: null,
   },
-  estado_factura: {
+  estado_comprobante: {
     id:          "",
     descripcion: "",
     deleted_at:  null,
@@ -58,6 +59,15 @@ const initialState: InvoiceState = {
     id_usuario: "",
     created_at: "",
     updated_at: "",
+  },
+  categoria_comprobante: {
+    id: "",
+    descripcion: "",
+    id_estado: "",
+    id_usuario: "",
+    created_at: "",
+    updated_at: "",
+    deleted_at: null,
   },
   referencia: "",
   comentario: "",
@@ -169,7 +179,7 @@ export const invoiceSlice = createSlice({
         updated_at:  "",
         deleted_at: null,
       };
-      state.tipo_factura = {
+      state.tipo_comprobante = {
         id: "",
         descripcion: "",
         id_estado: "",
@@ -178,7 +188,16 @@ export const invoiceSlice = createSlice({
         updated_at:  "",
         deleted_at: null,
       };
-      state.estado_factura = {
+       state.categoria_comprobante = {
+        id: "",
+        descripcion: "",
+        id_estado: "",
+        id_usuario: "",
+        created_at:  "",
+        updated_at:  "",
+        deleted_at: null,
+      };
+      state.estado_comprobante = {
         id: "",
         descripcion: "",
         deleted_at: null,
@@ -253,6 +272,13 @@ export const invoiceSlice = createSlice({
       state.metodo_pago = action.payload;
     },
 
+    onCategoriaComprobanteSelection: (
+      state,
+      action: PayloadAction<InvoiceCategoryData>
+    ) => {
+      state.categoria_comprobante = action.payload;
+    },
+
     onReferenciaFill: (state, action: PayloadAction<string>) => {
       state.referencia = action.payload;
     },
@@ -275,6 +301,7 @@ export const {
   onMetodoPagoSelection,
   onReferenciaFill,
   onInvoiceClean,
+  onCategoriaComprobanteSelection,
 } = invoiceSlice.actions;
 
 export default invoiceSlice.reducer;

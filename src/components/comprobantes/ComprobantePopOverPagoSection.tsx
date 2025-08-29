@@ -20,15 +20,17 @@ import {
 
 import getPagosCategorias from "@/helpers/metodos-pagos/getMetodosPagos";
 import { PagoCategoria } from "@/types/PagoCategorias";
+import getCategoriasComprobantes from "@/helpers/comprobantes/getCategoriasComprobantes";
 
-export const FacturaPopOverPagoSection = () => {
+export const ComprobantePopOverPagoSection = () => {
   const [pagosCategorias, setPagosCategorias] = useState([]);
   const [efectivoValue, setEfectivoValue] = useState("");
   const [localReferencia, setLocalReferencia] = useState("");
+  const [tiposComprobantes, setTiposComprobantes] = useState([]);
 
   // Obtener datos del store
   const { total } = useSelector((state: RootState) => state.invoice);
-  const { metodoPagoSelected, metodo_pago, referenciaFill, referencia } = useInvoiceStore();
+  const { metodoPagoSelected, metodo_pago, referenciaFill, referencia, categoriaComprobanteSelected, categoria_comprobante } = useInvoiceStore();
 
   // Referencias
   const efectivoRef = useRef<HTMLInputElement>(null);
@@ -42,6 +44,10 @@ export const FacturaPopOverPagoSection = () => {
   useEffect(() => {
     setLocalReferencia(referencia || "");
   }, [referencia]);
+
+  useEffect(() => {
+  getCategoriasComprobantes().then((data) => setTiposComprobantes(data));
+}, []);
 
 
   // Función para manejar el cambio de categoría de pago
@@ -74,6 +80,16 @@ export const FacturaPopOverPagoSection = () => {
       }, 100);
     }
   };
+
+    const handleCategoriaComprobanteChange = (value: string) => {
+    const categoria = tiposComprobantes.find((cat: PagoCategoria) => cat.id === value);
+
+    if (categoria) {
+      categoriaComprobanteSelected(categoria);
+    }
+
+  };
+
 
   // Función para manejar cambio en el input de efectivo
   const handleEfectivoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +130,29 @@ export const FacturaPopOverPagoSection = () => {
 
   return (
     <>
+     <div className="grid grid-cols-3 items-center gap-4">
+        <Label htmlFor="tipo_pago">*Categoria de Comprobante</Label>
+        <Select
+          value={categoria_comprobante?.id || ""}
+          onValueChange={handleCategoriaComprobanteChange}
+          required
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione Categoría" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Categorías</SelectLabel>
+              {tiposComprobantes.map((tipo: PagoCategoria) => (
+                <SelectItem key={tipo.id} value={tipo.id}>
+                  {tipo.descripcion}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="grid grid-cols-3 items-center gap-4">
         <Label htmlFor="tipo_pago">*Tipo de Pago</Label>
         <Select

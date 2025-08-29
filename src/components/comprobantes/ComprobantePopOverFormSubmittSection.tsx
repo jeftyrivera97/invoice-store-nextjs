@@ -14,8 +14,9 @@ import InvoicePDFComponent from "./InvoicePDFComponent"; // ✅ Ajustar ruta
 import { getEmpresa } from "@/helpers";
 import { clientes } from "../../generated/prisma/index";
 import InvoiceCreditoPDFComponent from "./InvoiceCreditoPDFComponent";
+import InvoiceTicketPDFComponent from "./InvoiceTicketPDFComponent";
 
-export const FacturaPopOverFormSubmittSection = () => {
+export const ComprobantePopOverFormSubmittSection = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Obtener TODOS los datos del store
@@ -32,12 +33,18 @@ export const FacturaPopOverFormSubmittSection = () => {
     porcentajeDescuento,
   } = useSelector((state: RootState) => state.invoice);
 
-  const { cliente, metodo_pago, referencia, cleanInvoice } = useInvoiceStore();
+  const {
+    cliente,
+    metodo_pago,
+    referencia,
+    cleanInvoice,
+    categoria_comprobante,
+  } = useInvoiceStore();
 
   const { user } = useSelector((state: RootState) => state.auth);
 
-  // Función para generar factura
-  const handleGenerarFactura = async () => {
+  // Función para generar comprobante
+  const handleGenerarComprobante = async () => {
     try {
       setIsLoading(true);
 
@@ -76,8 +83,16 @@ export const FacturaPopOverFormSubmittSection = () => {
         }
       }
 
+      if (!categoria_comprobante.id) {
+        toast.error("Por favor seleccione una Categoria de Comprobante", {
+          duration: 1000,
+          icon: "⚠️",
+        });
+        return;
+      }
+
       // Preparar datos desde el store
-      const facturaData = {
+      const comprobanteData = {
         // Datos del cliente y usuario
         id_cliente: cliente.id,
         id_usuario: user?.id,
@@ -95,6 +110,7 @@ export const FacturaPopOverFormSubmittSection = () => {
 
         // Tipos
         id_metodo_pago: metodo_pago.id,
+        id_categoria_comprobante: categoria_comprobante.id,
 
         // Productos del carrito
         productos: items.map((item) => ({
@@ -109,25 +125,25 @@ export const FacturaPopOverFormSubmittSection = () => {
         porcentaje_descuento: porcentajeDescuento || 0,
       };
 
-      console.log("Enviando factura con datos del store:", facturaData);
+      console.log("Enviando comprobante con datos del store:", comprobanteData);
 
       // Enviar al API
-      const response = await fetch("/api/facturas", {
+      const response = await fetch("/api/comprobantes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(facturaData),
+        body: JSON.stringify(comprobanteData),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        const codigoFactura =
-          result.data?.factura?.codigo_factura || "Sin código";
+        const codigoComprobante =
+          result.data?.comprobante?.codigo_comprobante || "Sin código";
 
         toast.success(
-          `¡Factura creada exitosamente!\nCódigo: ${codigoFactura}`,
+          `¡Comprobante creado exitosamente!\nCódigo: ${codigoComprobante}`,
           {
             duration: 2500,
             icon: "🚀",
@@ -135,20 +151,21 @@ export const FacturaPopOverFormSubmittSection = () => {
         );
 
         // ✅ Generar y descargar PDF después del éxito
+
         await generarPDF(result.data);
 
         // Limpiar todo después del éxito
         cleanInvoice();
       } else {
-        console.error("Error al crear factura:", result.error);
-        toast.error(`Error al crear factura: ${result.error}`, {
+        console.error("Error al crear comprobante:", result.error);
+        toast.error(`Error al crear comprobante: ${result.error}`, {
           duration: 2500,
           icon: "❌",
         });
       }
     } catch (error) {
       console.error("Error de conexión:", error);
-      toast.error("Error de conexión al crear la factura", {
+      toast.error("Error de conexión al crear la comprobante", {
         duration: 2500,
         icon: "❌",
       });
@@ -158,37 +175,40 @@ export const FacturaPopOverFormSubmittSection = () => {
   };
 
   // ✅ Función para generar PDF
-  const generarPDF = async (facturaData: any) => {
+  const generarPDF = async (comprobanteData: any) => {
     try {
-      console.log("Generando PDF con datos:", facturaData);
+      console.log("Generando PDF con datos:", comprobanteData);
+
+      const tipoC = comprobanteData.id_categoria_comprobante;
+      console.log("ID Categoria Comprobante a PDF:", tipoC);
 
       let component;
-      if (facturaData.factura.id_tipo_factura == 1) {
+      if (tipoC != 1) {
         component = (
           <InvoicePDFComponent
-            factura={facturaData.factura}
-            detalles={facturaData.detalles}
-            cliente={facturaData.cliente}
+            comprobante={comprobanteData.comprobante}
+            detalles={comprobanteData.detalles}
+            cliente={comprobanteData.cliente}
             items={items}
-            folio={facturaData.folio}
-            empresa={facturaData.empresa}
-            tipoFactura={facturaData.tipoFactura}
+            folio={comprobanteData.folio}
+            empresa={comprobanteData.empresa}
+            tipoComprobante={comprobanteData.tipoComprobante}
           />
         );
-      } else if (facturaData.factura.id_tipo_factura == 2) {
+      } else if (tipoC == 1) {
         component = (
-          <InvoiceCreditoPDFComponent
-            factura={facturaData.factura}
-            detalles={facturaData.detalles}
-            cliente={facturaData.cliente}
+          <InvoiceTicketPDFComponent
+            comprobante={comprobanteData.comprobante}
+            detalles={comprobanteData.detalles}
+            cliente={comprobanteData.cliente}
             items={items}
-            folio={facturaData.folio}
-            empresa={facturaData.empresa}
-            tipoFactura={facturaData.tipoFactura}
+            folio={comprobanteData.folio}
+            empresa={comprobanteData.empresa}
+            tipoComprobante={comprobanteData.tipoComprobante}
           />
         );
       } else {
-        throw new Error("Tipo de factura no soportado");
+        throw new Error("Tipo de comprobante no soportado");
       }
 
       const blob = await pdf(component).toBlob();
@@ -197,7 +217,7 @@ export const FacturaPopOverFormSubmittSection = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `factura-${facturaData.factura.codigo_factura}.pdf`;
+      link.download = `comprobante-${comprobanteData.comprobante.codigo_comprobante}.pdf`;
       link.click();
 
       // Limpiar URL
@@ -228,11 +248,11 @@ export const FacturaPopOverFormSubmittSection = () => {
       <Button
         variant="destructive"
         className="col-span-2"
-        onClick={handleGenerarFactura}
+        onClick={handleGenerarComprobante}
         disabled={isDisabled}
       >
         <Printer className="mr-2" />
-        {isLoading ? "Generando..." : "Generar Factura"}
+        {isLoading ? "Generando..." : "Generar Comprobante"}
       </Button>
     </div>
   );

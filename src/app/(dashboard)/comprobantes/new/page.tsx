@@ -1,4 +1,4 @@
-import { NewFacturaComponent } from "@/components/facturas/NewFacturaComponent";
+import { NewComprobanteComponent } from "@/components/comprobantes/NewComprobanteComponent";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // ← Importar authOptions
 import prisma from "@/lib/prisma";
@@ -57,5 +57,5 @@ export default async function NewComprobantePage() {
     );
   }
 
-  return <NewFacturaComponent />;
+  return <NewComprobanteComponent />;
 }
