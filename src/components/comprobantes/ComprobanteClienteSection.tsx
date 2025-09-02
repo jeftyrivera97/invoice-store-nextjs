@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useInvoiceStore } from "@/hooks/store/useInvoiceStore";
 
-export const ComprobantePopOverClienteSection = () => {
+export const ComprobanteClienteSection = () => {
   const { clienteSelected, cliente } = useInvoiceStore(); // Asumiendo que tienes selectedClienteId en el store
   
   const { startLoading: startClienteLoading, data: clientes } = useClienteStore();
@@ -33,7 +33,7 @@ export const ComprobantePopOverClienteSection = () => {
   };
 
   return (
-    <div className="grid grid-cols-3 items-center gap-4">
+    <>
       <Label htmlFor="cliente">*Cliente</Label>
       <Select 
         value={cliente?.id || ""} 
@@ -54,6 +54,6 @@ export const ComprobantePopOverClienteSection = () => {
           </SelectGroup>
         </SelectContent>
       </Select>
-    </div>
+    </>
   );
 };

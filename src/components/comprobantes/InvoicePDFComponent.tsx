@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+import { validateCreateCaja } from "@/helpers";
 
 // ✅ Import correcto - usar destructuring con el nombre exacto
 const { NumerosALetras } = require("numero-a-letras");
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerText: {
-    fontSize: 5,
+    fontSize: 7,
     textAlign: "center",
     marginBottom: "0.5mm",
     lineHeight: 1.2,
@@ -180,6 +181,9 @@ interface InvoicePDFProps {
   folio: any;
   empresa: any;
   tipoComprobante: any;
+  user: any;
+  medioPago: any;
+  cajaActiva: any;
 }
 
 export default function InvoicePDFComponent({
@@ -189,7 +193,10 @@ export default function InvoicePDFComponent({
   items,
   folio,
   empresa,
-  tipoComprobante
+  tipoComprobante,
+  user,
+  medioPago,
+  cajaActiva
 }: InvoicePDFProps) {
   // ✅ Función usando la librería correctamente
   const numeroEnLetras = (numero: number): string => {
@@ -247,9 +254,16 @@ export default function InvoicePDFComponent({
             FACTURA #{comprobante?.codigo_comprobante || "N/A"}
           </Text>
           <Text style={styles.invoiceDate}>
-            {comprobante?.fecha ? formatDate(comprobante.fecha) : "N/A"}
+            Fecha y hora: {comprobante?.fecha ? formatDate(comprobante.fecha) : "N/A"}
           </Text>
-          <Text style={styles.companyInfo}>Comprobante de {tipoComprobante}</Text>
+          <Text style={styles.companyInfo}>Factura de {tipoComprobante}</Text>
+        </View>
+
+        {/* Cajero */}
+        <View style={styles.clientSection}>
+          <Text style={styles.clientText}>Caja: {cajaActiva?.descripcion}</Text>
+          <Text style={styles.clientText}>Cajero: {user?.name}</Text>
+          <Text style={styles.clientText}>Medio de Pago: {medioPago}</Text>
         </View>
 
         {/* Cliente */}
@@ -259,24 +273,6 @@ export default function InvoicePDFComponent({
           </Text>
 
           <Text style={styles.clientText}>RTN: {cliente.codigo_cliente}</Text>
-          <Text style={styles.clientText}>
-            Tel.: {cliente.telefono_cliente}
-          </Text>
-          <Text style={styles.clientText}>Direccion: {cliente.direccion}</Text>
-        </View>
-
-        {/* Correlativo */}
-        <View style={styles.clientSection}>
-          <Text style={styles.clientText}>
-            No. Orden de Compra Exenta:_______
-          </Text>
-
-          <Text style={styles.clientText}>
-            No. Constancia de registro exonerado: _______
-          </Text>
-            <Text style={styles.clientText}>
-            No. de Registro de la SAG: _______
-          </Text>
         </View>
 
         {/* Productos */}
@@ -307,14 +303,18 @@ export default function InvoicePDFComponent({
 
         {/* Totales Simplificados */}
         <View style={styles.totalsSection}>
-          {(comprobante?.exento || 0) > 0 && (
-            <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Importe Exento:</Text>
-              <Text style={styles.totalValue}>
-                {formatCurrency(comprobante.exento || 0)}
-              </Text>
-            </View>
-          )}
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Importe Exento:</Text>
+            <Text style={styles.totalValue}>
+              {formatCurrency(comprobante.exento || 0)}
+            </Text>
+          </View>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Importe Exonerado:</Text>
+            <Text style={styles.totalValue}>
+              {formatCurrency(comprobante.exonerado || 0)}
+            </Text>
+          </View>
 
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Importe Gravado 15%:</Text>
@@ -324,16 +324,29 @@ export default function InvoicePDFComponent({
           </View>
 
           <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Importe Gravado 18%:</Text>
+            <Text style={styles.totalValue}>
+              {formatCurrency(comprobante.gravado18 || 0)}
+            </Text>
+          </View>
+
+          <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>ISV 15%:</Text>
             <Text style={styles.totalValue}>
               {formatCurrency(comprobante.impuesto15 || 0)}
+            </Text>
+          </View>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>ISV 18%:</Text>
+            <Text style={styles.totalValue}>
+              {formatCurrency(comprobante.impuesto18 || 0)}
             </Text>
           </View>
 
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Descuentos Otorgados:</Text>
             <Text style={styles.totalValue}>
-              -{formatCurrency(comprobante.descuentos || 0)}
+              {formatCurrency(comprobante.descuentos || 0)}
             </Text>
           </View>
 
@@ -348,7 +361,7 @@ export default function InvoicePDFComponent({
         {/* Footer Compacto */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            VALOR EN LETRAS: {numeroEnLetras(Number(comprobante?.total || 0))}
+            SON: {numeroEnLetras(Number(comprobante?.total || 0))}
           </Text>
           <Text style={styles.footerText}>
             Fecha Límite de Emisión: {folio?.fecha_limite || ""}
@@ -361,6 +374,20 @@ export default function InvoicePDFComponent({
             al {folio?.codigo_folio || ""}
             {folio?.final || ""}
           </Text>
+
+          <View style={styles.clientSection}>
+            <Text style={styles.footerText}>
+              No. Correlativo de Compra Exenta:_______
+            </Text>
+
+            <Text style={styles.footerText}>
+              No. Correlativo de registro exonerado: _______
+            </Text>
+            <Text style={styles.footerText}>
+              No. de Registro de la SAG: _______
+            </Text>
+          </View>
+
           <Text style={styles.footerText}>Original: Cliente</Text>
           <Text style={styles.footerText}>
             Copia: Obligado Tributario Emisor

@@ -1,9 +1,9 @@
+"use server";
+
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export async function activateCajaById(formData: FormData) {
-  "use server";
-
   const id = formData.get("id");
 
   if (!id || typeof id !== "string") {

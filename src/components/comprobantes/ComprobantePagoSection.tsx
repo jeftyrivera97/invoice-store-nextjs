@@ -22,7 +22,7 @@ import getPagosCategorias from "@/helpers/metodos-pagos/getMetodosPagos";
 import { PagoCategoria } from "@/types/PagoCategorias";
 import getCategoriasComprobantes from "@/helpers/comprobantes/getCategoriasComprobantes";
 
-export const ComprobantePopOverPagoSection = () => {
+export const ComprobantePagoSection = () => {
   const [pagosCategorias, setPagosCategorias] = useState([]);
   const [efectivoValue, setEfectivoValue] = useState("");
   const [localReferencia, setLocalReferencia] = useState("");

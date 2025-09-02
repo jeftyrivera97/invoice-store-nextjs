@@ -12,9 +12,9 @@ import {
 
 
 import { useSelector } from "react-redux";
-import { ComprobantePopOverPagoSection } from "./ComprobantePopOverPagoSection";
-import { ComprobantePopOverClienteSection } from "./ComprobantePopOverClienteSection";
-import { ComprobantePopOverFormSubmittSection } from "./ComprobantePopOverFormSubmittSection";
+import { ComprobantePagoSection } from "./ComprobantePagoSection";
+import { ComprobanteClienteSection } from "./ComprobanteClienteSection";
+import { ComprobanteFormSubmitSection } from "./ComprobanteFormSubmitSection";
 
 
 
@@ -46,9 +46,9 @@ export const ComprobantePopOverComponent = () => {
                 readOnly
               />
             </div>
-            <ComprobantePopOverClienteSection />
-            <ComprobantePopOverPagoSection />
-            <ComprobantePopOverFormSubmittSection />
+            <ComprobanteClienteSection />
+            <ComprobantePagoSection />
+            <ComprobanteFormSubmitSection />
           </div>
         </div>
       </PopoverContent>

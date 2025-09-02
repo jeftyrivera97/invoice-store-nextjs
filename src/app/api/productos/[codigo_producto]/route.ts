@@ -16,7 +16,8 @@ export async function GET(
   { params }: { params: { codigo_producto: string } }
 ) {
   try {
-    const { codigo_producto } = params;
+    const resolvedParams = await params;
+    const { codigo_producto } = resolvedParams;
     const producto = await prisma.productos.findFirst({
       where: { codigo_producto },
       include: {

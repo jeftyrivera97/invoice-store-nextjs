@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+
 
 interface CreateFolioType {
   codigo: string;
@@ -59,7 +59,7 @@ export async function createNewFolio({
     redirect("/folios/new?error=Error al crear el folio");
   }
 
-  revalidatePath("/folios/new");
+
   redirect(
     "/folios/new?success=Exito en la operacion. Ahora puede ingresar Facturas con este Folio."
   );

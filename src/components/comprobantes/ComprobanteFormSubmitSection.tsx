@@ -11,12 +11,9 @@ import { useInvoiceStore } from "@/hooks/store/useInvoiceStore";
 import toast, { Toaster } from "react-hot-toast";
 import { pdf } from "@react-pdf/renderer";
 import InvoicePDFComponent from "./InvoicePDFComponent"; // ✅ Ajustar ruta
-import { getEmpresa } from "@/helpers";
-import { clientes } from "../../generated/prisma/index";
-import InvoiceCreditoPDFComponent from "./InvoiceCreditoPDFComponent";
 import InvoiceTicketPDFComponent from "./InvoiceTicketPDFComponent";
 
-export const ComprobantePopOverFormSubmittSection = () => {
+export const ComprobanteFormSubmitSection = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Obtener TODOS los datos del store
@@ -184,6 +181,7 @@ export const ComprobantePopOverFormSubmittSection = () => {
 
       let component;
       if (tipoC != 1) {
+        console.log(comprobanteData.comprobante);
         component = (
           <InvoicePDFComponent
             comprobante={comprobanteData.comprobante}
@@ -193,6 +191,9 @@ export const ComprobantePopOverFormSubmittSection = () => {
             folio={comprobanteData.folio}
             empresa={comprobanteData.empresa}
             tipoComprobante={comprobanteData.tipoComprobante}
+            user={user}
+            medioPago={comprobanteData.medioPago}
+            cajaActiva={comprobanteData.cajaActiva}
           />
         );
       } else if (tipoC == 1) {

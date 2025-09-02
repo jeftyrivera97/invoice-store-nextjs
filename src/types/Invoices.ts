@@ -23,6 +23,8 @@ export interface InvoiceItem {
   exento: number;
   exonerado: number;
   total_linea: number;
+  total_lineaUSD: number;
+  total_lineaEUR: number;
 }
 
 export interface InvoiceState {
@@ -46,6 +48,10 @@ export interface InvoiceState {
   descuento: number;
   subtotal: number;
   total: number;
+  totalUSD: number;
+  totalEUR: number;
+  cambioDolar: number;
+  cambioEuro: number;
   loading: boolean;
   status: string;
   errorMessage: string | undefined;

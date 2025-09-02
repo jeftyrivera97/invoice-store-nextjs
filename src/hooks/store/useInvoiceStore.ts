@@ -14,6 +14,7 @@ import {
   onReferenciaFill,
   onInvoiceClean,
   onCategoriaComprobanteSelection,
+  onCurrencyLoad,
 } from "@/store/invoice/invoiceSlice";
 
 import { 
@@ -35,6 +36,10 @@ export const useInvoiceStore = () => {
     metodo_pago,
     categoria_comprobante,
     referencia,
+    totalEUR,
+    totalUSD,
+    cambioDolar,
+    cambioEuro,
   } = useSelector((state: RootState) => state.invoice);
 
   const dispatch = useDispatch();
@@ -49,7 +54,6 @@ export const useInvoiceStore = () => {
       const response = await fetch(`/api/productos/${codigo_producto}`);
       const { data } = await response.json();
 
-      // Aquí puedes construir el objeto ItemInvoice según tu interfaz
       const itemInvoice = {
         id: data.id,
         precio_venta: data.precio_venta,
@@ -64,6 +68,8 @@ export const useInvoiceStore = () => {
         exento: (data.exento ?? 0) * cantidad,
         exonerado: (data.exonerado ?? 0) * cantidad,
         total_linea: data.precio_venta * cantidad, // o la lógica que necesites
+        total_lineaUSD: data.precio_venta * cantidad / cambioDolar,
+        total_lineaEUR: data.precio_venta * cantidad / cambioEuro,
       };
 
       dispatch(onAddToInvoice(itemInvoice));
@@ -108,6 +114,34 @@ export const useInvoiceStore = () => {
     dispatch(onInvoiceClean());
   };
 
+    const startCurrencyLoading = async (): Promise<void> => {
+  
+   
+      try {
+
+    // Obtener tipos de cambio desde la API
+      const currencyResponse = await fetch('/api/currency');
+      const currencyData = await currencyResponse.json();
+      
+      // Buscar dólar y euro en los datos obtenidos
+      const dolar = currencyData.data?.find((curr: any) => curr.id === "1");
+      const euro = currencyData.data?.find((curr: any) => curr.id === "2");
+
+      const cambioDolar = Number(dolar?.venta || 1);
+      const cambioEuro = Number(euro?.venta || 1);
+      dispatch(onCurrencyLoad({ cambioDolar, cambioEuro }));
+
+    }  catch (error: any) {
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          "Error desconocido al cargar los datos";
+  
+        console.error("❌ Error en startLoading:", errorMessage);
+        dispatch(onInvoiceError(errorMessage));
+      }
+    };
+
   return {
     // Propiedades
     errorMessage,
@@ -121,6 +155,9 @@ export const useInvoiceStore = () => {
     metodo_pago,
     referencia,
     categoria_comprobante,
+    totalEUR,
+    totalUSD,
+    
     // Métodos
     fetchProductoByCodigo,
     applyDiscount, // <-- Exporta el método
@@ -130,5 +167,6 @@ export const useInvoiceStore = () => {
     referenciaFill,
     cleanInvoice,
     categoriaComprobanteSelected,
+    startCurrencyLoading,
   };
 };

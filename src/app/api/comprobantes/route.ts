@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { cajas_movimientos } from '../../../generated/prisma/index';
 
 // Función para convertir BigInt a string
 function convertBigIntToString(obj: any): any {
@@ -241,6 +242,13 @@ export async function POST(request: NextRequest) {
 
       const tipoComprobante = tipos_comprobantes?.descripcion;
 
+      const idMPG = Number(comprobante_pagos.id_metodo_pago);
+      const medio_pago = await tx.metodos_pagos.findUnique({
+        where: { id: BigInt(idMPG) },
+      });
+
+      const medioPago = medio_pago?.descripcion;
+
       // Si no es un ticket, se registra un folio
       if (id_categoria_comprobante != 1) {
         const folioComprobante = await tx.comprobantes_folios.create({
@@ -309,6 +317,18 @@ export async function POST(request: NextRequest) {
         },
       });
 
+    
+      const idSesion = Number(caja_movimiento.id_sesion);
+      const sesionActiva = await tx.cajas_sesiones.findFirst({
+        where: { id: BigInt(idSesion) },
+      });
+
+      const cajaActivaId = Number(sesionActiva?.id_caja);
+
+      const cajaActiva = await tx.cajas.findFirst({
+        where: {id: BigInt(cajaActivaId)},
+      });
+
       return {
         comprobante: nuevaComprobante,
         detalles: detallesComprobante,
@@ -322,6 +342,8 @@ export async function POST(request: NextRequest) {
         folio: folio,
         tipoComprobante: tipoComprobante,
         id_categoria_comprobante: id_categoria_comprobante,
+        medioPago: medioPago,
+        cajaActiva: cajaActiva,
       };
     });
 

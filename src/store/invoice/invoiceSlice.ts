@@ -26,6 +26,10 @@ const initialState: InvoiceState = {
   descuento: 0,
   subtotal: 0,
   total: 0,
+  totalUSD: 0,
+  totalEUR: 0,
+  cambioDolar: 1,
+  cambioEuro: 1,
   cliente: {
     id: "",
     codigo_cliente: "",
@@ -35,7 +39,7 @@ const initialState: InvoiceState = {
     id_estado: "",
     id_usuario: "",
     created_at: "",
-    updated_at:  "",
+    updated_at: "",
     deleted_at: null,
   },
   tipo_comprobante: {
@@ -48,9 +52,9 @@ const initialState: InvoiceState = {
     deleted_at: null,
   },
   estado_comprobante: {
-    id:          "",
+    id: "",
     descripcion: "",
-    deleted_at:  null,
+    deleted_at: null,
   },
   metodo_pago: {
     id: "",
@@ -97,6 +101,8 @@ export const invoiceSlice = createSlice({
         existing.exento += action.payload.exento;
         existing.exonerado += action.payload.exonerado;
         existing.total_linea += action.payload.total_linea;
+        existing.total_lineaUSD += action.payload.total_lineaUSD;
+        existing.total_lineaEUR += action.payload.total_lineaEUR;
       } else {
         state.items.push(action.payload);
       }
@@ -133,7 +139,15 @@ export const invoiceSlice = createSlice({
       // Aplica el descuento si existe
       const descuentoOtorgado =
         state.subtotal * (state.porcentajeDescuento / 100);
+
       state.total = state.subtotal - descuentoOtorgado;
+
+      const totalDolar = state.total / state.cambioDolar;
+      const totalEuro = state.total / state.cambioEuro;
+
+      state.totalUSD = totalDolar;
+      state.totalEUR = totalEuro;
+
       state.descuento = descuentoOtorgado;
       if (state.total < 0) state.total = 0;
 
@@ -154,56 +168,20 @@ export const invoiceSlice = createSlice({
       const descuentoOtorgado = subtotal * (state.porcentajeDescuento / 100);
       state.total = subtotal - descuentoOtorgado;
       state.descuento = descuentoOtorgado;
+
+      const totalDolar = state.total / state.cambioDolar;
+      const totalEuro = state.total / state.cambioEuro;
+
+      state.totalUSD = totalDolar;
+      state.totalEUR = totalEuro;
+
       if (state.total < 0) state.total = 0;
     },
 
     onInvoiceError: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.status = "not-loaded";
+      Object.assign(state, initialState);
       state.errorMessage = action.payload;
-      state.items = [];
-      state.counter = 0;
-      state.gravado15 = 0;
-      state.impuesto18 = 0;
-      state.exento = 0;
-      state.exonerado = 0;
-      state.cliente = {
-        id: "",
-        codigo_cliente: "",
-        descripcion: "",
-        direccion: "",
-        telefono: "",
-        id_estado: "",
-        id_usuario: "",
-        created_at: "",
-        updated_at:  "",
-        deleted_at: null,
-      };
-      state.tipo_comprobante = {
-        id: "",
-        descripcion: "",
-        id_estado: "",
-        id_usuario: "",
-        created_at:  "",
-        updated_at:  "",
-        deleted_at: null,
-      };
-       state.categoria_comprobante = {
-        id: "",
-        descripcion: "",
-        id_estado: "",
-        id_usuario: "",
-        created_at:  "",
-        updated_at:  "",
-        deleted_at: null,
-      };
-      state.estado_comprobante = {
-        id: "",
-        descripcion: "",
-        deleted_at: null,
-      };
-      state.referencia = "";
-      state.comentario = "";
+      state.status = "error";
     },
 
     onRecalculateTotals: (state) => {
@@ -235,11 +213,18 @@ export const invoiceSlice = createSlice({
         (acc, item) => acc + (item.total_linea ?? 0),
         0
       );
+
       // Aplica el descuento si existe
       const descuentoOtorgado =
         state.subtotal * (state.porcentajeDescuento / 100);
       state.total = state.subtotal - descuentoOtorgado;
       state.descuento = descuentoOtorgado;
+
+      const totalDolar = state.total / state.cambioDolar;
+      const totalEuro = state.total / state.cambioEuro;
+
+      state.totalUSD = totalDolar;
+      state.totalEUR = totalEuro;
       if (state.total < 0) state.total = 0;
       state.counter = state.items.length;
     },
@@ -254,11 +239,6 @@ export const invoiceSlice = createSlice({
           (item) => item.codigo_producto !== codigo_producto
         );
         state.counter = state.items.length;
-        // Recalcular totales
-        state.gravado15 = state.items.reduce(
-          (acc, item) => acc + (item.gravado15 ?? 0),
-          0
-        );
       }
     },
     onClienteSelection: (state, action: PayloadAction<InvoiceCliente>) => {
@@ -286,6 +266,14 @@ export const invoiceSlice = createSlice({
     onInvoiceClean: (state) => {
       Object.assign(state, initialState);
     },
+    onCurrencyLoad: (
+      state,
+      action: PayloadAction<{ cambioDolar: number; cambioEuro: number }>
+    ) => {
+      const { cambioDolar, cambioEuro } = action.payload;
+      state.cambioDolar = cambioDolar;
+      state.cambioEuro = cambioEuro;
+    },
   },
 });
 
@@ -302,6 +290,7 @@ export const {
   onReferenciaFill,
   onInvoiceClean,
   onCategoriaComprobanteSelection,
+  onCurrencyLoad,
 } = invoiceSlice.actions;
 
 export default invoiceSlice.reducer;

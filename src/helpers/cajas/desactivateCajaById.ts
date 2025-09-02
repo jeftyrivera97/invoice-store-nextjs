@@ -1,8 +1,9 @@
+  "use server";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export async function desactivateCajaById(formData: FormData) {
-  "use server";
+
 
   const id = formData.get("id");
 
