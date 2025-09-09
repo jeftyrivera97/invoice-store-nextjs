@@ -21,12 +21,6 @@ export default async function NewComprobantePage() {
     },
   });
 
-  const folio = await prisma.folios.findFirst({
-    where: {
-      id_estado: BigInt(1),
-    },
-  });
-
   if (!sesion) {
     return (
       <RestriccionComponent
@@ -37,25 +31,6 @@ export default async function NewComprobantePage() {
     );
   }
 
-  if (!folio) {
-    return (
-      <RestriccionComponent
-        title="No hay folios disponibles"
-        description="Dirigase a Folios para administrar un nuevo folio."
-        instruction="Debe activar o crear un nuevo folio."
-      />
-    );
-  }
-
-  if (folio.actual == folio.final) {
-    return (
-      <RestriccionComponent
-        title="El folio de facturacion activo ya alcanzo su limite"
-        description="Dirigase a Folios para administrar un nuevo folio."
-        instruction="Debe activar o crear un nuevo folio."
-      />
-    );
-  }
 
   return <NewComprobanteComponent />;
 }

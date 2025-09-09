@@ -7,7 +7,6 @@ export * from "./comprobantes/NewComprobanteComponent";
 export * from "./comprobantes/ComprobanteImpuestosSection";
 export * from "./comprobantes/ComprobanteItemsTable";
 export * from "./comprobantes/ComprobanteProductAddComponent";
-export * from "./comprobantes/ComprobantePopOverComponent";
 export * from "./comprobantes/ComprobantePagoSection";
 export * from "./comprobantes/ComprobanteClienteSection";
 export * from "./comprobantes/ComprobanteFormSubmitSection";
@@ -30,3 +29,4 @@ export * from './comprobantes/ComprobantePagosComponent';
 export * from './comprobantes/ComprobantePagosTotal';
 export * from './comprobantes/ComprobanteCurrencySection';
 export * from './comprobantes/ComprobanteTotalesSection';
+export * from './comprobantes/ComprobanteRefreshProductButton'

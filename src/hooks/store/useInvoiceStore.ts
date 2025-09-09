@@ -48,10 +48,18 @@ export const useInvoiceStore = () => {
   const fetchProductoByCodigo = async (
     codigo_producto: string,
     cantidad: number = 1
-  ): Promise<void> => {
+  ): Promise<{ success: boolean; message?: string }> => {
     dispatch(onInvoiceLoading());
     try {
       const response = await fetch(`/api/productos/${codigo_producto}`);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          dispatch(onInvoiceError("Producto no encontrado"));
+          return { success: false, message: `Producto con código ${codigo_producto} no encontrado` };
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const { data } = await response.json();
 
       const itemInvoice = {
@@ -73,10 +81,12 @@ export const useInvoiceStore = () => {
       };
 
       dispatch(onAddToInvoice(itemInvoice));
+      return { success: true };
     } catch (error: any) {
       const errorMessage =
         error?.message || "Error desconocido al cargar el producto";
       dispatch(onInvoiceError(errorMessage));
+      return { success: false, message: errorMessage };
     }
   };
 

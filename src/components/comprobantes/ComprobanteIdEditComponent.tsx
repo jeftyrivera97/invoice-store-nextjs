@@ -1,4 +1,3 @@
-import { getComprobanteById } from "@/helpers";
 
 import {
   Card,
@@ -14,8 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-import { ArrowLeftIcon, CheckCircle } from "lucide-react";
+import { ArrowLeftIcon, CheckCircle, AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
 
 import {
   Table,
@@ -27,11 +25,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { InvoiceDetail, InvoiceItem } from "@/types";
-import {
-  AlertCircleIcon,
-  CheckCircle2Icon,
-} from "lucide-react";
+import { InvoiceDetail } from "@/types";
+import { editComprobanteById, getComprobanteById } from "@/helpers";
 
 export const ComprobanteIdEditComponent = async ({
   params,
@@ -43,6 +38,13 @@ export const ComprobanteIdEditComponent = async ({
   const resolvedParams = await params;
   const { data, detalles } = await getComprobanteById(Number(resolvedParams.id));
   console.log(data);
+
+  const handleUpdate = async () => {
+    "use server";
+    await editComprobanteById({
+      comprobanteId: Number(resolvedParams.id),
+    });
+  };
 
   return (
     <>
@@ -277,10 +279,12 @@ export const ComprobanteIdEditComponent = async ({
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" variant="destructive">
-            <CheckCircle className="mr-2" />
-            Pagar Comprobante
-          </Button>
+          <form action={handleUpdate} className="w-full">
+            <Button type="submit" className="w-full" variant="destructive">
+              <CheckCircle className="mr-2" />
+              Pagar Comprobante
+            </Button>
+          </form>
         </CardFooter>
       </Card>
     </>

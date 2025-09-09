@@ -22,3 +22,4 @@ export * from './cajas/activateCajaById'
 export * from './comprobantes/getComprobanteById'
 export * from './comprobantes/getComprobantes'
 export * from './comprobantes/getCategoriasComprobantes';
+export * from './comprobantes/editComprobanteById';

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { cajas_movimientos } from '../../../generated/prisma/index';
+import { cajas_movimientos } from "../../../generated/prisma/index";
 
 // Función para convertir BigInt a string
 function convertBigIntToString(obj: any): any {
@@ -62,24 +62,26 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    if (!sesion) {
-      throw new Error("No hay una sesión abierta para el usuario");
-    }
-
     const folios = await prisma.folios.findFirst({
       where: {
         id_estado: BigInt(1),
       },
     });
 
-    if (!folios) {
-      throw new Error("No hay un folio activo");
+    if (!sesion) {
+      throw new Error("No hay una sesión abierta para el usuario");
     }
 
-    if (folios.actual == folios.final) {
-      throw new Error(
-        "El folio actual ha alcanzado su límite. Debe crear un nuevo folio"
-      );
+    if (id_categoria_comprobante == 2) {
+      if (!folios) {
+        throw new Error("No hay un folio activo para crear una factura");
+      }
+
+      if (folios.actual == folios.final) {
+        throw new Error(
+          "El folio actual ha alcanzado su límite. Debe crear un nuevo folio"
+        );
+      }
     }
 
     // Usar transacción para asegurar consistencia
@@ -92,13 +94,36 @@ export async function POST(request: NextRequest) {
         metodos_pagos?.id_tipo_operacion || "1"
       );
 
+      let numeroFactura = "N/A";
+      let tipoPago = 1;
+      let estadoComprobante = 1;
+
+      if (id_categoria_comprobante == 2 && id_metodo_pago !== 1) {
+        numeroFactura = await generarNumeroComprobante(tx);
+        tipoPago = 1;
+        estadoComprobante = 3; // Emitido y pagado
+      }
+
+      if (id_categoria_comprobante == 1 && id_metodo_pago !== 1) {
+        numeroFactura = `TICKET-${Date.now()}`;
+        tipoPago = 1;
+        estadoComprobante = 3; // Emitido y pagado
+      }
+
+      if (id_categoria_comprobante == 1 && id_metodo_pago == 1) {
+        numeroFactura = `CREDITO-${Date.now()}`;
+        tipoPago = 2;
+        estadoComprobante = 2; // Solo registrado y  no pagado
+      }
+
+      if (id_categoria_comprobante !== 1 && id_metodo_pago == 1) {
+        throw new Error("No se puede emitir factura a crédito");
+      }
+
       // 1. Crear el comprobante
       const nuevaComprobante = await tx.comprobantes.create({
         data: {
-          codigo_comprobante:
-            id_categoria_comprobante != 1
-              ? await generarNumeroComprobante(tx)
-              : `TICKET-${Date.now()}`, // ← Usar codigo_comprobante
+          codigo_comprobante: numeroFactura,
           fecha: new Date(),
           fecha_hora: new Date(),
           fecha_vencimiento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -113,9 +138,9 @@ export async function POST(request: NextRequest) {
           descuentos: parseFloat(descuentos) || 0,
           subtotal: parseFloat(subtotal) || 0,
           total: parseFloat(total) || 0,
-          id_categoria: id_categoria_comprobante,
-          id_tipo_comprobante: BigInt(1),
-          id_estado_comprobante: BigInt(3),
+          id_categoria: BigInt(id_categoria_comprobante),
+          id_tipo_comprobante: BigInt(tipoPago),
+          id_estado_comprobante: BigInt(estadoComprobante),
           id_estado: BigInt(1),
           created_at: new Date(),
           updated_at: new Date(),
@@ -152,6 +177,7 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      // 4. Crear la informacion del Pago del comprobante
       const comprobante_pagos = await tx.comprobantes_pagos.create({
         data: {
           id_comprobante: nuevaComprobante.id,
@@ -205,7 +231,7 @@ export async function POST(request: NextRequest) {
         venta_pago_link +
         venta_cheque;
 
-      // 4. Actualizar el saldo de la sesión
+      // 5. Actualizar el saldo de la sesión
       const caja_sesion = await tx.cajas_sesiones.update({
         where: { id: sesion.id, id_estado_sesion: BigInt(1) },
         data: {
@@ -221,6 +247,7 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // Busqueda de datos para los comprobantes
       const cliente = await tx.clientes.findUnique({
         where: { id: BigInt(id_cliente) },
       });
@@ -249,20 +276,24 @@ export async function POST(request: NextRequest) {
 
       const medioPago = medio_pago?.descripcion;
 
-      // Si no es un ticket, se registra un folio
-      if (id_categoria_comprobante != 1) {
+      // Si es una factura 6. Crear un Folio Comprobante
+      if (id_categoria_comprobante == 2) {
+        if (!folios) {
+          throw new Error("No se encontró un folio válido para la factura");
+        }
+
         const folioComprobante = await tx.comprobantes_folios.create({
           data: {
             id_comprobante: nuevaComprobante.id,
             id_folio: folios.id,
             id_estado: BigInt(1),
             id_usuario: BigInt(id_usuario),
-
             created_at: new Date(),
             updated_at: new Date(),
           },
         });
 
+        // Si es factura, 7. Actualizar el numero de folio
         await tx.folios.update({
           where: { id: BigInt(folios.id) },
           data: {
@@ -274,7 +305,7 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Si es de contado, se registra un movimiento de caja y venta
+      // 8. Registrar movimiento de caja
 
       const caja_movimiento = await tx.cajas_movimientos.create({
         data: {
@@ -283,13 +314,47 @@ export async function POST(request: NextRequest) {
           id_categoria: 1, // Ingreso
           id_medio: id_metodo_pago,
           monto: total,
-          descripcion: id_categoria_comprobante == 1 ? "Pago de ticket" : "Pago de Factura",
+          descripcion:
+            id_categoria_comprobante == 1
+              ? "Pago de ticket"
+              : "Pago de Factura",
           id_estado: 1,
           id_usuario: BigInt(id_usuario),
           created_at: new Date(),
           updated_at: new Date(),
         },
       });
+
+      // Encontrar datos de la caja y sesion
+      const idSesion = Number(caja_movimiento.id_sesion);
+      const sesionActiva = await tx.cajas_sesiones.findFirst({
+        where: { id: BigInt(idSesion) },
+      });
+
+      const cajaActivaId = Number(sesionActiva?.id_caja);
+
+      const cajaActiva = await tx.cajas.findFirst({
+        where: { id: BigInt(cajaActivaId) },
+      });
+
+      // Si es credito, no se genera venta y ingreso y retorna antes
+
+      if (id_categoria_comprobante == 1 && id_metodo_pago == 1) {
+        return {
+          comprobante: nuevaComprobante,
+          detalles: detallesComprobante,
+          pagos: comprobante_pagos,
+          sesion: caja_sesion,
+          cliente: cliente,
+          empresa: empresa,
+          tipoComprobante: tipoComprobante,
+          id_categoria_comprobante: id_categoria_comprobante,
+          medioPago: medioPago,
+          cajaActiva: cajaActiva,
+        };
+      }
+
+      // 9. Crear venta
 
       const venta = await tx.ventas.create({
         data: {
@@ -304,6 +369,8 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // 10. Crear Ingreso
+
       const ingreso = await tx.ingresos.create({
         data: {
           descripcion: "Ingreso por venta de productos",
@@ -317,34 +384,37 @@ export async function POST(request: NextRequest) {
         },
       });
 
-    
-      const idSesion = Number(caja_movimiento.id_sesion);
-      const sesionActiva = await tx.cajas_sesiones.findFirst({
-        where: { id: BigInt(idSesion) },
-      });
-
-      const cajaActivaId = Number(sesionActiva?.id_caja);
-
-      const cajaActiva = await tx.cajas.findFirst({
-        where: {id: BigInt(cajaActivaId)},
-      });
-
-      return {
-        comprobante: nuevaComprobante,
-        detalles: detallesComprobante,
-        pagos: comprobante_pagos,
-        sesion: caja_sesion,
-        movimiento: caja_movimiento,
-        venta: venta,
-        ingreso: ingreso,
-        cliente: cliente,
-        empresa: empresa,
-        folio: folio,
-        tipoComprobante: tipoComprobante,
-        id_categoria_comprobante: id_categoria_comprobante,
-        medioPago: medioPago,
-        cajaActiva: cajaActiva,
-      };
+      if (id_categoria_comprobante == 1 && id_metodo_pago !== 1) {
+        return {
+          comprobante: nuevaComprobante,
+          detalles: detallesComprobante,
+          pagos: comprobante_pagos,
+          sesion: caja_sesion,
+          cliente: cliente,
+          empresa: empresa,
+          tipoComprobante: tipoComprobante,
+          id_categoria_comprobante: id_categoria_comprobante,
+          medioPago: medioPago,
+          cajaActiva: cajaActiva,
+        };
+      } else {
+        return {
+          comprobante: nuevaComprobante,
+          detalles: detallesComprobante,
+          pagos: comprobante_pagos,
+          sesion: caja_sesion,
+          movimiento: caja_movimiento,
+          venta: venta,
+          ingreso: ingreso,
+          cliente: cliente,
+          empresa: empresa,
+          folio: folio,
+          tipoComprobante: tipoComprobante,
+          id_categoria_comprobante: id_categoria_comprobante,
+          medioPago: medioPago,
+          cajaActiva: cajaActiva,
+        };
+      }
     });
 
     console.log("Comprobante creada exitosamente:", result.comprobante.id);
@@ -397,6 +467,114 @@ async function generarNumeroComprobante(tx: any): Promise<string> {
     // Si hay error, generar uno basado en timestamp
     const timestamp = Date.now().toString().slice(-5);
     return `FAC-${timestamp}`;
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    console.log("Datos recibidos para actualizar comprobante:", body);
+    console.log("ID del comprobante a actualizar:", id);
+
+    if (!id) {
+      return NextResponse.json(
+        {
+          error: "ID del comprobante es requerido",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Verificar que el comprobante existe
+    const comprobanteExistente = await prisma.comprobantes.findUnique({
+      where: { id: BigInt(id) },
+    });
+
+    if (!comprobanteExistente) {
+      return NextResponse.json(
+        {
+          error: "Comprobante no encontrado",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Usar transacción para asegurar consistencia
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Actualizar el comprobante principal
+      await tx.comprobantes.update({
+        where: { id: BigInt(id) },
+        data: {
+          codigo_comprobante: `TICKET-${Date.now()}`,
+          id_tipo_comprobante: 1,
+          id_categoria: 1,
+          id_estado_comprobante: 3,
+          updated_at: new Date(),
+        },
+      });
+
+      const comprobante = await tx.comprobantes.findUnique({
+        where: { id: BigInt(id) },
+        include: {
+          clientes: true,
+          categorias_comprobantes: true,
+          tipos_comprobantes: true,
+          estados_comprobantes: true,
+          estados: true,
+          users: true,
+          comprobantes_detalles: true,
+        },
+      });
+
+      const comprobantePago = await tx.comprobantes_pagos.findFirst({
+        where: { id_comprobante: BigInt(id) },
+      });
+
+      await tx.comprobantes_pagos.update({
+        where: { id: comprobantePago?.id },
+        data: {
+          id_metodo_pago: 2,
+          fecha_hora: new Date(),
+          comentario: "Pagado con Efectivo",
+          updated_at: new Date(),
+        },
+      });
+
+      return comprobante;
+    });
+
+    console.log("Comprobante actualizado exitosamente:", result?.id);
+
+    // Convertir BigInt a string para la respuesta
+    const comprobanteResponse = convertBigIntToString(result);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Comprobante actualizado exitosamente",
+        data: comprobanteResponse,
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error(
+      "Error al actualizar comprobante:",
+      error.message,
+      error.stack
+    );
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message || "Error interno del servidor",
+        details:
+          process.env.NODE_ENV === "development" ? error.stack : undefined,
+      },
+      { status: 500 }
+    );
   }
 }
 

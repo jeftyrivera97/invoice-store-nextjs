@@ -53,6 +53,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: "0.5mm",
   },
+  // SIN VALOR FISCAL - Elemento clave
+  fiscalWarning: {
+    fontSize: 6,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: "1mm",
+    color: "#000",
+    backgroundColor: "#f0f0f0",
+    padding: "1mm",
+    borderWidth: 0.5,
+    borderColor: "#000",
+  },
   // Cliente
   clientSection: {
     marginBottom: "2mm",
@@ -177,7 +189,6 @@ interface InvoicePDFProps {
   detalles: any[];
   cliente: any;
   items: any[];
-  folio: any;
   empresa: any;
   tipoComprobante: any;
 }
@@ -187,9 +198,8 @@ export default function InvoiceCreditoPDFComponent({
   detalles,
   cliente,
   items,
-  folio,
   empresa,
-  tipoComprobante,
+  tipoComprobante
 }: InvoicePDFProps) {
   // ✅ Función usando la librería correctamente
   const numeroEnLetras = (numero: number): string => {
@@ -226,36 +236,29 @@ export default function InvoiceCreditoPDFComponent({
         {/* Header Compacto */}
         <View style={styles.header}>
           <Text style={styles.companyName}>
-            {empresa?.descripcion || "Empresa"}
-          </Text>
-          <Text style={styles.companyInfo}>{empresa?.razon_social || ""}</Text>
-          <Text style={styles.companyInfo}>
-            RTN: {empresa?.codigo_empresa || ""}
+            {empresa?.descripcion}
           </Text>
           <Text style={styles.companyInfo}>{empresa?.direccion || ""}</Text>
           <Text style={styles.companyInfo}>Tel. {empresa?.telefono || ""}</Text>
-          <Text style={styles.companyInfo}>Cel. {empresa?.celular || ""}</Text>
-          <Text style={styles.companyInfo}>
-            Correo: {empresa?.correo || ""}
-          </Text>
-          
         </View>
 
-        {/* Info de Ticket */}
+        {/* Info de Comprobante */}
         <View style={styles.invoiceHeader}>
           <Text style={styles.invoiceNumber}>
-            TICKET #{comprobante?.codigo_comprobante || "N/A"}
+            {comprobante?.codigo_comprobante || "N/A"}
           </Text>
           <Text style={styles.invoiceDate}>
             {comprobante?.fecha ? formatDate(comprobante.fecha) : "N/A"}
           </Text>
           <Text style={styles.companyInfo}>Ticket de {tipoComprobante}</Text>
+          
+           <Text style={styles.thanksText}>*SIN VALOR FISCAL*</Text>
         </View>
 
         {/* Cliente */}
         <View style={styles.clientSection}>
           <Text style={styles.clientText}>
-            Cliente: {cliente?.descripcion || "CONSUMIDOR FINAL"}
+            Comprador: PARTICULAR
           </Text>
         </View>
 
@@ -287,9 +290,8 @@ export default function InvoiceCreditoPDFComponent({
 
         {/* Totales Simplificados */}
         <View style={styles.totalsSection}>
-    
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Descuentos Otorgados:</Text>
+            <Text style={styles.totalLabel}>Descuentos:</Text>
             <Text style={styles.totalValue}>
               -{formatCurrency(comprobante.descuentos || 0)}
             </Text>
@@ -308,8 +310,10 @@ export default function InvoiceCreditoPDFComponent({
           <Text style={styles.footerText}>
             VALOR EN LETRAS: {numeroEnLetras(Number(comprobante?.total || 0))}
           </Text>
-      
-          <Text style={styles.thanksText}>¡GRACIAS POR SU COMPRA!</Text>
+          <Text style={styles.thanksText}>¡Gracias por su compra!</Text>
+          <Text style={styles.thanksText}>*Sin valor fiscal*</Text>
+          <Text style={styles.thanksText}>*No hay devoluciones*</Text>
+          <Text style={styles.thanksText}>TICKET DE CREDITO</Text>
         </View>
       </Page>
     </Document>

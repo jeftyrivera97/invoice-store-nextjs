@@ -6,13 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { PlusCircleIcon } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ComprobanteRefreshProductButton } from "./ComprobanteRefreshProductButton";
 
 export const ComprobanteProductAddComponent = () => {
   const { fetchProductoByCodigo, applyDiscount } = useInvoiceStore();
@@ -21,10 +24,20 @@ export const ComprobanteProductAddComponent = () => {
   const [cantidad, setCantidad] = useState(1);
   const codigoProductoRef = useRef<HTMLInputElement>(null);
 
-  const onAddInvoiceButon = () => {
+  const onAddInvoiceButon = async () => {
     if (codigoProducto.trim()) {
-      fetchProductoByCodigo(codigoProducto, cantidad);
-      setCodigoProducto(""); 
+      const result = await fetchProductoByCodigo(codigoProducto, cantidad);
+
+      if (!result.success) {
+        toast.error(result.message || `Producto con código ${codigoProducto} no encontrado`, {
+          duration: 2500,
+          icon: "❌",
+        });
+        return; // No limpiar los campos si hay error
+      }
+
+      // Solo limpiar y resetear si el producto se agregó correctamente
+      setCodigoProducto("");
       setCantidad(1);
       applyDiscount(0);
 
@@ -34,9 +47,9 @@ export const ComprobanteProductAddComponent = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = async (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      onAddInvoiceButon();
+      await onAddInvoiceButon();
     }
   };
 
@@ -44,9 +57,10 @@ export const ComprobanteProductAddComponent = () => {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>Agregar Productos</CardTitle>
-        <CardDescription>
-          Ingrese cantidad y codigo de producto
-        </CardDescription>
+        <CardDescription>Ingrese cantidad y codigo de producto</CardDescription>
+        <CardAction>
+          <ComprobanteRefreshProductButton />
+        </CardAction>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

@@ -189,7 +189,6 @@ interface InvoicePDFProps {
   detalles: any[];
   cliente: any;
   items: any[];
-  folio: any;
   empresa: any;
   tipoComprobante: any;
 }
@@ -199,7 +198,6 @@ export default function InvoiceTicketPDFComponent({
   detalles,
   cliente,
   items,
-  folio,
   empresa,
   tipoComprobante
 }: InvoicePDFProps) {

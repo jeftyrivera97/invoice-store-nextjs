@@ -12,6 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { pdf } from "@react-pdf/renderer";
 import InvoicePDFComponent from "./InvoicePDFComponent"; // ✅ Ajustar ruta
 import InvoiceTicketPDFComponent from "./InvoiceTicketPDFComponent";
+import InvoiceCreditoPDFComponent from "./InvoiceCreditoPDFComponent";
 
 export const ComprobanteFormSubmitSection = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -177,11 +178,12 @@ export const ComprobanteFormSubmitSection = () => {
       console.log("Generando PDF con datos:", comprobanteData);
 
       const tipoC = comprobanteData.id_categoria_comprobante;
+      const tipoP = comprobanteData.pagos.id_metodo_pago;
       console.log("ID Categoria Comprobante a PDF:", tipoC);
+      console.log("TIPO COMPROBANTE: ", tipoC, "TIPO PAGO: ", tipoP);
 
       let component;
-      if (tipoC != 1) {
-        console.log(comprobanteData.comprobante);
+      if (tipoC == 2) {
         component = (
           <InvoicePDFComponent
             comprobante={comprobanteData.comprobante}
@@ -196,14 +198,24 @@ export const ComprobanteFormSubmitSection = () => {
             cajaActiva={comprobanteData.cajaActiva}
           />
         );
-      } else if (tipoC == 1) {
+      } else if (tipoC == 1 && tipoP != 1) {
         component = (
           <InvoiceTicketPDFComponent
             comprobante={comprobanteData.comprobante}
             detalles={comprobanteData.detalles}
             cliente={comprobanteData.cliente}
             items={items}
-            folio={comprobanteData.folio}
+            empresa={comprobanteData.empresa}
+            tipoComprobante={comprobanteData.tipoComprobante}
+          />
+        );
+      } else if (tipoC == 1 && tipoP == 1) {
+        component = (
+          <InvoiceCreditoPDFComponent
+            comprobante={comprobanteData.comprobante}
+            detalles={comprobanteData.detalles}
+            cliente={comprobanteData.cliente}
+            items={items}
             empresa={comprobanteData.empresa}
             tipoComprobante={comprobanteData.tipoComprobante}
           />
