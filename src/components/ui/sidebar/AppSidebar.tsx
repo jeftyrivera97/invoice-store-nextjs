@@ -1,23 +1,13 @@
 import {
-  Home,
-  Inbox,
-  Search,
-  LucideDollarSign,
-  Info,
-  DollarSign,
   ShoppingBag,
-  Book,
-  LogOut,
-  ChevronUp,
-  User2,
-
+  Bot,
+  Settings2,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
@@ -28,18 +18,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
 
 import {
   Collapsible,
@@ -119,7 +97,7 @@ const items = {
   ],
 };
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

@@ -70,12 +70,13 @@ export async function POST(request: NextRequest) {
     // Crear el folio
     const nuevoFolio = await prisma.folios.create({
       data: {
-        codigo: codigo.toString(),
+        codigo_folio: codigo.toString(),
         inicio: Number(inicio),
         final: Number(final),
         actual: Number(inicio), // Empezar con el número inicial
         id_estado: 1, // Estado activo
         id_usuario: Number(session.user.id),
+        fecha_limite: new Date(new Date().setMonth(new Date().getMonth() + 1)), // 30 días desde hoy
         created_at: new Date(),
         updated_at: new Date(),
       },

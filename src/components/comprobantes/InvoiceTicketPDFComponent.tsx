@@ -195,8 +195,6 @@ interface InvoicePDFProps {
 
 export default function InvoiceTicketPDFComponent({
   comprobante,
-  detalles,
-  cliente,
   items,
   empresa,
   tipoComprobante

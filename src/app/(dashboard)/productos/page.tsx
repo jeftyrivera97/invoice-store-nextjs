@@ -5,7 +5,7 @@ import { IndexPageTitle } from "@/components";
 export default async function ProductosPage({
   searchParams,
 }: {
-  searchParams: { page?: string; search?: string };
+  searchParams: Promise<{ page?: string; search?: string }>;
 }) {
   const awaitedSearchParams = await searchParams;
 

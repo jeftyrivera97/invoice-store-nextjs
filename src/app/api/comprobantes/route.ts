@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { cajas_movimientos } from "../../../generated/prisma/index";
 
 // Función para convertir BigInt a string
 function convertBigIntToString(obj: any): any {
@@ -90,7 +89,7 @@ export async function POST(request: NextRequest) {
         where: { id: BigInt(id_metodo_pago) },
       });
 
-      const idTipoOperacion: number = Number(
+      Number(
         metodos_pagos?.id_tipo_operacion || "1"
       );
 
@@ -282,7 +281,7 @@ export async function POST(request: NextRequest) {
           throw new Error("No se encontró un folio válido para la factura");
         }
 
-        const folioComprobante = await tx.comprobantes_folios.create({
+        await tx.comprobantes_folios.create({
           data: {
             id_comprobante: nuevaComprobante.id,
             id_folio: folios.id,
@@ -463,7 +462,7 @@ async function generarNumeroComprobante(tx: any): Promise<string> {
     const ultimoNumero = folio.actual;
     const siguienteNumero = ultimoNumero + 1;
     return `${folio.codigo_folio}${siguienteNumero}`;
-  } catch (error) {
+  } catch {
     // Si hay error, generar uno basado en timestamp
     const timestamp = Date.now().toString().slice(-5);
     return `FAC-${timestamp}`;

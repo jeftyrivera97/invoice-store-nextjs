@@ -13,7 +13,7 @@ function convertBigIntToString(obj: any): any {
 
 export async function GET(
   request: Request,
-  { params }: { params: { codigo_producto: string } }
+  { params }: { params: Promise<{ codigo_producto: string }> }
 ) {
   try {
     const resolvedParams = await params;

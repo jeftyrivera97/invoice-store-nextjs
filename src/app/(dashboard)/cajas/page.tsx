@@ -1,11 +1,10 @@
 import { AddButton, IndexPageTitle } from "@/components";
-import {IndexTable} from "@/components/cajas/IndexTable";
-
+import { IndexTable } from "@/components/cajas/IndexTable";
 
 export default async function CajaPage({
   searchParams,
 }: {
-  searchParams: { error?: string; success?: string };
+  searchParams: Promise<{ error?: string; success?: string }>;
 }) {
   const awaitedSearchParams = await searchParams;
 

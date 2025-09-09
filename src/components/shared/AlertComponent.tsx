@@ -5,7 +5,7 @@ export default async function AlertComponent({
 }: {
   searchParams: { page?: string; search?: string };
 }) {
-  const awaitedSearchParams = await searchParams;
+  await searchParams;
 
   
   return (

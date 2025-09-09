@@ -1,5 +1,3 @@
-import { FolioData } from "./Folios";
-
 export interface InvoiceMetodoPago {
   id: string;
   descripcion: string;

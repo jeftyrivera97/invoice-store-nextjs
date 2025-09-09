@@ -8,7 +8,7 @@ import { RestriccionComponent } from "@/components";
 export default async function NewComprobantePage() {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user?.id) {
+  if (!session?.user) {
     redirect("/auth/signin");
   }
 

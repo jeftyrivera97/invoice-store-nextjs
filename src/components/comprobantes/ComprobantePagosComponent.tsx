@@ -3,7 +3,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import {
 import { ComprobanteClienteSection } from "./ComprobanteClienteSection";
 import { ComprobanteFormSubmitSection } from "./ComprobanteFormSubmitSection";
 import { ComprobantePagoSection } from "./ComprobantePagoSection";
-import { ComprobantePagosTotal } from "./ComprobantePagosTotal";
 
 export const ComprobantePagosComponent = () => {
   return (

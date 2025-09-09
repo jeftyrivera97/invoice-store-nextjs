@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 
-export async function getCurrencyExchange(id: number = 1) {
+export async function getCurrencyExchange() {
   const dbData = await prisma.currency_exchange.findMany({
      where: { id_estado: BigInt(1) }, 
       

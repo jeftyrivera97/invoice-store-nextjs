@@ -48,9 +48,6 @@ export async function getProducts({ page = 1, pageSize = 50, search = "" }: GetP
     prisma.productos.count(),
   ]);
 
-  const totalPages = Math.ceil(total / pageSize);
-
-
   return {
     productos,
     total,

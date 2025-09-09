@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
-import { validateCreateCaja } from "@/helpers";
 
 // ✅ Import correcto - usar destructuring con el nombre exacto
 const { NumerosALetras } = require("numero-a-letras");
@@ -188,7 +187,6 @@ interface InvoicePDFProps {
 
 export default function InvoicePDFComponent({
   comprobante,
-  detalles,
   cliente,
   items,
   folio,
