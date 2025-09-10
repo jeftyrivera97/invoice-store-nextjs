@@ -43,7 +43,7 @@ export default async function IndexTable() {
                 {folio.estados.id === "1" ? (
                   <Button variant="destructive">Cerrar</Button>
                 ) : (
-                  <Button variant="secondary">Ver</Button>
+                  <p>Sin Accion</p>
                 )}
               </TableCell>
             </TableRow>

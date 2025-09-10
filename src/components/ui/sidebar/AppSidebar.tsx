@@ -45,6 +45,10 @@ const items = {
           title: "Administrar Productos",
           url: "/productos",
         },
+        {
+          title: "Nuevo Producto",
+          url: "/productos/new",
+        },
   
       ],
     },

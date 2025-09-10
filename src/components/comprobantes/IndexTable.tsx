@@ -75,7 +75,7 @@ export const IndexTable = async function ({
               <TableCell>
                 {
                 comprobante.id_tipo_comprobante === BigInt(1)
-                  ? <Button variant="secondary"><Link href={`/comprobantes/${comprobante.id}`}>Ver</Link></Button>
+                  ? <Button variant="default"><Link href={`/comprobantes/${comprobante.id}`}>Ver</Link></Button>
                   : <Button variant="destructive"><Link href={`/comprobantes/${comprobante.id}/edit`}>Pagar</Link></Button>
                 }
                 </TableCell>

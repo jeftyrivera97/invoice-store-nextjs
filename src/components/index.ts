@@ -34,3 +34,8 @@ export * from './shared/SearchInput';
 export * from './clientes/ClienteIndexTable';
 export * from './clientes/NewClienteComponent';
 export * from './clientes/EditClienteByIdComponent'
+export * from './productos/NewProductoComponent';
+export * from './productos/EditProductoComponent';
+export * from './productos/ProductoForm';
+export * from './productos/EditProductoForm';
+export * from './home/HomePageComponent';

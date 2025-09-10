@@ -11,6 +11,7 @@ import { productosColumns } from "@/helpers";
 import Link from "next/link";
 import { getProducts } from "@/helpers/productos/getProducts";
 import { redirect } from "next/navigation";
+import { Button } from '@/components/ui/button';
 
 export default async function IndexTable({
   page,
@@ -61,8 +62,13 @@ export default async function IndexTable({
                 {producto.proveedores?.descripcion || "Sin proveedor"}
               </TableCell>
               <TableCell>{producto.stock}</TableCell>
-              <TableCell className="text-right">
+              <TableCell >
                 L.{producto.precio_venta?.toFixed(2) || "0.00"}
+              </TableCell>
+              <TableCell className="text-right">
+                <Button variant="destructive">
+                  <Link href={`/productos/${producto.id}/edit`}>Editar</Link>
+                </Button>
               </TableCell>
             </TableRow>
           ))}

@@ -87,7 +87,7 @@ export const IndexTable = async function ({
                 ) : (
                     <form action={activateCajaById}>
                     <input type="hidden" name="id" value={caja.id} />
-                    <Button type="submit" variant="secondary">
+                    <Button type="submit" variant="default">
                       Activar
                     </Button>
                   </form>
