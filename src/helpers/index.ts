@@ -1,4 +1,4 @@
-export * from './productos/getColumns'
+
 export * from './metodos-pagos/getMetodosPagos'
 export * from './cajas/getCajas'
 export * from './cajas/getMovimientos'
@@ -23,3 +23,8 @@ export * from './comprobantes/getComprobanteById'
 export * from './comprobantes/getComprobantes'
 export * from './comprobantes/getCategoriasComprobantes';
 export * from './comprobantes/editComprobanteById';
+export * from './clientes/getClientes';
+export * from './clientes/getClienteById';
+export * from './clientes/validateCreateCliente';
+export * from './clientes/createNewCliente';
+export * from './clientes/editClienteById';

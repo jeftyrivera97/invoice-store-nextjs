@@ -2,6 +2,8 @@ import {
   ShoppingBag,
   Bot,
   Settings2,
+  Users,
+  DollarSign
 } from "lucide-react";
 
 import {
@@ -64,11 +66,30 @@ const items = {
         
       ],
     },
+    {
+      title: "Clientes",
+      url: "#",
+      icon: Users,
+      isActive: true,
+      items: [
+         {
+          title: "Administrar Clientes",
+          url: "/clientes",
+        },
+
+        {
+          title: "Nuevo Cliente",
+          url: "/clientes/new",
+        },
+
+      ],
+    },
+
     
     {
       title: "Cajas",
       url: "#",
-      icon: Settings2,
+      icon: DollarSign,
        isActive: true,
       items: [
         {
@@ -98,6 +119,7 @@ const items = {
 };
 
 import { ChevronRight } from "lucide-react";
+import { users } from '../../../generated/prisma/index';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

@@ -30,3 +30,7 @@ export * from './comprobantes/ComprobantePagosTotal';
 export * from './comprobantes/ComprobanteCurrencySection';
 export * from './comprobantes/ComprobanteTotalesSection';
 export * from './comprobantes/ComprobanteRefreshProductButton'
+export * from './shared/SearchInput';
+export * from './clientes/ClienteIndexTable';
+export * from './clientes/NewClienteComponent';
+export * from './clientes/EditClienteByIdComponent'

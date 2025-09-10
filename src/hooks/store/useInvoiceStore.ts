@@ -137,8 +137,8 @@ export const useInvoiceStore = () => {
       const dolar = currencyData.data?.find((curr: any) => curr.id === "1");
       const euro = currencyData.data?.find((curr: any) => curr.id === "2");
 
-      const cambioDolar = Number(dolar?.venta || 1);
-      const cambioEuro = Number(euro?.venta || 1);
+      const cambioDolar = Number(dolar?.venta || 26);
+      const cambioEuro = Number(euro?.venta || 27);
       dispatch(onCurrencyLoad({ cambioDolar, cambioEuro }));
 
     }  catch (error: any) {

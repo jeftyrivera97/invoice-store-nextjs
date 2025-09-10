@@ -15,7 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ComprobanteRefreshProductButton } from "./ComprobanteRefreshProductButton";
+
 
 export const ComprobanteProductAddComponent = () => {
   const { fetchProductoByCodigo, applyDiscount } = useInvoiceStore();
@@ -58,9 +58,7 @@ export const ComprobanteProductAddComponent = () => {
       <CardHeader>
         <CardTitle>Agregar Productos</CardTitle>
         <CardDescription>Ingrese cantidad y codigo de producto</CardDescription>
-        <CardAction>
-          <ComprobanteRefreshProductButton />
-        </CardAction>
+       
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

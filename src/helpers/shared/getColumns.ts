@@ -46,6 +46,15 @@ export const productosColumns = [
   { label: "Opciones" },
 ];
 
+export const clientesColumns = [
+  { label: "ID", className: "w-[100px]" },
+  { label: "Codigo" },
+  { label: "Descripcion" },
+  { label: "Direccion" },
+  { label: "Telefono" },
+  { label: "Opciones" },
+];
+
 export const comprobantesColumns = [
   { label: "ID", className: "w-[100px]" },
   { label: "Codigo" },

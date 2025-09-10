@@ -13,10 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useInvoiceStore } from "@/hooks/store/useInvoiceStore";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
 
 export const ComprobanteClienteSection = () => {
-  const { clienteSelected, cliente } = useInvoiceStore(); // Asumiendo que tienes selectedClienteId en el store
-  
+  const { clienteSelected, cliente } = useInvoiceStore();
   const { startLoading: startClienteLoading, data: clientes } = useClienteStore();
 
   useEffect(() => {
@@ -25,16 +26,30 @@ export const ComprobanteClienteSection = () => {
 
   // Función para manejar el cambio de cliente
   const handleClienteChange = (clienteId: string) => {
-    // Encontrar el cliente completo basado en el ID
     const cliente = clientes.find(c => c.id === clienteId);
     if (cliente) {
-      clienteSelected(cliente); // O pasa el objeto completo si tu store lo necesita
+      clienteSelected(cliente);
     }
+  };
+
+  // Función para recargar clientes (llama directamente a startClienteLoading)
+  const handleRefreshClientes = () => {
+    startClienteLoading(); // Llama directamente la función
   };
 
   return (
     <>
-      <Label htmlFor="cliente">*Cliente</Label>
+      <div className="flex items-center justify-between">
+        <Label htmlFor="cliente">*Cliente</Label>
+        <Button 
+          type="button" 
+          variant="outline" 
+          size="icon"
+          onClick={handleRefreshClientes}
+        >
+          <RefreshCcw />
+        </Button>
+      </div>
       <Select 
         value={cliente?.id || ""} 
         onValueChange={handleClienteChange}

@@ -7,62 +7,57 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { productosColumns } from "@/helpers";
+import { clientesColumns, getClientes } from "@/helpers";
 import Link from "next/link";
-import { getProducts } from "@/helpers/productos/getProducts";
 import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
-export default async function IndexTable({
+export default async function ClienteIndexTable({
   page,
   search,
 }: {
   page?: string;
   search?: string;
 }) {
-  
   const pageNumber = parseInt(page || "1");
   const pageSize = 50;
 
   if (isNaN(pageNumber) || pageNumber < 1) redirect("/productos?page=1");
 
-  // Usa el helper para obtener productos y paginación
-  const { productos, totalPages } = await getProducts({
+  // Usa el helper para obtener clientes y paginación
+  const { clientes, totalPages } = await getClientes({
     page: pageNumber,
     pageSize,
     search: search || "",
   });
 
-  const columnsTable = productosColumns;
+  const columnsTable = clientesColumns;
 
   return (
     <>
       <Table>
-        <TableCaption>Lista de productos disponibles.</TableCaption>
+        <TableCaption>Lista de clientes disponibles.</TableCaption>
         <TableHeader>
           <TableRow>
-            {columnsTable.map((productosColumns) => (
-              <TableHead key={productosColumns.label} className={productosColumns.className ?? ""}>
-                {productosColumns.label}
+            {columnsTable.map((col) => (
+              <TableHead key={col.label} className={col.className ?? ""}>
+                {col.label}
               </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {productos.map((producto) => (
-            <TableRow key={producto.id.toString()}>
-              <TableCell className="font-medium">{producto.id}</TableCell>
-              <TableCell>{producto.codigo_producto}</TableCell>
-              <TableCell>{producto.descripcion}</TableCell>
+          {clientes.map((cliente) => (
+            <TableRow key={cliente.id.toString()}>
+              <TableCell className="font-medium">{cliente.id}</TableCell>
+              <TableCell>{cliente.codigo_cliente}</TableCell>
+              <TableCell>{cliente.descripcion}</TableCell>
+              <TableCell>{cliente.direccion}</TableCell>
+              <TableCell>{cliente.telefono}</TableCell>
               <TableCell>
-                {producto.producto_categorias?.descripcion || "Sin categoría"}
-              </TableCell>
-              <TableCell>{producto.marca}</TableCell>
-              <TableCell>
-                {producto.proveedores?.descripcion || "Sin proveedor"}
-              </TableCell>
-              <TableCell>{producto.stock}</TableCell>
-              <TableCell className="text-right">
-                L.{producto.precio_venta?.toFixed(2) || "0.00"}
+                <Button variant="destructive">
+                  <Link href={`/clientes/${cliente.id}/edit`}>Editar</Link>
+                </Button>
               </TableCell>
             </TableRow>
           ))}
