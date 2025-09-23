@@ -55,7 +55,7 @@ export default async function IndexTable({
               <TableCell>{producto.codigo_producto}</TableCell>
               <TableCell>{producto.descripcion}</TableCell>
               <TableCell>
-                {producto.producto_categorias?.descripcion || "Sin categoría"}
+                {producto.categorias_productos?.descripcion || "Sin categoría"}
               </TableCell>
               <TableCell>{producto.marca}</TableCell>
               <TableCell>

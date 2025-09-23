@@ -59,7 +59,7 @@ export const IndexTable = async function ({
                   ? new Date(comprobante.fecha).toLocaleDateString("es-ES")
                   : ""}
               </TableCell>
-              <TableCell>{comprobante.clientes?.descripcion}</TableCell>
+              <TableCell>{comprobante.clientes?.razon_social || "N/A"}</TableCell>
               <TableCell>L. {comprobante.gravado15}</TableCell>
               <TableCell>L. {comprobante.gravado18}</TableCell>
               <TableCell>L. {comprobante.impuesto15}</TableCell>

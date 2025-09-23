@@ -51,9 +51,12 @@ export default async function ClienteIndexTable({
             <TableRow key={cliente.id.toString()}>
               <TableCell className="font-medium">{cliente.id}</TableCell>
               <TableCell>{cliente.codigo_cliente}</TableCell>
-              <TableCell>{cliente.descripcion}</TableCell>
+              <TableCell>{cliente.razon_social}</TableCell>
+              <TableCell>{cliente.nombre}</TableCell>
+              <TableCell>{cliente.apellido}</TableCell>
               <TableCell>{cliente.direccion}</TableCell>
               <TableCell>{cliente.telefono}</TableCell>
+               <TableCell>{cliente.correo}</TableCell>
               <TableCell>
                 <Button variant="destructive">
                   <Link href={`/clientes/${cliente.id}/edit`}>Editar</Link>

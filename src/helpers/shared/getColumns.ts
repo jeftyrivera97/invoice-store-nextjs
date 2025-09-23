@@ -49,9 +49,12 @@ export const productosColumns = [
 export const clientesColumns = [
   { label: "ID", className: "w-[100px]" },
   { label: "Codigo" },
-  { label: "Descripcion" },
+  { label: "Razon Social" },
+  { label: "Nombre" },
+  { label: "Apellido" },
   { label: "Direccion" },
   { label: "Telefono" },
+  { label: "Correo" },
   { label: "Opciones" },
 ];
 

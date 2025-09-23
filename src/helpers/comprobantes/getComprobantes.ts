@@ -17,7 +17,7 @@ export async function getComprobantes({ page = 1, pageSize = 50, search = "" }: 
             { codigo_comprobante: { contains: search } },
             {
               clientes: {
-                descripcion: { contains: search },
+                razon_social: { contains: search },
               },
             },
           ],

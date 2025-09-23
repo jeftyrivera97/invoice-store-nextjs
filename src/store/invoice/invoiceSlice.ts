@@ -33,9 +33,12 @@ const initialState: InvoiceState = {
   cliente: {
     id: "",
     codigo_cliente: "",
-    descripcion: "",
+    razon_social: "",
+    nombre: "",
+    apellido: "",
     direccion: "",
     telefono: "",
+    correo: "",
     id_estado: "",
     id_usuario: "",
     created_at: "",

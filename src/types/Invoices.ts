@@ -106,9 +106,12 @@ export interface InvoiceCategoryData {
 export interface InvoiceCliente {
   id: string;
   codigo_cliente: string;
-  descripcion: string;
+  razon_social: string;
+  nombre: string;
+  apellido: string;
   direccion: string;
   telefono: string;
+  correo: string;
   id_estado: string;
   id_usuario: string;
   created_at: string;
@@ -133,7 +136,6 @@ export interface InvoiceUsers {
   updated_at: string;
 }
 
-
 export interface InvoiceDetail {
   id: string;
   linea: string;
@@ -146,6 +148,3 @@ export interface InvoiceDetail {
   created_at: string;
   updated_at: string;
 }
-
-
-

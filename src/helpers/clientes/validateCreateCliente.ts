@@ -12,16 +12,22 @@ export async function validateCreateCliente(formData: FormData) {
   }
 
   const codigo_cliente = formData.get("codigo_cliente") as string;
-  const descripcion = formData.get("descripcion") as string;
+    const razon_social = formData.get("razon_social") as string;
+      const nombre = formData.get("nombre") as string;
+  const apellido = formData.get("apellido") as string;
   const direccion = formData.get("direccion") as string;
   const telefono = formData.get("telefono") as string;
+const correo = formData.get("correo") as string;
 
   // Agregar debug para ver qué estás recibiendo
   console.log("FormData recibida:", {
     codigo_cliente,
-    descripcion,
+    razon_social,
+    nombre,
+    apellido,
     direccion,
-    telefono
+    telefono,
+    correo,
   });
 
   // Mejorar validación de código
@@ -29,8 +35,8 @@ export async function validateCreateCliente(formData: FormData) {
     redirect("/folios/new?error=Debe ingresar el RTN");
   }
 
-  if (!descripcion || descripcion.trim() === "") {
-    redirect("/folios/new?error=Debe ingresar una descripcion");
+  if (!razon_social || razon_social.trim() === "") {
+    redirect("/folios/new?error=Debe ingresar una razon social");
   }
 
   if (!direccion || direccion.trim() === "") {
@@ -45,9 +51,12 @@ export async function validateCreateCliente(formData: FormData) {
   return {
     session,
     codigo_cliente,
-    descripcion,
+    razon_social,
+    nombre,
+    apellido,
     direccion,
-    telefono
+    telefono,
+    correo
   };
 }
 

@@ -19,7 +19,7 @@ export async function getProducts({ page = 1, pageSize = 50, search = "" }: GetP
             { descripcion: { contains: search } },
             { marca: { contains: search } },
             {
-              producto_categorias: {
+              categorias_productos: {
                 descripcion: { contains: search },
               },
             },

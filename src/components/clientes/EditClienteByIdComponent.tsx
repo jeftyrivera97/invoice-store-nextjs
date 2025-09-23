@@ -40,9 +40,12 @@ export const EditClienteByIdComponent = async ({
     "use server";
     await editClienteById({
       codigo_cliente: formData.get("codigo_cliente") as string,
-      descripcion: formData.get("descripcion") as string,
+      razon_social: formData.get("razon_social") as string,
+      nombre: formData.get("nombre") as string,
+      apellido: formData.get("apellido") as string,
       direccion: formData.get("direccion") as string,
       telefono: formData.get("telefono") as string,
+      correo: formData.get("correo") as string,
       userId: data.userId,
       clienteId: Number(resolvedParams.id),
     });
@@ -107,12 +110,22 @@ export const EditClienteByIdComponent = async ({
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="descripcion">Nombre</Label>
+                <Label htmlFor="nombre">Nombre</Label>
                 <Input
-                  id="descripcion"
-                  name="descripcion"
+                  id="nombre"
+                  name="nombre"
                   type="text"
-                  defaultValue={data.descripcion || ""}
+                  defaultValue={data.nombre || ""}
+                  required
+                />
+              </div>
+                 <div className="grid gap-2">
+                <Label htmlFor="apellido">Apellido</Label>
+                <Input
+                  id="apellido"
+                  name="apellido"
+                  type="text"
+                  defaultValue={data.apellido || ""}
                   required
                 />
               </div>
@@ -133,6 +146,16 @@ export const EditClienteByIdComponent = async ({
                   name="telefono"
                   type="text"
                   defaultValue={data.telefono || ""}
+                  required
+                />
+              </div>
+                <div className="grid gap-2">
+                <Label htmlFor="correo">Correo</Label>
+                <Input
+                  id="correo"
+                  name="correo"
+                  type="text"
+                  defaultValue={data.correo || ""}
                   required
                 />
               </div>

@@ -3,21 +3,27 @@ import { redirect } from "next/navigation";
 
 interface CreateClienteType {
   codigo_cliente: string;
-  descripcion: string;
+  razon_social: string;
+  nombre: string;
+  apellido: string;
   direccion: string;
   telefono: string;
+  correo: string;
   userId: string | number;
 }
 
 export async function createNewCliente({
   codigo_cliente,
-  descripcion,
+  razon_social,
+  nombre,
+  apellido,
   direccion,
   telefono,
+  correo,
   userId,
 }: CreateClienteType) {
   // Validaciones
-  if (!codigo_cliente || !descripcion || !direccion || !telefono) {
+  if (!codigo_cliente || !nombre || !direccion || !telefono) {
     redirect("/clientes/new?error=Todos los campos son requeridos");
   }
 
@@ -34,9 +40,12 @@ export async function createNewCliente({
     const nuevoCliente = await prisma.clientes.create({
       data: {
         codigo_cliente,
-        descripcion,
+        razon_social,
+        nombre,
+        apellido,
         direccion,
         telefono,
+        correo,
         id_usuario: Number(userId), // Usar el userId pasado como parámetro
         created_at: new Date(),
         updated_at: new Date(),

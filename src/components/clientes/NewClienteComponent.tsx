@@ -31,15 +31,18 @@ export const NewClienteComponent = async ({
     "use server";
 
     // Validar datos
-    const { session, codigo_cliente, descripcion, direccion, telefono } =
+    const { session, codigo_cliente, razon_social, nombre, apellido, direccion, telefono, correo } =
       await validateCreateCliente(formData);
 
     // Crear folio
     await createNewCliente({
       codigo_cliente,
-      descripcion,
+      razon_social,
+      nombre,
+      apellido,
       direccion,
       telefono,
+      correo,
       userId: session.user.id,
     });
   }
@@ -102,13 +105,33 @@ export const NewClienteComponent = async ({
                   required
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="nombre_cliente">Nombre</Label>
+                  <div className="grid gap-2">
+                <Label htmlFor="nombre">Razon Social</Label>
                 <Input
-                  id="descripcion"
-                  name="descripcion"
+                  id="razon_social"
+                  name="razon_social"
+                  type="text"
+                  placeholder="Razon Social del cliente"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="nombre">Nombre</Label>
+                <Input
+                  id="nombre"
+                  name="nombre"
                   type="text"
                   placeholder="Nombre del cliente"
+                  required
+                />
+              </div>
+               <div className="grid gap-2">
+                <Label htmlFor="apellido">Apellido</Label>
+                <Input
+                  id="apellido"
+                  name="apellido"
+                  type="text"
+                  placeholder="Apellido del cliente"
                   required
                 />
               </div>
@@ -129,6 +152,17 @@ export const NewClienteComponent = async ({
                   name="telefono"
                   type="text"
                   placeholder="Telefono del cliente"
+                  required
+                />
+                
+              </div>
+                <div className="grid gap-2">
+                <Label htmlFor="correo">Correo</Label>
+                <Input
+                  id="correo"
+                  name="correo"
+                  type="text"
+                  placeholder="Correo del cliente"
                   required
                 />
               </div>

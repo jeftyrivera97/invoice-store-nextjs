@@ -16,7 +16,7 @@ export async function getClientes({ page = 1, pageSize = 50, search = "" }: getC
       ? {
           OR: [
             { codigo_cliente: { contains: search } },
-            { descripcion: { contains: search } },
+            { razon_social: { contains: search } },
             { direccion: { contains: search } },
           ],
         }

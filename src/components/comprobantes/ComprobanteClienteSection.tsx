@@ -63,7 +63,7 @@ export const ComprobanteClienteSection = () => {
             <SelectLabel>Clientes</SelectLabel>
             {clientes.map((cliente) => (
               <SelectItem key={cliente.id} value={cliente.id}>
-                {cliente.descripcion} - {cliente.codigo_cliente}
+                {cliente.razon_social} - {cliente.codigo_cliente}
               </SelectItem>
             ))}
           </SelectGroup>

@@ -69,7 +69,7 @@ export const ComprobanteIdShowComponent = async ({
               <Input
                 type="text"
                 readOnly
-                value={data.clientes.descripcion || "N/A"}
+                value={data.clientes.razon_social || "N/A"}
               />
             </div>
 

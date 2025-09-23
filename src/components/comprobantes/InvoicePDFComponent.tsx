@@ -267,7 +267,7 @@ export default function InvoicePDFComponent({
         {/* Cliente */}
         <View style={styles.clientSection}>
           <Text style={styles.clientText}>
-            Cliente: {cliente?.descripcion || "CONSUMIDOR FINAL"}
+            Cliente: {cliente?.razon_social || "CONSUMIDOR FINAL"}
           </Text>
 
           <Text style={styles.clientText}>RTN: {cliente.codigo_cliente}</Text>

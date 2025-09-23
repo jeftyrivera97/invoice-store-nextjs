@@ -3,23 +3,29 @@ import { redirect } from "next/navigation";
 
 interface CreateClienteType {
   codigo_cliente: string;
-  descripcion: string;
+  razon_social: string;
+  nombre: string;
+  apellido: string;
   direccion: string;
   telefono: string;
+  correo: string;
   userId: string | number;
   clienteId: string | number;
 }
 
 export async function editClienteById({
   codigo_cliente,
-  descripcion,
+  razon_social,
+  nombre,
+  apellido,
   direccion,
   telefono,
+  correo,
   userId,
   clienteId,
 }: CreateClienteType) {
   // Validaciones
-  if (!codigo_cliente || !descripcion || !direccion || !telefono) {
+  if (!codigo_cliente || !nombre || !direccion || !telefono) {
     redirect("/clientes/new?error=Todos los campos son requeridos");
   }
 
@@ -29,9 +35,12 @@ export async function editClienteById({
       where: { id: Number(clienteId) },
       data: {
         codigo_cliente,
-        descripcion,
+        razon_social,
+        nombre,
+        apellido,
         direccion,
         telefono,
+        correo,
         id_usuario: Number(userId), // Usar el userId pasado como parámetro
         updated_at: new Date(),
       },
