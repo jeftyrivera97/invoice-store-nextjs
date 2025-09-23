@@ -14,7 +14,11 @@ function convertBigIntToString(obj: any): any {
 export async function GET() {
   try {
     console.log("Iniciando consulta de metodos de pagos...");
-    const data = await prisma.metodos_pagos.findMany();
+    const data = await prisma.metodos_pagos.findMany({
+      where: {
+        id_estado: 1, // Solo obtener los métodos de pago activos
+      }
+    });
 
     // Convierte todos los BigInt a string
     const metodosPagos = convertBigIntToString(data);
