@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Agregar useEffect
 import { useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Printer } from "lucide-react";
+import { Printer, Eye, X } from "lucide-react"; // Agregar X icon
 import type { RootState } from "@/store/store";
 import { useInvoiceStore } from "@/hooks/store/useInvoiceStore";
 import toast, { Toaster } from "react-hot-toast";
 import { pdf } from "@react-pdf/renderer";
-import InvoicePDFComponent from "./InvoicePDFComponent"; // ✅ Ajustar ruta
+import InvoicePDFComponent from "./InvoicePDFComponent";
 import InvoiceTicketPDFComponent from "./InvoiceTicketPDFComponent";
 import InvoiceCreditoPDFComponent from "./InvoiceCreditoPDFComponent";
 
 export const ComprobanteFormSubmitSection = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null); // Estado para el PDF
 
   // Obtener TODOS los datos del store
   const {
@@ -40,6 +41,99 @@ export const ComprobanteFormSubmitSection = () => {
   } = useInvoiceStore();
 
   const { user } = useSelector((state: RootState) => state.auth);
+
+  // ✅ Hook para cerrar modal con ESC
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && pdfUrl) {
+        cerrarPDF();
+      }
+    };
+
+    if (pdfUrl) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [pdfUrl]);
+
+  // ✅ Función para generar PDF (modificada)
+  const generarPDF = async (comprobanteData: any) => {
+    try {
+      console.log("Generando PDF con datos:", comprobanteData);
+
+      const tipoC = comprobanteData.id_categoria_comprobante;
+      const tipoP = comprobanteData.pagos.id_metodo_pago;
+      console.log("ID Categoria Comprobante a PDF:", tipoC);
+      console.log("TIPO COMPROBANTE: ", tipoC, "TIPO PAGO: ", tipoP);
+
+      let component;
+      if (tipoC == 2) {
+        component = (
+          <InvoicePDFComponent
+            comprobante={comprobanteData.comprobante}
+            detalles={comprobanteData.detalles}
+            cliente={comprobanteData.cliente}
+            items={items}
+            folio={comprobanteData.folio}
+            empresa={comprobanteData.empresa}
+            tipoComprobante={comprobanteData.tipoComprobante}
+            user={user}
+            medioPago={comprobanteData.medioPago}
+            cajaActiva={comprobanteData.cajaActiva}
+          />
+        );
+      } else if (tipoC == 1 && tipoP != 1) {
+        component = (
+          <InvoiceTicketPDFComponent
+            comprobante={comprobanteData.comprobante}
+            detalles={comprobanteData.detalles}
+            cliente={comprobanteData.cliente}
+            items={items}
+            empresa={comprobanteData.empresa}
+            tipoComprobante={comprobanteData.tipoComprobante}
+          />
+        );
+      } else if (tipoC == 1 && tipoP == 1) {
+        component = (
+          <InvoiceCreditoPDFComponent
+            comprobante={comprobanteData.comprobante}
+            detalles={comprobanteData.detalles}
+            cliente={comprobanteData.cliente}
+            items={items}
+            empresa={comprobanteData.empresa}
+            tipoComprobante={comprobanteData.tipoComprobante}
+          />
+        );
+      } else {
+        throw new Error("Tipo de comprobante no soportado");
+      }
+
+      const blob = await pdf(component).toBlob();
+
+      // Crear URL del blob para mostrar en navegador
+      const url = URL.createObjectURL(blob);
+
+      // Guardar la URL en el estado para mostrar el PDF
+      setPdfUrl(url);
+
+      toast.success("PDF generado exitosamente", {
+        duration: 1500,
+        icon: "📄",
+      });
+
+      return url; // Retornar la URL para usarla si es necesario
+    } catch (error) {
+      console.error("Error generando PDF:", error);
+      toast.error("Error al generar PDF", {
+        duration: 1500,
+        icon: "❌",
+      });
+      throw error;
+    }
+  };
 
   // Función para generar comprobante
   const handleGenerarComprobante = async () => {
@@ -148,8 +242,7 @@ export const ComprobanteFormSubmitSection = () => {
           }
         );
 
-        // ✅ Generar y descargar PDF después del éxito
-
+        // ✅ Generar PDF y mostrar en pantalla
         await generarPDF(result.data);
 
         // Limpiar todo después del éxito
@@ -172,81 +265,11 @@ export const ComprobanteFormSubmitSection = () => {
     }
   };
 
-  // ✅ Función para generar PDF
-  const generarPDF = async (comprobanteData: any) => {
-    try {
-      console.log("Generando PDF con datos:", comprobanteData);
-
-      const tipoC = comprobanteData.id_categoria_comprobante;
-      const tipoP = comprobanteData.pagos.id_metodo_pago;
-      console.log("ID Categoria Comprobante a PDF:", tipoC);
-      console.log("TIPO COMPROBANTE: ", tipoC, "TIPO PAGO: ", tipoP);
-
-      let component;
-      if (tipoC == 2) {
-        component = (
-          <InvoicePDFComponent
-            comprobante={comprobanteData.comprobante}
-            detalles={comprobanteData.detalles}
-            cliente={comprobanteData.cliente}
-            items={items}
-            folio={comprobanteData.folio}
-            empresa={comprobanteData.empresa}
-            tipoComprobante={comprobanteData.tipoComprobante}
-            user={user}
-            medioPago={comprobanteData.medioPago}
-            cajaActiva={comprobanteData.cajaActiva}
-          />
-        );
-      } else if (tipoC == 1 && tipoP != 1) {
-        component = (
-          <InvoiceTicketPDFComponent
-            comprobante={comprobanteData.comprobante}
-            detalles={comprobanteData.detalles}
-            cliente={comprobanteData.cliente}
-            items={items}
-            empresa={comprobanteData.empresa}
-            tipoComprobante={comprobanteData.tipoComprobante}
-          />
-        );
-      } else if (tipoC == 1 && tipoP == 1) {
-        component = (
-          <InvoiceCreditoPDFComponent
-            comprobante={comprobanteData.comprobante}
-            detalles={comprobanteData.detalles}
-            cliente={comprobanteData.cliente}
-            items={items}
-            empresa={comprobanteData.empresa}
-            tipoComprobante={comprobanteData.tipoComprobante}
-          />
-        );
-      } else {
-        throw new Error("Tipo de comprobante no soportado");
-      }
-
-      const blob = await pdf(component).toBlob();
-
-      // Crear URL del blob y descargar
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `comprobante-${comprobanteData.comprobante.codigo_comprobante}.pdf`;
-      link.click();
-
-      // Limpiar URL
-      URL.revokeObjectURL(url);
-
-      // Crear el PDF usando react-pdf/renderer
-      toast.success("PDF generado exitosamente", {
-        duration: 1500,
-        icon: "📄",
-      });
-    } catch (error) {
-      console.error("Error generando PDF:", error);
-      toast.error("Error al generar PDF", {
-        duration: 1500,
-        icon: "❌",
-      });
+  // Función para cerrar el visor de PDF
+  const cerrarPDF = () => {
+    if (pdfUrl) {
+      URL.revokeObjectURL(pdfUrl);
+      setPdfUrl(null);
     }
   };
 
@@ -255,18 +278,66 @@ export const ComprobanteFormSubmitSection = () => {
     isLoading || items.length === 0 || !cliente || !metodo_pago;
 
   return (
-    <div className="grid grid-cols-3 items-center gap-4">
-      <Toaster position="top-center" reverseOrder={false} />
-      <Label htmlFor="agregar">&nbsp;</Label>
-      <Button
-        variant="destructive"
-        className="col-span-2"
-        onClick={handleGenerarComprobante}
-        disabled={isDisabled}
-      >
-        <Printer className="mr-2" />
-        {isLoading ? "Generando..." : "Generar Comprobante"}
-      </Button>
-    </div>
+    <>
+      <div className="grid grid-cols-3 items-center gap-4">
+        <Toaster position="top-center" reverseOrder={false} />
+        <Label htmlFor="agregar">&nbsp;</Label>
+        <Button
+          variant="destructive"
+          className="col-span-2"
+          onClick={handleGenerarComprobante}
+          disabled={isDisabled}
+        >
+          <Printer className="mr-2" />
+          {isLoading ? "Generando..." : "Generar Comprobante"}
+        </Button>
+      </div>
+
+      {/* Modal para mostrar PDF */}
+      {pdfUrl && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={cerrarPDF} // Cerrar al hacer clic en el overlay
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()} // Evitar cerrar al hacer clic dentro del modal
+          >
+            {/* Header del modal */}
+            <div className="flex justify-between items-center p-4 border-b">
+              <h3 className="text-lg font-semibold">Vista Previa del Comprobante</h3>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const link = document.createElement("a");
+                    link.href = pdfUrl;
+                    link.download = `comprobante-${Date.now()}.pdf`;
+                    link.click();
+                  }}
+                >
+                  <Printer className="w-4 h-4 mr-2" />
+                  Descargar
+                </Button>
+                <Button variant="outline" size="sm" onClick={cerrarPDF}>
+                  <X className="w-4 h-4 mr-2" />
+                  Cerrar
+                </Button>
+              </div>
+            </div>
+
+            {/* Contenido del PDF */}
+            <div className="flex-1 p-4">
+              <iframe
+                src={pdfUrl}
+                className="w-full h-full min-h-[600px] border rounded"
+                title="Vista previa del comprobante"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
