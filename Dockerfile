@@ -8,18 +8,18 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Copia el env de producción para que prisma use la URL correcta al generar
-COPY .env.production .env
-
+# Prisma usa DATABASE_URL del entorno (que vendrá de Dokploy)
 RUN npx prisma generate
 RUN npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-# Copia el build standalone (ajusta si no usas standalone)
+ENV NEXT_TELEMETRY_DISABLED=1
+
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/static ./.next/static
+
 EXPOSE 3000
 CMD ["node", "server.js"]
