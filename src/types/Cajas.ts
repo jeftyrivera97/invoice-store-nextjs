@@ -43,7 +43,7 @@ export interface CajaSesionesData {
   created_at: string;
   updated_at: string;
   deleted_at: null;
-  users: CajaUsers;
+  users_cajas_sesiones_id_usuarioTousers: CajaUsers;
   cajas: CajaData;
   estados_sesiones: CajaEstados;
   estados: CajaEstados;

@@ -89,9 +89,7 @@ export async function POST(request: NextRequest) {
         where: { id: BigInt(id_metodo_pago) },
       });
 
-      Number(
-        metodos_pagos?.id_tipo_operacion || "1"
-      );
+      Number(metodos_pagos?.id_tipo_operacion || "1");
 
       let numeroFactura = "N/A";
       let tipoPago = 1;
@@ -357,6 +355,7 @@ export async function POST(request: NextRequest) {
 
       const venta = await tx.ventas.create({
         data: {
+          codigo_venta: nuevaComprobante.codigo_comprobante,
           fecha: new Date(),
           total: total,
           id_movimiento: caja_movimiento.id,
@@ -372,6 +371,7 @@ export async function POST(request: NextRequest) {
 
       const ingreso = await tx.ingresos.create({
         data: {
+          codigo_ingreso: nuevaComprobante.codigo_comprobante,
           descripcion: "Ingreso por venta de productos",
           fecha: new Date(),
           id_categoria: 1, // Ingreso por venta de productos

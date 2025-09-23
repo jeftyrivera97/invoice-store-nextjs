@@ -17,7 +17,7 @@ export async function GET() {
     const dbData = await prisma.cajas_movimientos.findMany({
       include: {
         cajas_sesiones: true,
-        cajas_categorias_movimientos: true,
+        categorias_movimientos: true,
         estados: true,
         users: true,
       },

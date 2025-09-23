@@ -40,7 +40,7 @@ export async function getProducts({ page = 1, pageSize = 50, search = "" }: GetP
       take: pageSize,
       where,
       include: {
-        producto_categorias: true,
+        categorias_productos: true,
         proveedores: true,
         impuestos: true,
       },

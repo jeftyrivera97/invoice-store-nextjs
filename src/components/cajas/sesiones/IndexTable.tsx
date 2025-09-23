@@ -59,7 +59,7 @@ export default async function IndexTable() {
               <TableCell>{caja.total_contado}</TableCell>
               <TableCell>{caja.diferencia}</TableCell>
               <TableCell>{caja.estados_sesiones?.descripcion}</TableCell>
-              <TableCell>{caja.users?.name}</TableCell>
+              <TableCell>{caja.users_cajas_sesiones_id_usuarioTousers?.name}</TableCell>
               <TableCell>
                 {caja.id_estado_sesion === "1" ? (
                   <Button variant="destructive">

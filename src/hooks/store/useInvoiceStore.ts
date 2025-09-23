@@ -58,26 +58,45 @@ export const useInvoiceStore = () => {
           dispatch(onInvoiceError("Producto no encontrado"));
           return { success: false, message: `Producto con código ${codigo_producto} no encontrado` };
         }
+        if (response.status === 500) {
+          dispatch(onInvoiceError("Error interno del servidor"));
+          return { success: false, message: "Error interno del servidor al buscar el producto" };
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const { data } = await response.json();
+
+      const responseData = await response.json();
+      
+      // Verificar si la respuesta tiene la estructura esperada
+      if (!responseData || !responseData.data) {
+        dispatch(onInvoiceError("Respuesta inválida del servidor"));
+        return { success: false, message: "Respuesta inválida del servidor" };
+      }
+
+      const { data } = responseData;
+
+      // Verificar que el producto tiene los campos necesarios
+      if (!data.id || !data.codigo_producto || !data.precio_venta) {
+        dispatch(onInvoiceError("Datos del producto incompletos"));
+        return { success: false, message: "Los datos del producto están incompletos" };
+      }
 
       const itemInvoice = {
         id: data.id,
-        precio_venta: data.precio_venta,
+        precio_venta: Number(data.precio_venta),
         codigo_producto: data.codigo_producto,
-        descripcion: data.descripcion,
-        cantidad: cantidad, // o la cantidad que el usuario seleccione
-        precio: data.precio_venta,
-        gravado15: (data.gravado15 ?? 0) * cantidad,
-        gravado18: (data.gravado18 ?? 0) * cantidad,
-        impuesto15: (data.impuesto15 ?? 0) * cantidad,
-        impuesto18: (data.impuesto18 ?? 0) * cantidad,
-        exento: (data.exento ?? 0) * cantidad,
-        exonerado: (data.exonerado ?? 0) * cantidad,
-        total_linea: data.precio_venta * cantidad, // o la lógica que necesites
-        total_lineaUSD: data.precio_venta * cantidad / cambioDolar,
-        total_lineaEUR: data.precio_venta * cantidad / cambioEuro,
+        descripcion: data.descripcion || "Sin descripción",
+        cantidad: cantidad,
+        precio: Number(data.precio_venta),
+        gravado15: (Number(data.gravado15) || 0) * cantidad,
+        gravado18: (Number(data.gravado18) || 0) * cantidad,
+        impuesto15: (Number(data.impuesto15) || 0) * cantidad,
+        impuesto18: (Number(data.impuesto18) || 0) * cantidad,
+        exento: (Number(data.exento) || 0) * cantidad,
+        exonerado: (Number(data.exonerado) || 0) * cantidad,
+        total_linea: Number(data.precio_venta) * cantidad,
+        total_lineaUSD: Number(data.precio_venta) * cantidad / cambioDolar,
+        total_lineaEUR: Number(data.precio_venta) * cantidad / cambioEuro,
       };
 
       dispatch(onAddToInvoice(itemInvoice));
@@ -86,6 +105,7 @@ export const useInvoiceStore = () => {
       const errorMessage =
         error?.message || "Error desconocido al cargar el producto";
       dispatch(onInvoiceError(errorMessage));
+      console.error("Error en fetchProductoByCodigo:", error);
       return { success: false, message: errorMessage };
     }
   };

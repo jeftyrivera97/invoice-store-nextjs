@@ -17,6 +17,7 @@ export async function createNewSesion({
     const nuevaSesion = await prisma.cajas_sesiones.create({
       data: {
         id_caja: Number(cajaId),
+        fecha: new Date(),
         caja_efectivo_inicial: saldoInicial,
         caja_efectivo_final: 0,
         diferencia: 0,
@@ -32,9 +33,11 @@ export async function createNewSesion({
         id_estado_sesion: 1,
         id_estado: 1,
         id_usuario: Number(userId),
+        id_usuario_auditor: null,
         created_at: new Date(),
         updated_at: new Date(),
         deleted_at: null,
+
       },
     });
 

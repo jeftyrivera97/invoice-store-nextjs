@@ -5,7 +5,7 @@ export async function getSesionById(id: number) {
      where: { id: BigInt(id) }, 
       include: {
         cajas: true,
-        users: true,
+        users_cajas_sesiones_id_usuarioTousers: true,
         estados_sesiones: true,
         estados: true,
       },

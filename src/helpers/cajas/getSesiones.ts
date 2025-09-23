@@ -1,10 +1,11 @@
 import prisma from "@/lib/prisma";
 
+
 export default async function getSesiones() {
   const dbData = await prisma.cajas_sesiones.findMany({
     include: {
       cajas: true,
-      users: true,
+      users_cajas_sesiones_id_usuarioTousers: true,
       estados_sesiones: true,
       estados: true,
     },
