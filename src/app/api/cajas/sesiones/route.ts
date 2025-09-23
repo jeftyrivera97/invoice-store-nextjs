@@ -11,6 +11,8 @@ export async function GET() {
         cajas: true,
         estados_sesiones: true,
         estados: true,
+        users_cajas_sesiones_id_usuarioTousers: true,
+        users_cajas_sesiones_id_usuario_auditorTousers: true,
       },
     });
 

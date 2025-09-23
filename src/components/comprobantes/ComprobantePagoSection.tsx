@@ -45,6 +45,14 @@ export const ComprobantePagoSection = () => {
     setLocalReferencia(referencia || "");
   }, [referencia]);
 
+  // Limpiar campos cuando no hay método de pago seleccionado
+  useEffect(() => {
+    if (!metodo_pago?.id || metodo_pago?.id === "") {
+      setEfectivoValue("");
+      setLocalReferencia("");
+    }
+  }, [metodo_pago?.id]);
+
   useEffect(() => {
   getCategoriasComprobantes().then((data) => setTiposComprobantes(data));
 }, []);

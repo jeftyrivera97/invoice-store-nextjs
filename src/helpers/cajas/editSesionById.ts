@@ -22,8 +22,12 @@ export async function editSesionById({
   }
 
   try {
-    const cajaVentas = ventaEfectivo + cajaEfectivoInicial;
-    const diferencia = cajaVentas - cajaEfectivoContado;
+
+    const cajaInicial = cajaEfectivoInicial;
+    const cajaFinal = ventaEfectivo + cajaInicial;
+    const cajaFinalContado = cajaEfectivoContado;
+
+    const diferencia = cajaFinalContado - cajaFinal;
 
     const sesion = await prisma.cajas_sesiones.update({
       where: { id: BigInt(sesionId) },

@@ -8,15 +8,31 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-
-import getCajas from "@/helpers/cajas/getSesiones";
+import { redirect } from "next/navigation";
+import { getSesionesIndexTable } from "@/helpers/cajas/getSesiones";
 import { sesionesColumns } from "@/helpers";
 import { CajaSesionesData } from "@/types/Cajas";
-import Link from 'next/link';
+import Link from "next/link";
+import getSesiones from "@/helpers/cajas/getSesiones";
 
-export default async function IndexTable() {
-  // Usa el helper para obtener cajas y paginación
-  const { data } = await getCajas();
+export default async function IndexTable({
+  page,
+  search,
+}: {
+  page?: string;
+  search?: string;
+}) {
+  const pageNumber = parseInt(page || "1");
+  const pageSize = 50;
+
+  if (isNaN(pageNumber) || pageNumber < 1) redirect("/productos?page=1");
+
+  // Usa el helper para obtener productos y paginación
+  const { sesiones, totalPages } = await getSesionesIndexTable({
+    page: pageNumber,
+    pageSize,
+    search: search || "",
+  });
 
   const columnsTable = sesionesColumns;
 
@@ -34,47 +50,75 @@ export default async function IndexTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((caja: CajaSesionesData) => (
-            <TableRow key={caja.id.toString()}>
-              <TableCell className="font-medium">{caja.id}</TableCell>
-              <TableCell>{caja.cajas?.descripcion}</TableCell>
-              <TableCell>{caja.caja_efectivo_inicial}</TableCell>
-              <TableCell>{caja.caja_efectivo_final}</TableCell>
+          {sesiones.map((sesion: CajaSesionesData) => (
+            <TableRow key={sesion.id.toString()}>
+              <TableCell className="font-medium">{sesion.id}</TableCell>
+              <TableCell>{sesion.cajas?.descripcion}</TableCell>
+              <TableCell>{sesion.caja_efectivo_inicial}</TableCell>
+              <TableCell>{sesion.caja_efectivo_final}</TableCell>
               <TableCell>
-                {caja.fecha_apertura
-                  ? caja.fecha_apertura.toLocaleString()
+                {sesion.fecha_apertura
+                  ? sesion.fecha_apertura.toLocaleString()
                   : ""}
               </TableCell>
               <TableCell>
-                {caja.fecha_cierre
-                  ? caja.fecha_cierre.toLocaleString()
+                {sesion.fecha_cierre
+                  ? sesion.fecha_cierre.toLocaleString()
                   : "Sin Cierre"}
               </TableCell>
-              <TableCell>{caja.venta_efectivo}</TableCell>
-              <TableCell>{caja.venta_tarjeta}</TableCell>
-              <TableCell>{caja.venta_transferencia}</TableCell>
-              <TableCell>{caja.venta_pago_link}</TableCell>
-              <TableCell>{caja.venta_cheque}</TableCell>
-              <TableCell>{caja.venta_credito}</TableCell>
-              <TableCell>{caja.total_contado}</TableCell>
-              <TableCell>{caja.diferencia}</TableCell>
-              <TableCell>{caja.estados_sesiones?.descripcion}</TableCell>
-              <TableCell>{caja.users_cajas_sesiones_id_usuarioTousers?.name}</TableCell>
+              <TableCell>{sesion.venta_efectivo}</TableCell>
+              <TableCell>{sesion.venta_tarjeta}</TableCell>
+              <TableCell>{sesion.venta_transferencia}</TableCell>
+              <TableCell>{sesion.venta_pago_link}</TableCell>
+              <TableCell>{sesion.venta_cheque}</TableCell>
+              <TableCell>{sesion.venta_credito}</TableCell>
+              <TableCell>{sesion.total_contado}</TableCell>
+              <TableCell>{sesion.diferencia}</TableCell>
+              <TableCell>{sesion.estados_sesiones.descripcion}</TableCell>
               <TableCell>
-                {caja.id_estado_sesion === "1" ? (
+                {sesion.users_cajas_sesiones_id_usuarioTousers.name}
+              </TableCell>
+
+              <TableCell>
+                {sesion.id_estado_sesion === "1" ? (
                   <Button variant="destructive">
-                    <Link href={`/cajas/sesiones/${caja.id}/edit`}>
+                    <Link href={`/cajas/sesiones/${sesion.id}/edit`}>
                       Cerrar
                     </Link>
                   </Button>
                 ) : (
-                  <Button variant="secondary">Ver</Button>
+                  <Button variant="default">
+                    <Link href={`/cajas/sesiones/${sesion.id}`}>Ver</Link>
+                  </Button>
                 )}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <div className="flex justify-between items-center mt-4">
+        <Link
+          href={`?page=${pageNumber - 1}`}
+          className={`text-sm px-4 py-2 rounded border ${
+            pageNumber <= 1 ? "opacity-50 pointer-events-none" : ""
+          }`}
+        >
+          ← Anterior
+        </Link>
+
+        <p className="text-sm">
+          Página {pageNumber} de {totalPages}
+        </p>
+
+        <Link
+          href={`?page=${pageNumber + 1}`}
+          className={`text-sm px-4 py-2 rounded border ${
+            pageNumber >= totalPages ? "opacity-50 pointer-events-none" : ""
+          }`}
+        >
+          Siguiente →
+        </Link>
+      </div>
     </>
   );
 }

@@ -27,8 +27,8 @@ export interface CajaSesionesData {
   caja_efectivo_inicial: number;
   caja_efectivo_final: number;
   diferencia: number;
-  fecha_apertura: Date;
-  fecha_cierre: Date;
+  fecha_apertura: string;
+  fecha_cierre: string;
   venta_efectivo: number;
   venta_tarjeta: number;
   venta_transferencia: number;
@@ -44,6 +44,7 @@ export interface CajaSesionesData {
   updated_at: string;
   deleted_at: null;
   users_cajas_sesiones_id_usuarioTousers: CajaUsers;
+    users_cajas_sesiones_id_usuario_auditorTousers: CajaUsers;
   cajas: CajaData;
   estados_sesiones: CajaEstados;
   estados: CajaEstados;
@@ -92,3 +93,4 @@ export interface CajaUsers {
   created_at: null;
   updated_at: null;
 }
+

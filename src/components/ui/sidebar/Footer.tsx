@@ -77,10 +77,7 @@ export const Footer = () => {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <IconUserCircle />
-                  Cuenta
-                </DropdownMenuItem>
+                
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <LogOutSideBarItem />

@@ -45,9 +45,18 @@ const items = {
           title: "Administrar Productos",
           url: "/productos",
         },
+        
+        {
+          title: "Administrar Categorias",
+          url: "/categorias-productos",
+        },
         {
           title: "Nuevo Producto",
           url: "/productos/new",
+        },
+         {
+          title: "Nueva Categoria",
+          url: "/categorias-productos/new",
         },
   
       ],

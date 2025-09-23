@@ -127,7 +127,7 @@ export const EditSesionComponent = async ({
               Verifique los detalles y ingrese el efectivo contado manualmente.
             </CardDescription>
             <CardAction>
-              <Button variant="outline" size="icon">
+              <Button variant="destructive" size="icon">
                 <Link href="/cajas/sesiones">
                   <ArrowLeftIcon />
                 </Link>

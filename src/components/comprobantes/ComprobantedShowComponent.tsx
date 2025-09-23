@@ -42,7 +42,7 @@ export const ComprobanteIdShowComponent = async ({
         <CardTitle>Ver Comprobante</CardTitle>
         <CardDescription>Verifique los detalles del comprobante</CardDescription>
         <CardAction>
-          <Button variant="outline" size="icon">
+          <Button variant="destructive" size="icon">
             <Link href="/comprobantes">
               <ArrowLeftIcon />
             </Link>

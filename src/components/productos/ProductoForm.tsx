@@ -38,7 +38,7 @@ export const ProductoForm = ({ categorias, impuestos, proveedores, usuario }: Pr
     precio_compra: "",
     precio_venta: "",
     codigo_producto: "",
-    usuario: usuario.id || 1,
+    usuario: typeof usuario.id === 'string' ? parseInt(usuario.id, 10) : usuario.id || 1,
   });
 
 
@@ -88,6 +88,7 @@ export const ProductoForm = ({ categorias, impuestos, proveedores, usuario }: Pr
       <input type="hidden" name="id_categoria" value={formData.id_categoria} />
       <input type="hidden" name="id_proveedor" value={formData.id_proveedor} />
       <input type="hidden" name="id_impuesto" value={formData.id_impuesto} />
+      <input type="hidden" name="usuario" value={formData.usuario} />
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="grid gap-2">

@@ -1,6 +1,5 @@
-
 import { SearchInput } from "../../../components/shared/SearchInput";
-import { ComprobantesIndexTable, IndexPageTitle } from "@/components";
+import { AddButton, ComprobantesIndexTable, IndexPageTitle } from "@/components";
 
 export default async function ComprobantesPage({
   searchParams,
@@ -11,12 +10,20 @@ export default async function ComprobantesPage({
 
   return (
     <>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-1">
+      <div className="grid auto-rows-min gap-4 md:grid-cols-4">
         <div>
           <IndexPageTitle title="Lista de Comprobantes" />
         </div>
+        <div></div>
+        <div></div>
+        <div>
+          <AddButton
+            url="/comprobantes/new"
+            placeholder="Nuevo Comprobante"
+          />
+        </div>
 
-        <div className="grid auto-rows-min gap-4 md:grid-cols-1 w-1/4">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-1 w-2/4">
           <div>
             <SearchInput placeholder="Buscar Comprobantes..." />
           </div>

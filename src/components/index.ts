@@ -39,3 +39,10 @@ export * from './productos/EditProductoComponent';
 export * from './productos/ProductoForm';
 export * from './productos/EditProductoForm';
 export * from './home/HomePageComponent';
+
+export * from './categorias-productos/EditCategoriaProductoForm';
+export * from './categorias-productos/IndexCategoriaProductoComponent';
+export * from './categorias-productos/IndexCategoriaProductoDataTableComponent';
+export * from './categorias-productos/NewCategoriaProductoForm';
+
+export * from './cajas/sesiones/ShowSesionComponent';

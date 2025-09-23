@@ -16,7 +16,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-
 export const ComprobanteProductAddComponent = () => {
   const { fetchProductoByCodigo, applyDiscount } = useInvoiceStore();
 
@@ -26,23 +25,49 @@ export const ComprobanteProductAddComponent = () => {
 
   const onAddInvoiceButon = async () => {
     if (codigoProducto.trim()) {
-      const result = await fetchProductoByCodigo(codigoProducto, cantidad);
+      // Verificar primero si el producto existe sin usar el store
+      try {
+        const response = await fetch(`/api/productos/${codigoProducto}`);
+        
+        if (!response.ok) {
+          // El producto no existe, mostrar error sin afectar el store
+          toast.error(
+            `Producto con código ${codigoProducto} no encontrado`,
+            {
+              duration: 2500,
+              icon: "❌",
+            }
+          );
+          setCodigoProducto("");
+          if (codigoProductoRef.current) {
+            codigoProductoRef.current.focus();
+          }
+          return;
+        }
 
-      if (!result.success) {
-        toast.error(result.message || `Producto con código ${codigoProducto} no encontrado`, {
+        // Si llegamos aquí, el producto existe, ahora usar el store
+        const result = await fetchProductoByCodigo(codigoProducto, cantidad);
+
+        if (result.success) {
+          // Solo limpiar y resetear si el producto se agregó correctamente
+          setCodigoProducto("");
+          setCantidad(1);
+          applyDiscount(0);
+        }
+
+        if (codigoProductoRef.current) {
+          codigoProductoRef.current.focus();
+        }
+      } catch (error) {
+        // Error de red o API
+        toast.error("Error al buscar el producto", {
           duration: 2500,
           icon: "❌",
         });
-        return; // No limpiar los campos si hay error
-      }
-
-      // Solo limpiar y resetear si el producto se agregó correctamente
-      setCodigoProducto("");
-      setCantidad(1);
-      applyDiscount(0);
-
-      if (codigoProductoRef.current) {
-        codigoProductoRef.current.focus();
+        setCodigoProducto("");
+        if (codigoProductoRef.current) {
+          codigoProductoRef.current.focus();
+        }
       }
     }
   };
@@ -58,7 +83,6 @@ export const ComprobanteProductAddComponent = () => {
       <CardHeader>
         <CardTitle>Agregar Productos</CardTitle>
         <CardDescription>Ingrese cantidad y codigo de producto</CardDescription>
-       
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

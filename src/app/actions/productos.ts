@@ -19,7 +19,15 @@ export async function createProducto(formData: FormData) {
     const precio_compra = parseFloat(formData.get("precio_compra") as string);
     const precio_venta = parseFloat(formData.get("precio_venta") as string);
     const codigo_producto = formData.get("codigo_producto") as string;
-    const usuario = parseInt(formData.get("usuario") as string, 10) || 1;
+    
+    // Manejar el usuario de forma más robusta
+    const usuarioRaw = formData.get("usuario") as string;
+    const usuario = usuarioRaw ? parseInt(usuarioRaw, 10) : 1;
+    
+    // Validar que el usuario sea un número válido
+    if (isNaN(usuario) || usuario <= 0) {
+      throw new Error("ID de usuario inválido");
+    }
 
     // Validaciones básicas
     if (!descripcion || !id_categoria || !id_proveedor || !id_impuesto || !marca) {
@@ -45,24 +53,27 @@ export async function createProducto(formData: FormData) {
       }
     }
 
-    // Crear el producto
+    // Debug: Log del objeto data antes de crear
+    const dataToCreate = {
+      codigo_producto,
+      descripcion,
+      id_categoria,
+      marca,
+      size: size,
+      id_proveedor,
+      peso,
+      stock,
+      id_impuesto,
+      precio_venta,
+      valor: precio_venta, // El campo valor parece ser requerido
+      created_at: new Date(),
+      updated_at: new Date(),
+      id_usuario: usuario, // Usar la variable ya parseada en lugar de parsear de nuevo
+    };
+    
+    // Crear el producto sin especificar ID - dejar que auto-increment funcione
     const nuevoProducto = await prisma.productos.create({
-      data: {
-        codigo_producto,
-        descripcion,
-        id_categoria,
-        marca,
-        size: size,
-        id_proveedor,
-        peso,
-        stock,
-        id_impuesto,
-        precio_venta,
-        valor: precio_venta, // El campo valor parece ser requerido
-        created_at: new Date(),
-        updated_at: new Date(),
-        id_usuario: parseInt(formData.get("usuario") as string, 10),
-      },
+      data: dataToCreate,
     });
 
     console.log("Producto creado exitosamente:", nuevoProducto);

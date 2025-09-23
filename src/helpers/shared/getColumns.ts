@@ -34,6 +34,12 @@ export const foliosColumns = [
   { label: "Opciones" },
 ];
 
+export const categoriasProductosColumns = [
+  { label: "ID", className: "w-[100px]" },
+  { label: "Descripcion" },
+  { label: "Opciones" },
+];
+
 export const productosColumns = [
   { label: "ID", className: "w-[100px]" },
   { label: "Codigo" },

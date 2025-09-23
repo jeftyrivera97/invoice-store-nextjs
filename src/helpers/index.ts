@@ -29,6 +29,7 @@ export * from './clientes/validateCreateCliente';
 export * from './clientes/createNewCliente';
 export * from './clientes/editClienteById';
 export * from './categorias-productos/getCategoriasProductos';
+export * from './categorias-productos/getCategoriaProductoById';
 export * from './impuestos/getImpuestos';
 export * from './proveedores/getProveedores';
 export * from './categorias-productos/getCategoriasProductoById';
@@ -36,3 +37,7 @@ export * from './impuestos/getImpuestosById';
 export * from './proveedores/getProveedoresById';   
 export * from './productos/getProductoById';
 export * from './productos/getProducts';
+
+export * from './categorias-productos/createNewCategoriaProducto';
+export * from './categorias-productos/validateCreateCategoriaProducto';
+export * from './categorias-productos/editCategoriaProductoById';

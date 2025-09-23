@@ -2,7 +2,6 @@ import IndexTable from "@/components/productos/IndexTable";
 import { SearchInput } from "../../../components/shared/SearchInput";
 import { AddButton, IndexPageTitle } from "@/components";
 
-
 export default async function ProductosPage({
   searchParams,
 }: {
@@ -16,12 +15,8 @@ export default async function ProductosPage({
         <div>
           <IndexPageTitle title="Lista de Productos" />
         </div>
-        <div>
-
-        </div>
-        <div>
-
-        </div>
+        <div></div>
+        <div></div>
         <div>
           <AddButton url="/productos/new" placeholder="Nuevo Producto" />
         </div>
