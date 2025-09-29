@@ -1,0 +1,28 @@
+# Dockerfile para desarrollo
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Instalar dependencias del sistema necesarias
+RUN apk add --no-cache \
+    postgresql-client \
+    curl
+
+# Copiar archivos de configuración
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Instalar dependencias
+RUN npm ci
+
+# Copiar código fuente
+COPY . .
+
+# Generar Prisma Client
+RUN npx prisma generate
+
+# Exponer puerto
+EXPOSE 3000
+
+# Comando por defecto (se sobrescribe en docker-compose)
+CMD ["npm", "run", "dev"]
