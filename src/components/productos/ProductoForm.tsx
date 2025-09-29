@@ -63,7 +63,7 @@ export const ProductoForm = ({ categorias, impuestos, proveedores, usuario }: Pr
     const selectedProveedor = proveedores.find(prov => prov.id.toString() === formData.id_proveedor);
     const proveedorInitials = getInitials(selectedProveedor?.descripcion || "");
 
-    // Generar 4 números aleatorios
+    // Generar números aleatorios entre 100 y 9999
     const randomNumbers = Math.floor(1000 + Math.random() * 9000);
 
     // Crear el código final
