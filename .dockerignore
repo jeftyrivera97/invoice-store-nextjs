@@ -27,6 +27,7 @@ dist/
 build/
 
 # Docker
+docker-compose.yml
 docker-compose.override.yml
 
 # Logs

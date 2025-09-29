@@ -67,7 +67,7 @@ export const ProductoForm = ({ categorias, impuestos, proveedores, usuario }: Pr
     const randomNumbers = Math.floor(1000 + Math.random() * 9000);
 
     // Crear el código final
-    const codigo = `${descripcionInitials}${categoriaInitials}${marcaInitials}${proveedorInitials}${randomNumbers}`;
+    const codigo = `${descripcionInitials}${categoriaInitials}${marcaInitials}${randomNumbers}`;
 
     setFormData(prev => ({
       ...prev,

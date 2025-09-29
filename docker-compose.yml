@@ -27,7 +27,7 @@ services:
       NODE_ENV: development
       DATABASE_URL: postgresql://postgres:postgres123@db:5432/souvenirbd
       NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: your-secret-key-here-change-in-production
+      NEXTAUTH_SECRET: 51e7ec2e32a2dfa8073457eec56b62d3e03b1fd5c211dfec40fc0507fc041601
     ports:
       - "3000:3000"
     volumes:
