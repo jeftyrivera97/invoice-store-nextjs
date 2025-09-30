@@ -8,31 +8,45 @@ interface GetProductsParams {
 }
 
 export async function getProducts({ page = 1, pageSize = 50, search = "" }: GetProductsParams) {
-
   const pageNumber = page;
 
+  // normaliza el search
+  const query = (search ?? "").trim();
+
+
+  const searchNumber = Number(search);
+  const isSearchNumber = !isNaN(searchNumber);
+
+  // Filtro correcto usando `is` en relaciones 1:1
   const where =
-    search && search.length > 0
+    query.length > 0
       ? {
-          OR: [
-            { codigo_producto: { contains: search } },
-            { descripcion: { contains: search } },
-            { marca: { contains: search } },
-            {
-              categorias_productos: {
-                descripcion: { contains: search },
+        OR: [
+          { codigo_producto: { contains: query, mode: "insensitive" as const } },
+          { descripcion: { contains: query, mode: "insensitive" as const } },
+          { marca: { contains: query, mode: "insensitive" as const } },
+          { precio_venta: isSearchNumber ? { equals: searchNumber } : undefined },
+          {
+            categorias_productos: {
+              is: {
+                descripcion: { contains: query, mode: "insensitive" as const },
               },
             },
-            {
-              proveedores: {
-                descripcion: { contains: search },
+          },
+          {
+            proveedores: {
+              is: {
+                descripcion: { contains: query, mode: "insensitive" as const },
               },
             },
-          ],
-        }
+          },
+        ],
+      }
       : undefined;
 
-  if (isNaN(pageNumber) || pageNumber < 1) redirect("/productos?page=1");
+  if (isNaN(pageNumber as number) || (pageNumber as number) < 1) {
+    redirect("/productos?page=1");
+  }
 
   const [productos, total] = await Promise.all([
     prisma.productos.findMany({
@@ -44,21 +58,18 @@ export async function getProducts({ page = 1, pageSize = 50, search = "" }: GetP
         proveedores: true,
         impuestos: true,
       },
+      // opcional: orden consistente
+      orderBy: { id: "desc" },
     }),
-    prisma.productos.count(),
+    prisma.productos.count({ where }), // <— aplica el mismo filtro aquí
   ]);
 
   return {
     productos,
     total,
     totalPages: Math.ceil(total / pageSize),
-    page,
+    page: pageNumber,
     pageSize,
-    search,
- 
+    search: query,
   };
 }
-
-
-
-
