@@ -289,27 +289,28 @@ export const ComprobanteFormSubmitSection = () => {
           disabled={isDisabled}
         >
           <Printer className="mr-2" />
-          {isLoading ? "Generando..." : "Generar Comprobante"}
+          {isLoading ? "Imprimiendo..." : "Imprimir"}
         </Button>
       </div>
 
       {/* Modal para mostrar PDF */}
       {pdfUrl && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4"
           onClick={cerrarPDF} // Cerrar al hacer clic en el overlay
         >
           <div 
-            className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col"
+            className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[95vh] sm:h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()} // Evitar cerrar al hacer clic dentro del modal
           >
             {/* Header del modal */}
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-lg font-semibold">Vista Previa del Comprobante</h3>
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 sm:p-4 border-b gap-2">
+              <h3 className="text-base sm:text-lg font-semibold">Vista Previa del Comprobante</h3>
+              <div className="flex gap-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="sm"
+                  className="flex-1 sm:flex-none text-xs sm:text-sm"
                   onClick={() => {
                     const link = document.createElement("a");
                     link.href = pdfUrl;
@@ -317,21 +318,26 @@ export const ComprobanteFormSubmitSection = () => {
                     link.click();
                   }}
                 >
-                  <Printer className="w-4 h-4 mr-2" />
+                  <Printer className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Descargar
                 </Button>
-                <Button variant="outline" size="sm" onClick={cerrarPDF}>
-                  <X className="w-4 h-4 mr-2" />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 sm:flex-none text-xs sm:text-sm"
+                  onClick={cerrarPDF}
+                >
+                  <X className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Cerrar
                 </Button>
               </div>
             </div>
 
             {/* Contenido del PDF */}
-            <div className="flex-1 p-4">
+            <div className="flex-1 p-2 sm:p-4 overflow-hidden">
               <iframe
                 src={pdfUrl}
-                className="w-full h-full min-h-[600px] border rounded"
+                className="w-full h-full border rounded"
                 title="Vista previa del comprobante"
               />
             </div>

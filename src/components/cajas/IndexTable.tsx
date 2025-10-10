@@ -16,6 +16,8 @@ import {
   AlertCircleIcon,
   CheckCircle2Icon,
 } from "lucide-react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 
 export const IndexTable = async function ({
@@ -26,6 +28,9 @@ export const IndexTable = async function ({
   const awaitedSearchParams = await searchParams;
 
   const columnsTable = cajasColumns;
+
+  const session = await getServerSession(authOptions);
+  const canManageCaja = session?.user?.roleId === "1" || session?.user?.roleId === "2";
 
   const { data } = await getCajas();
 
@@ -77,20 +82,24 @@ export const IndexTable = async function ({
               <TableCell className="font-medium">{caja.id}</TableCell>
               <TableCell>{caja.descripcion}</TableCell>
               <TableCell>
-                {caja.id_estado === "1" ? (
-                  <form action={desactivateCajaById}>
-                    <input type="hidden" name="id" value={caja.id} />
-                    <Button type="submit" variant="destructive">
-                      Desactivar
-                    </Button>
-                  </form>
-                ) : (
+                {canManageCaja ? (
+                  caja.id_estado === "1" ? (
+                    <form action={desactivateCajaById}>
+                      <input type="hidden" name="id" value={caja.id} />
+                      <Button type="submit" variant="destructive">
+                        Desactivar
+                      </Button>
+                    </form>
+                  ) : (
                     <form action={activateCajaById}>
-                    <input type="hidden" name="id" value={caja.id} />
-                    <Button type="submit" variant="default">
-                      Activar
-                    </Button>
-                  </form>
+                      <input type="hidden" name="id" value={caja.id} />
+                      <Button type="submit" variant="default">
+                        Activar
+                      </Button>
+                    </form>
+                  )
+                ) : (
+                  <p>N/A</p>
                 )}
               </TableCell>
             </TableRow>

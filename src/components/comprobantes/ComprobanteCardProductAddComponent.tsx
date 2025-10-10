@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export const ComprobanteProductAddComponent = () => {
+export const ComprobanteCardProductAddComponent = () => {
   const { fetchProductoByCodigo, applyDiscount } = useInvoiceStore();
 
   const [codigoProducto, setCodigoProducto] = useState("");
@@ -82,7 +82,7 @@ export const ComprobanteProductAddComponent = () => {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>Agregar Productos</CardTitle>
-        <CardDescription>Ingrese cantidad y codigo de producto</CardDescription>
+        <CardDescription>Cantidad y código de producto</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

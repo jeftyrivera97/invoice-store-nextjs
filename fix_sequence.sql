@@ -155,3 +155,5 @@ SELECT setval('ventas_id_seq', COALESCE((SELECT MAX(id) + 1 FROM ventas), 1), fa
 
 -- Mensaje de confirmación
 SELECT 'Todas las secuencias han sido sincronizadas exitosamente' as resultado;
+
+REINDEX DATABASE nombre_de_tu_base_de_datos;

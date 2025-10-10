@@ -59,7 +59,7 @@ export async function getProducts({ page = 1, pageSize = 50, search = "" }: GetP
         impuestos: true,
       },
       // opcional: orden consistente
-      orderBy: { id: "desc" },
+      orderBy: { id: "asc" },
     }),
     prisma.productos.count({ where }), // <— aplica el mismo filtro aquí
   ]);

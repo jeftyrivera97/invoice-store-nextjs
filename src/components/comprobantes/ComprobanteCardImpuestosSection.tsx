@@ -16,7 +16,7 @@ import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 //import { ComprobanteCurrencySection } from "./ComprobanteCurrencySection";
 
-export const ComprobanteImpuestosSection = () => {
+export const ComprobanteCardImpuestosSection = () => {
   const {
     porcentajeDescuento,
     exento,
@@ -47,7 +47,7 @@ export const ComprobanteImpuestosSection = () => {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>Impuestos y Descuentos del Comprobante</CardTitle>
-        <CardDescription>Resumen de impuestos y descuentos</CardDescription>
+        <CardDescription>Resumen</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4">
@@ -128,7 +128,7 @@ export const ComprobanteImpuestosSection = () => {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="descuentoOtorgado">Descuento Otorgado</Label>
+            <Label htmlFor="descuentoOtorgado">Descuento</Label>
             <Input
               type="number"
               id="descuentoOtorgado"

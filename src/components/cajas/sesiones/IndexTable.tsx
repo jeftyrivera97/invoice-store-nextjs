@@ -14,6 +14,8 @@ import { sesionesColumns } from "@/helpers";
 import { CajaSesionesData } from "@/types/Cajas";
 import Link from "next/link";
 import getSesiones from "@/helpers/cajas/getSesiones";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function IndexTable({
   page,
@@ -27,11 +29,15 @@ export default async function IndexTable({
 
   if (isNaN(pageNumber) || pageNumber < 1) redirect("/productos?page=1");
 
+  const session = await getServerSession(authOptions);
+  const idUsuario = session?.user?.id ? BigInt(session.user.id) : undefined;
+
   // Usa el helper para obtener productos y paginación
   const { sesiones, totalPages } = await getSesionesIndexTable({
     page: pageNumber,
     pageSize,
     search: search || "",
+    id_usuario: idUsuario,
   });
 
   const columnsTable = sesionesColumns;

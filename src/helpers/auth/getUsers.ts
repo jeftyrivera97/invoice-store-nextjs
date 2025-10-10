@@ -13,3 +13,18 @@ export async function getUsers() {
 
   return { data };
 }
+
+export async function getProductionUsers() {
+  const dbData = await prisma.users.findMany({
+    where: { id: { not: 1 } },
+  });
+
+  // Función inline
+  const data = JSON.parse(
+    JSON.stringify(dbData, (key, value) =>
+      typeof value === "bigint" ? value.toString() : value
+    )
+  );
+
+  return { data };
+}

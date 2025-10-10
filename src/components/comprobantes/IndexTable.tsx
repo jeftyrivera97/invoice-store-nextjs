@@ -14,6 +14,8 @@ import {
   getComprobantes,
 } from "@/helpers";
 import Link from "next/link";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export const IndexTable = async function ({
   page,
@@ -27,11 +29,15 @@ export const IndexTable = async function ({
 
   if (isNaN(pageNumber) || pageNumber < 1) redirect("/comprobantes?page=1");
 
+  const session = await getServerSession(authOptions);
+  const idUsuario = session?.user?.id ? BigInt(session.user.id) : undefined;
+
   // Usa el helper para obtener productos y paginación
   const { comprobantes, totalPages } = await getComprobantes({
     page: pageNumber,
     pageSize,
     search: search || "",
+    id_usuario: idUsuario,
   });
 
   const columnsTable = comprobantesColumns;

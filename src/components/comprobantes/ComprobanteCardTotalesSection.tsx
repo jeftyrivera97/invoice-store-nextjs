@@ -14,7 +14,7 @@ import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 //import { ComprobanteCurrencySection } from "./ComprobanteCurrencySection";
 
-export const ComprobanteTotalesSection = () => {
+export const ComprobanteCardTotalesSection = () => {
   const { total, totalEUR, totalUSD } = useSelector(
     (state: RootState) => state.invoice
   );
@@ -22,8 +22,8 @@ export const ComprobanteTotalesSection = () => {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Totales del Comprobante</CardTitle>
-        <CardDescription>Resumen de totales</CardDescription>
+        <CardTitle>Totales</CardTitle>
+        <CardDescription>Resumen </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-4">

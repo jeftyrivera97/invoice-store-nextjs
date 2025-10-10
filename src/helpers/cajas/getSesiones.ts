@@ -26,19 +26,31 @@ interface GetSesionesParams {
   page?: number;
   pageSize?: number;
   search?: string;
+  id_usuario?: bigint;
 }
 
-export async function getSesionesIndexTable({ page = 1, pageSize = 50, search = "" }: GetSesionesParams) {
+export async function getSesionesIndexTable({ page = 1, pageSize = 50, search = "", id_usuario }: GetSesionesParams) {
 
   const pageNumber = page;
 
 
   if (isNaN(pageNumber) || pageNumber < 1) redirect("/cajas/sesiones?page=1");
 
+  const where: any = {};
+
+  if (search && search.length > 0) {
+    // No explicit text fields here; keeping placeholder for future search
+  }
+
+  if (id_usuario !== undefined) {
+    where.id_usuario = id_usuario;
+  }
+
   const [sesionesRaw, total] = await Promise.all([
     prisma.cajas_sesiones.findMany({
       skip: (pageNumber - 1) * pageSize,
       take: pageSize,
+      where: Object.keys(where).length ? where : undefined,
       include: {
         estados: true,
         users_cajas_sesiones_id_usuario_auditorTousers: true,
@@ -46,7 +58,7 @@ export async function getSesionesIndexTable({ page = 1, pageSize = 50, search = 
         estados_sesiones: true,
       },
     }),
-    prisma.categorias_productos.count(), // Usar el mismo filtro para el count
+    prisma.cajas_sesiones.count({ where: Object.keys(where).length ? where : undefined }), // Usar el mismo filtro para el count
   ]);
 
   // Convertir BigInt a string para serialización
@@ -63,5 +75,6 @@ export async function getSesionesIndexTable({ page = 1, pageSize = 50, search = 
     page,
     pageSize,
     search,
+    id_usuario,
   };
 }

@@ -6,6 +6,8 @@ declare module "next-auth" {
     id: string; // Add the `id` property
     name: string;
     email: string;
+    role?: string | null;
+    roleId?: string | null;
   }
 
   interface Session {
@@ -14,5 +16,7 @@ declare module "next-auth" {
 
   interface JWT {
     id: string; // Add the `id` property to the JWT
+    role?: string | null;
+    roleId?: string | null;
   }
 }

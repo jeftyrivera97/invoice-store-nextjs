@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 
 import Link from "next/link";
-import { editSesionById, getSesionById, getUsers } from "@/helpers";
+import { editSesionById, getSesionById, getProductionUsers } from "@/helpers";
 import { UsersType } from "@/types/User";
 
 // ✅ Mover server action fuera del componente y corregir
@@ -79,7 +79,7 @@ export const EditSesionComponent = async ({
 
   //  Usar params.id directamente
   const { data: sesionData } = await getSesionById(Number(params.id));
-  const { data: users } = await getUsers();
+  const { data: users } = await getProductionUsers();
 
   if (!sesionData) {
     redirect("/cajas/sesiones?error=Sesión no encontrada");

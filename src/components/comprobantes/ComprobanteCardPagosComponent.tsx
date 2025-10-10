@@ -11,12 +11,12 @@ import { ComprobanteClienteSection } from "./ComprobanteClienteSection";
 import { ComprobanteFormSubmitSection } from "./ComprobanteFormSubmitSection";
 import { ComprobantePagoSection } from "./ComprobantePagoSection";
 
-export const ComprobantePagosComponent = () => {
+export const ComprobanteCardPagosComponent = () => {
   return (
     <Card className="w-full max-w-lg">
       <CardHeader>
         <CardTitle>Datos de Pago</CardTitle>
-        <CardDescription>Ingrese info pago</CardDescription>
+        <CardDescription>Ingrese pago</CardDescription>
         <CardAction>
           {/* Boton Submit */}
           <ComprobanteFormSubmitSection />
