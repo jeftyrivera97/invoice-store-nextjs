@@ -58,9 +58,9 @@ export const ComprobantePagoSection = () => {
   }, []);
 
   // Función para cargar tipo de operación por ID
-  const cargarTipoOperacion = async (idTipoOperacion: string) => {
+  const cargarTipoOperacion = async () => {
     try {
-      const response = await fetch(`/api/tipos-operaciones/${idTipoOperacion}`);
+      const response = await fetch(`/api/tipos-operaciones/1`);
       const data = await response.json();
       
       if (data.success && data.data) {
@@ -79,7 +79,7 @@ export const ComprobantePagoSection = () => {
     if (categoria) {
       metodoPagoSelected(categoria);
       // Cargar automáticamente tipo de operación id=1 (Contado)
-      await cargarTipoOperacion("1");
+      await cargarTipoOperacion();
     }
 
     // Si selecciona EFECTIVO (id="2")

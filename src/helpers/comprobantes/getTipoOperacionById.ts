@@ -9,7 +9,7 @@ export default async function getTipoOperacionById(id: string) {
 
   if (!dbData) {
     return null;
-  }
+  } 
 
   // Convertir BigInt a string para serialización
   const data = JSON.parse(
