@@ -97,7 +97,7 @@ export const EditProductoComponent = async ({
           <EditProductoForm
             categorias={categorias.data}
             impuestos={impuestos.data}
-            proveedores={proveedores.data}
+            proveedores={proveedores.proveedores}
             usuario={session.user}
             producto={producto.data}  // Extract the inner data object
           />

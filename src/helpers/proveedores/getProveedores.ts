@@ -11,7 +11,7 @@ export async function getProveedores({
   page = 1,
   pageSize = 50,
   search = "",
-}: GetProductsParams) {
+}: GetProductsParams = {}) {
   const pageNumber = page;
 
   // normaliza el search
