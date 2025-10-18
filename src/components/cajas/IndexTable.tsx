@@ -30,7 +30,7 @@ export const IndexTable = async function ({
   const columnsTable = cajasColumns;
 
   const session = await getServerSession(authOptions);
-  const canManageCaja = session?.user?.roleId === "1" || session?.user?.roleId === "2";
+  const canManageCaja = session?.user?.roleId === "1" || session?.user?.roleId === "2" || session?.user?.roleId === "3";
 
   const { data } = await getCajas();
 
