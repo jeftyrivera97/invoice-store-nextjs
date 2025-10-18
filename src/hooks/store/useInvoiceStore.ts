@@ -11,6 +11,7 @@ import {
   onRecalculateTotals,
   onClienteSelection,
   onMetodoPagoSelection,
+  onTipoOperacionSelection,
   onReferenciaFill,
   onInvoiceClean,
   onCategoriaComprobanteSelection,
@@ -34,6 +35,7 @@ export const useInvoiceStore = () => {
     moduleTitle,
     cliente,
     metodo_pago,
+    tipo_operacion,
     categoria_comprobante,
     referencia,
     totalEUR,
@@ -136,6 +138,10 @@ export const useInvoiceStore = () => {
     dispatch(onCategoriaComprobanteSelection(categoria_comprobante));
   };
 
+  const tipoOperacionSelected = (tipo_operacion: InvoiceCategoryData) => {
+    dispatch(onTipoOperacionSelection(tipo_operacion));
+  };
+
   const referenciaFill = (referencia: string) => {
     dispatch(onReferenciaFill(referencia));
   };
@@ -183,6 +189,7 @@ export const useInvoiceStore = () => {
     moduleTitle,
     cliente,
     metodo_pago,
+    tipo_operacion,
     referencia,
     categoria_comprobante,
     totalEUR,
@@ -194,6 +201,7 @@ export const useInvoiceStore = () => {
     productInvoiceDelete,
     clienteSelected,
     metodoPagoSelected,
+    tipoOperacionSelected,
     referenciaFill,
     cleanInvoice,
     categoriaComprobanteSelected,

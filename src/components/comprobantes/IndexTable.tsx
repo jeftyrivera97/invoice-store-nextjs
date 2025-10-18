@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { InvoiceData } from "@/types";
 
 export const IndexTable = async function ({
   page,
@@ -58,7 +59,7 @@ export const IndexTable = async function ({
         <TableBody>
           {comprobantes.map((comprobante) => (
             <TableRow key={comprobante.id.toString()}>
-              <TableCell className="font-medium">{comprobante.id}</TableCell>
+              <TableCell className="font-medium">{comprobante.id.toString()}</TableCell>
               <TableCell>{comprobante.codigo_comprobante}</TableCell>
               <TableCell>
                 {comprobante.fecha
@@ -75,12 +76,12 @@ export const IndexTable = async function ({
               <TableCell>L. {comprobante.subtotal}</TableCell>
               <TableCell>L. {comprobante.total}</TableCell>
               <TableCell>{comprobante.categorias_comprobantes?.descripcion}</TableCell>
-              <TableCell>{comprobante.tipos_comprobantes?.descripcion}</TableCell>
+              <TableCell>{comprobante.tipos_operaciones?.descripcion}</TableCell>
               <TableCell>{comprobante.estados?.descripcion}</TableCell>
               <TableCell>{comprobante.users?.name}</TableCell>
               <TableCell>
                 {
-                comprobante.id_tipo_comprobante === BigInt(1)
+                comprobante.id_tipo_operacion === BigInt(1)
                   ? <Button variant="default"><Link href={`/comprobantes/${comprobante.id}`}>Ver</Link></Button>
                   : <Button variant="destructive"><Link href={`/comprobantes/${comprobante.id}/edit`}>Pagar</Link></Button>
                 }

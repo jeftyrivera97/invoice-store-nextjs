@@ -46,3 +46,8 @@ export * from './categorias-productos/IndexCategoriaProductoDataTableComponent';
 export * from './categorias-productos/NewCategoriaProductoForm';
 
 export * from './cajas/sesiones/ShowSesionComponent';
+
+export * from './proveedores/IndexProveedorTable';
+export * from './proveedores/NewProveedorComponent';
+export * from './proveedores/EditProveedorComponent';
+export * from './proveedores/ProveedorForm';

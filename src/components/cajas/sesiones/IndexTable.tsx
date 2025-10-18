@@ -116,8 +116,8 @@ export default async function IndexTable({
           Página {pageNumber} de {totalPages}
         </p>
 
-        <Link
-          href={`?page=${pageNumber + 1}`}
+       <Link
+          href={`?page=${pageNumber + 1}${search ? `&search=${encodeURIComponent(search)}` : ""}`}
           className={`text-sm px-4 py-2 rounded border ${
             pageNumber >= totalPages ? "opacity-50 pointer-events-none" : ""
           }`}

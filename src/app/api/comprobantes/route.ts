@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       throw new Error("No hay una sesión abierta para el usuario");
     }
 
-    if (id_categoria_comprobante == 2) {
+    if (id_categoria_comprobante == 3 || id_categoria_comprobante == 4) {
       if (!folios) {
         throw new Error("No hay un folio activo para crear una factura");
       }
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
           subtotal: parseFloat(subtotal) || 0,
           total: parseFloat(total) || 0,
           id_categoria: BigInt(id_categoria_comprobante),
-          id_tipo_comprobante: BigInt(tipoPago),
+          id_tipo_operacion: BigInt(tipoPago),
           id_estado_comprobante: BigInt(estadoComprobante),
           id_estado: BigInt(1),
           created_at: new Date(),
@@ -259,12 +259,12 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      const idTF = Number(nuevaComprobante.id_tipo_comprobante);
-      const tipos_comprobantes = await tx.tipos_comprobantes.findUnique({
+      const idTF = Number(nuevaComprobante.id_tipo_operacion);
+      const tipos_operaciones = await tx.tipos_operaciones.findUnique({
         where: { id: BigInt(idTF) },
       });
 
-      const tipoComprobante = tipos_comprobantes?.descripcion;
+      const tipoComprobante = tipos_operaciones?.descripcion;
 
       const idMPG = Number(comprobante_pagos.id_metodo_pago);
       const medio_pago = await tx.metodos_pagos.findUnique({
@@ -274,7 +274,7 @@ export async function POST(request: NextRequest) {
       const medioPago = medio_pago?.descripcion;
 
       // Si es una factura 6. Crear un Folio Comprobante
-      if (id_categoria_comprobante == 2) {
+      if (id_categoria_comprobante == 3 || id_categoria_comprobante == 4) {
         if (!folios) {
           throw new Error("No se encontró un folio válido para la factura");
         }
@@ -508,7 +508,7 @@ export async function PUT(request: NextRequest) {
         where: { id: BigInt(id) },
         data: {
           codigo_comprobante: `TICKET-${Date.now()}`,
-          id_tipo_comprobante: 1,
+          id_tipo_operacion: 1,
           id_categoria: 1,
           id_estado_comprobante: 3,
           updated_at: new Date(),
@@ -520,7 +520,7 @@ export async function PUT(request: NextRequest) {
         include: {
           clientes: true,
           categorias_comprobantes: true,
-          tipos_comprobantes: true,
+          tipos_operaciones: true,
           estados_comprobantes: true,
           estados: true,
           users: true,
@@ -584,10 +584,13 @@ export async function GET() {
       include: {
         clientes: true,
         categorias_comprobantes: true,
-        tipos_comprobantes: true,
+        tipos_operaciones: true,
         estados_comprobantes: true,
         estados: true,
         users: true,
+        comprobantes_detalles: true,
+        comprobantes_pagos: true,
+        comprobantes_folios: true,
       },
     });
 

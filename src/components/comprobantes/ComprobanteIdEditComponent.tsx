@@ -209,7 +209,7 @@ export const ComprobanteIdEditComponent = async ({
                 <Input
                   type="text"
                   readOnly
-                  value={data.tipos_comprobantes.descripcion}
+                  value={data.tipos_operaciones.descripcion}
                   id="tipo_comprobante"
                   name="tipo_comprobante"
                 />

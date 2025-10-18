@@ -10,7 +10,7 @@ export async function getComprobanteById(id: number) {
         users: true,
         estados: true,
         clientes: true,
-        tipos_comprobantes: true,
+        tipos_operaciones: true,
         categorias_comprobantes: true,
       },
   });

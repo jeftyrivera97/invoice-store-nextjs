@@ -7,17 +7,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  categoriasProductosColumns,
-  getCategoriasProductosIndexTable,
-} from "@/helpers";
-
+import { proveedoresColumns } from "@/helpers";
 import Link from "next/link";
+import { getProveedores } from "@/helpers/proveedores/getProveedores";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CategoriaProductoData } from "@/types/Categorias-Productos";
 
-export default async function IndexCategoriaProductoDataTableComponent({
+export default async function IndexTable({
   page,
   search,
 }: {
@@ -27,48 +23,47 @@ export default async function IndexCategoriaProductoDataTableComponent({
   const pageNumber = parseInt(page || "1");
   const pageSize = 50;
 
-  if (isNaN(pageNumber) || pageNumber < 1)
-    redirect("/categorias-productos?page=1");
+  if (isNaN(pageNumber) || pageNumber < 1) redirect("/proveedores?page=1");
 
-  // Usa el helper para obtener categorias y paginación
-  const { categorias, totalPages } = await getCategoriasProductosIndexTable({
+  // Usa el helper para obtener proveedores y paginación
+  const { proveedores, totalPages } = await getProveedores({
     page: pageNumber,
     pageSize,
     search: search || "",
   });
 
-  const columnsTable = categoriasProductosColumns;
+  const columnsTable = proveedoresColumns;
 
   return (
     <>
       <Table>
-        <TableCaption>
-          Lista de categorias de productos disponibles.
-        </TableCaption>
+        <TableCaption>Lista de proveedors disponibles.</TableCaption>
         <TableHeader>
           <TableRow>
-            {columnsTable.map((categoriasProductosColumns) => (
+            {columnsTable.map((proveedoresColumns) => (
               <TableHead
-                key={categoriasProductosColumns.label}
-                className={categoriasProductosColumns.className ?? ""}
+                key={proveedoresColumns.label}
+                className={proveedoresColumns.className ?? ""}
               >
-                {categoriasProductosColumns.label}
+                {proveedoresColumns.label}
               </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {categorias.map((categoria: CategoriaProductoData) => (
-            <TableRow key={categoria.id.toString()}>
-              <TableCell className="font-medium">{categoria.id}</TableCell>
+          {proveedores.map((proveedor) => (
+            <TableRow key={proveedor.id.toString()}>
+              <TableCell className="font-medium">{proveedor.id}</TableCell>
+              <TableCell>{proveedor.codigo_proveedor}</TableCell>
+              <TableCell>{proveedor.descripcion}</TableCell>
+              <TableCell>{proveedor.categoria}</TableCell>
+              <TableCell>{proveedor.contacto}</TableCell>
+              <TableCell>{proveedor.telefono}</TableCell>
+              <TableCell>{proveedor.correo}</TableCell>
 
-              <TableCell>{categoria.descripcion}</TableCell>
-
-              <TableCell>
+              <TableCell className="text-right">
                 <Button variant="destructive">
-                  <Link href={`/categorias-productos/${categoria.id}/edit`}>
-                    Editar
-                  </Link>
+                  <Link href={`/proveedores/${proveedor.id}/edit`}>Editar</Link>
                 </Button>
               </TableCell>
             </TableRow>
@@ -77,7 +72,9 @@ export default async function IndexCategoriaProductoDataTableComponent({
       </Table>
       <div className="flex justify-between items-center mt-4">
         <Link
-          href={`?page=${pageNumber - 1}`}
+          href={`?page=${pageNumber - 1}${
+            search ? `&search=${encodeURIComponent(search)}` : ""
+          }`}
           className={`text-sm px-4 py-2 rounded border ${
             pageNumber <= 1 ? "opacity-50 pointer-events-none" : ""
           }`}
@@ -88,6 +85,7 @@ export default async function IndexCategoriaProductoDataTableComponent({
         <p className="text-sm">
           Página {pageNumber} de {totalPages}
         </p>
+
         <Link
           href={`?page=${pageNumber + 1}${
             search ? `&search=${encodeURIComponent(search)}` : ""

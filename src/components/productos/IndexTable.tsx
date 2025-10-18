@@ -76,7 +76,7 @@ export default async function IndexTable({
       </Table>
       <div className="flex justify-between items-center mt-4">
         <Link
-          href={`?page=${pageNumber - 1}`}
+          href={`?page=${pageNumber - 1}${search ? `&search=${encodeURIComponent(search)}` : ""}`}
           className={`text-sm px-4 py-2 rounded border ${
             pageNumber <= 1 ? "opacity-50 pointer-events-none" : ""
           }`}
@@ -89,7 +89,7 @@ export default async function IndexTable({
         </p>
 
         <Link
-          href={`?page=${pageNumber + 1}`}
+          href={`?page=${pageNumber + 1}${search ? `&search=${encodeURIComponent(search)}` : ""}`}
           className={`text-sm px-4 py-2 rounded border ${
             pageNumber >= totalPages ? "opacity-50 pointer-events-none" : ""
           }`}

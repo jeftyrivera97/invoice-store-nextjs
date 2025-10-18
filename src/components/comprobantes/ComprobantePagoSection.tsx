@@ -30,7 +30,7 @@ export const ComprobantePagoSection = () => {
 
   // Obtener datos del store
   const { total } = useSelector((state: RootState) => state.invoice);
-  const { metodoPagoSelected, metodo_pago, referenciaFill, referencia, categoriaComprobanteSelected, categoria_comprobante } = useInvoiceStore();
+  const { metodoPagoSelected, metodo_pago, referenciaFill, referencia, categoriaComprobanteSelected, categoria_comprobante, tipoOperacionSelected, tipo_operacion } = useInvoiceStore();
 
   // Referencias
   const efectivoRef = useRef<HTMLInputElement>(null);
@@ -54,16 +54,32 @@ export const ComprobantePagoSection = () => {
   }, [metodo_pago?.id]);
 
   useEffect(() => {
-  getCategoriasComprobantes().then((data) => setTiposComprobantes(data));
-}, []);
+    getCategoriasComprobantes().then((data) => setTiposComprobantes(data));
+  }, []);
+
+  // Función para cargar tipo de operación por ID
+  const cargarTipoOperacion = async (idTipoOperacion: string) => {
+    try {
+      const response = await fetch(`/api/tipos-operaciones/${idTipoOperacion}`);
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        tipoOperacionSelected(data.data);
+      }
+    } catch (error) {
+      console.error("Error cargando tipo de operación:", error);
+    }
+  };
 
 
   // Función para manejar el cambio de categoría de pago
-  const handlePagoCategoriaChange = (value: string) => {
+  const handlePagoCategoriaChange = async (value: string) => {
     const categoria = pagosCategorias.find((cat: PagoCategoria) => cat.id === value);
     
     if (categoria) {
       metodoPagoSelected(categoria);
+      // Cargar automáticamente tipo de operación id=1 (Contado)
+      await cargarTipoOperacion("1");
     }
 
     // Si selecciona EFECTIVO (id="2")

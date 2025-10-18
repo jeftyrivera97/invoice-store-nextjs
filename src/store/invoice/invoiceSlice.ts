@@ -45,7 +45,7 @@ const initialState: InvoiceState = {
     updated_at: "",
     deleted_at: null,
   },
-  tipo_comprobante: {
+  tipo_operacion: {
     id: "",
     descripcion: "",
     id_estado: "",
@@ -70,6 +70,7 @@ const initialState: InvoiceState = {
   categoria_comprobante: {
     id: "",
     descripcion: "",
+    id_tipo: "",
     id_estado: "",
     id_usuario: "",
     created_at: "",
@@ -262,6 +263,13 @@ export const invoiceSlice = createSlice({
       state.categoria_comprobante = action.payload;
     },
 
+    onTipoOperacionSelection: (
+      state,
+      action: PayloadAction<InvoiceCategoryData>
+    ) => {
+      state.tipo_operacion = action.payload;
+    },
+
     onReferenciaFill: (state, action: PayloadAction<string>) => {
       state.referencia = action.payload;
     },
@@ -290,6 +298,7 @@ export const {
   onRecalculateTotals,
   onClienteSelection,
   onMetodoPagoSelection,
+  onTipoOperacionSelection,
   onReferenciaFill,
   onInvoiceClean,
   onCategoriaComprobanteSelection,

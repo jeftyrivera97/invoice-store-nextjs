@@ -1,10 +1,4 @@
-import {
-  ShoppingBag,
-  Bot,
-  Settings2,
-  Users,
-  DollarSign
-} from "lucide-react";
+import { ShoppingBag, Bot, Settings2, Users, DollarSign, List, LucideShoppingCart, Receipt, Package} from "lucide-react";
 
 import {
   Sidebar,
@@ -45,29 +39,54 @@ const items = {
           title: "Administrar Productos",
           url: "/productos",
         },
-        
-        {
-          title: "Administrar Categorias",
-          url: "/categorias-productos",
-        },
+
         {
           title: "Nuevo Producto",
           url: "/productos/new",
         },
-         {
+      ],
+    },
+    {
+      title: "Categorias",
+      url: "#",
+      icon: List,
+      isActive: true,
+      items: [
+        {
+          title: "Administrar Categorias",
+          url: "/categorias-productos",
+        },
+
+        {
           title: "Nueva Categoria",
           url: "/categorias-productos/new",
         },
-  
+      ],
+    },
+    {
+      title: "Proveedores",
+      url: "#",
+      icon: LucideShoppingCart,
+      isActive: true,
+      items: [
+        {
+          title: "Administrar Proveedores",
+          url: "/proveedores",
+        },
+
+        {
+          title: "Nuevo Proveedor",
+          url: "/proveedores/new",
+        },
       ],
     },
     {
       title: "Comprobantes",
       url: "#",
-      icon: Bot,
+      icon: Receipt,
       isActive: true,
       items: [
-         {
+        {
           title: "Administrar Comprobantes",
           url: "/comprobantes",
         },
@@ -76,7 +95,6 @@ const items = {
           title: "Nuevo Comprobante",
           url: "/comprobantes/new",
         },
-        
       ],
     },
     {
@@ -85,7 +103,7 @@ const items = {
       icon: Users,
       isActive: true,
       items: [
-         {
+        {
           title: "Administrar Clientes",
           url: "/clientes",
         },
@@ -94,16 +112,14 @@ const items = {
           title: "Nuevo Cliente",
           url: "/clientes/new",
         },
-
       ],
     },
 
-    
     {
       title: "Cajas",
       url: "#",
       icon: DollarSign,
-       isActive: true,
+      isActive: true,
       items: [
         {
           title: "Administrar Cajas",
@@ -113,14 +129,13 @@ const items = {
           title: "Administrar Sesiones",
           url: "/cajas/sesiones",
         },
-        
       ],
     },
-     {
+    {
       title: "Folios",
       url: "#",
-      icon: Settings2,
-       isActive: true,
+      icon: Package,
+      isActive: true,
       items: [
         {
           title: "Administrar Folios",
@@ -132,7 +147,7 @@ const items = {
 };
 
 import { ChevronRight } from "lucide-react";
-import { users } from '../../../generated/prisma/index';
+import { users } from "../../../generated/prisma/index";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

@@ -20,7 +20,7 @@ export async function editComprobanteById({
         where: { id: BigInt(comprobanteId) },
         data: {
           codigo_comprobante: `TICKET-${Date.now()}`,
-          id_tipo_comprobante: 1,
+          id_tipo_operacion: 1,
           id_categoria: 1,
           id_estado_comprobante: 3,
           updated_at: new Date(),
@@ -32,7 +32,7 @@ export async function editComprobanteById({
         include: {
           clientes: true,
           categorias_comprobantes: true,
-          tipos_comprobantes: true,
+          tipos_operaciones: true,
           estados_comprobantes: true,
           estados: true,
           users: true,
