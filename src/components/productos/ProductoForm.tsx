@@ -162,7 +162,7 @@ export const ProductoForm = ({ categorias, impuestos, proveedores, usuario }: Pr
                     key={proveedor.id.toString()}
                     value={proveedor.id.toString()}
                   >
-                    {proveedor.descripcion}
+                   {proveedor.id} - {proveedor.descripcion}
                   </SelectItem>
                 ))}
               </SelectGroup>
