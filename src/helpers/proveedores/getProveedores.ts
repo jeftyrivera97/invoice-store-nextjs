@@ -61,8 +61,20 @@ export async function getProveedores({
     prisma.proveedores.count({ where }), // <— aplica el mismo filtro aquí
   ]);
 
+   const dbData = await prisma.proveedores.findMany({
+       where: { id_estado: BigInt(1) }, 
+       orderBy: { descripcion: "asc" },
+        
+    });
+    const data = JSON.parse(
+      JSON.stringify(dbData, (key, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+
   return {
     proveedores,
+    data,
     total,
     totalPages: Math.ceil(total / pageSize),
     page: pageNumber,

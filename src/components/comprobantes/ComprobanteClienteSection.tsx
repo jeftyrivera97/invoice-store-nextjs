@@ -18,15 +18,26 @@ import { RefreshCcw } from "lucide-react";
 
 export const ComprobanteClienteSection = () => {
   const { clienteSelected, cliente } = useInvoiceStore();
-  const { startLoading: startClienteLoading, data: clientes } = useClienteStore();
+  const { startLoading: startClienteLoading, data: clientes } =
+    useClienteStore();
 
   useEffect(() => {
     startClienteLoading();
   }, []);
 
+  // Seleccionar cliente con id="1" por defecto cuando se carguen los clientes
+  useEffect(() => {
+    if (clientes.length > 0 && !cliente?.id) {
+      const clienteDefault = clientes.find((c) => c.id === "1");
+      if (clienteDefault) {
+        clienteSelected(clienteDefault);
+      }
+    }
+  }, [clientes, cliente, clienteSelected]);
+
   // Función para manejar el cambio de cliente
   const handleClienteChange = (clienteId: string) => {
-    const cliente = clientes.find(c => c.id === clienteId);
+    const cliente = clientes.find((c) => c.id === clienteId);
     if (cliente) {
       clienteSelected(cliente);
     }
@@ -41,29 +52,35 @@ export const ComprobanteClienteSection = () => {
     <>
       <div className="flex items-center justify-between">
         <Label htmlFor="cliente">*Cliente</Label>
-        <Button 
-          type="button" 
-          variant="outline" 
+       {/* <Button
+          type="button"
+          variant="outline"
           size="icon"
           onClick={handleRefreshClientes}
         >
           <RefreshCcw />
-        </Button>
+        </Button> */}
       </div>
-      <Select 
-        value={cliente?.id || ""} 
+      <Select
+        value={cliente?.id || ""}
         onValueChange={handleClienteChange}
         required
       >
-        <SelectTrigger>
-          <SelectValue placeholder="Seleccione un cliente" />
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Seleccione un cliente" className="truncate" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Clientes</SelectLabel>
             {clientes.map((cliente) => (
-              <SelectItem key={cliente.id} value={cliente.id}>
-                {cliente.razon_social} - {cliente.codigo_cliente}
+              <SelectItem 
+                key={cliente.id} 
+                value={cliente.id}
+                className="truncate"
+              >
+                <span className="truncate block">
+                  {cliente.razon_social} - {cliente.codigo_cliente}
+                </span>
               </SelectItem>
             ))}
           </SelectGroup>

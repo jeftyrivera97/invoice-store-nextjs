@@ -289,7 +289,7 @@ export const ComprobanteFormSubmitSection = () => {
           disabled={isDisabled}
         >
           <Printer className="mr-2" />
-          {isLoading ? "Imprimiendo..." : "Imprimir"}
+          {isLoading ? "En Proceso.." : "Imprimir"}
         </Button>
       </div>
 

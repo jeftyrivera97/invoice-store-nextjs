@@ -54,8 +54,20 @@ export const ComprobantePagoSection = () => {
   }, [metodo_pago?.id]);
 
   useEffect(() => {
-    getCategoriasComprobantes().then((data) => setTiposComprobantes(data));
+    getCategoriasComprobantes().then((data) => {
+      setTiposComprobantes(data);
+    });
   }, []);
+
+  // Seleccionar categoría con id="1" por defecto cuando se carguen los tipos
+  useEffect(() => {
+    if (tiposComprobantes.length > 0 && !categoria_comprobante?.id) {
+      const categoriaDefault = tiposComprobantes.find((cat: PagoCategoria) => cat.id === "1");
+      if (categoriaDefault) {
+        categoriaComprobanteSelected(categoriaDefault);
+      }
+    }
+  }, [tiposComprobantes, categoria_comprobante?.id, categoriaComprobanteSelected]);
 
   // Función para cargar tipo de operación por ID
   const cargarTipoOperacion = async () => {

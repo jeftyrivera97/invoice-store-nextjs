@@ -16,7 +16,7 @@ export const ComprobanteCardPagosComponent = () => {
     <Card className="w-full max-w-lg">
       <CardHeader>
         <CardTitle>Datos de Pago</CardTitle>
-        <CardDescription>Ingrese pago</CardDescription>
+        <CardDescription>Informacion</CardDescription>
         <CardAction>
           {/* Boton Submit */}
           <ComprobanteFormSubmitSection />

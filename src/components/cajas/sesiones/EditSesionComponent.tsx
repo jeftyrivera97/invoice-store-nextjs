@@ -120,7 +120,7 @@ export const EditSesionComponent = async ({
         {/* ✅ Usar params.id directamente */}
         <input type="hidden" name="sesionId" value={params.id} />
 
-        <Card className="w-full max-w-lg">
+        <Card className="w-full max-w-5xl">
           <CardHeader>
             <CardTitle>Cerrar Sesión de Caja</CardTitle>
             <CardDescription>
@@ -136,7 +136,7 @@ export const EditSesionComponent = async ({
           </CardHeader>
 
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Columna Izquierda */}
               <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
@@ -166,6 +166,32 @@ export const EditSesionComponent = async ({
                 </div>
 
                 <div className="grid gap-2">
+                  <Label htmlFor="fecha_cierre">Fecha Cierre</Label>
+                  <Input
+                    type="text"
+                    readOnly
+                    value={new Date().toLocaleString()}
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="saldo_inicial">Efectivo Inicial</Label>
+                  <Input
+                    type="number"
+                    readOnly
+                    value={sesionData?.caja_efectivo_inicial || 0}
+                    id="efectivo_caja_inicial"
+                    name="efectivo_caja_inicial"
+                  />
+                </div>
+
+              
+              </div>
+
+              {/* Columna Derecha */}
+              <div className="flex flex-col gap-4">
+
+                  <div className="grid gap-2">
                   <Label htmlFor="venta_efectivo">Ventas en Efectivo</Label>
                   <Input
                     type="number"
@@ -202,10 +228,7 @@ export const EditSesionComponent = async ({
                     value={sesionData?.venta_pago_link || 0}
                   />
                 </div>
-              </div>
 
-              {/* Columna Derecha */}
-              <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="venta_cheque">Ventas con Cheque</Label>
                   <Input
@@ -215,12 +238,24 @@ export const EditSesionComponent = async ({
                   />
                 </div>
 
+              </div>
+              <div className="flex flex-col gap-4">
+
+                
                 <div className="grid gap-2">
                   <Label htmlFor="venta_credito">Créditos Otorgados</Label>
                   <Input
                     type="number"
                     readOnly
                     value={sesionData?.venta_credito || 0}
+                  />
+                </div>
+                  <div className="grid gap-2">
+                  <Label htmlFor="total_ventas">Gastos Pagados</Label>
+                  <Input
+                    type="number"
+                    readOnly
+                    value={sesionData?.total_contado || 0}
                   />
                 </div>
 
@@ -234,24 +269,6 @@ export const EditSesionComponent = async ({
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="saldo_inicial">Efectivo Inicial</Label>
-                  <Input
-                    type="number"
-                    readOnly
-                    value={sesionData?.caja_efectivo_inicial || 0}
-                    id="efectivo_caja_inicial"
-                    name="efectivo_caja_inicial"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="fecha_cierre">Fecha Cierre</Label>
-                  <Input
-                    type="text"
-                    readOnly
-                    value={new Date().toLocaleString()}
-                  />
-                </div>
-                <div className="grid gap-2">
                   <Label
                     htmlFor="usuario"
                     className="text-red-600 font-semibold"
@@ -259,8 +276,8 @@ export const EditSesionComponent = async ({
                     *Usuario Auditor (Requerido)
                   </Label>
                   <Select name="usuario_auditor" required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccione un Usuario Auditor" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccione" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>

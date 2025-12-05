@@ -115,7 +115,7 @@ export const ComprobanteCardImpuestosSection = () => {
 
           {/* Fila 3 */}
           <div className="grid gap-2">
-            <Label htmlFor="descuento">% Descuento</Label>
+           <Label htmlFor="descuento" className="text-red-600">% Descuento</Label>
             <Input
               type="number"
               id="descuento"
@@ -128,7 +128,7 @@ export const ComprobanteCardImpuestosSection = () => {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="descuentoOtorgado">Descuento</Label>
+            <Label htmlFor="descuentoOtorgado" className="text-red-600" >Descuento</Label>
             <Input
               type="number"
               id="descuentoOtorgado"

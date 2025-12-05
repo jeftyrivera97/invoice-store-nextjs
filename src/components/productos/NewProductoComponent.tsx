@@ -90,7 +90,7 @@ export const NewProductoComponent = async ({
           <ProductoForm
             categorias={categorias.data}
             impuestos={impuestos.data}
-            proveedores={proveedores.proveedores}
+            proveedores={proveedores.data}
             usuario={session.user}
           />
         </CardContent>
